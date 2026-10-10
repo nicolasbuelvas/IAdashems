@@ -421,5 +421,19 @@ Task: Física balística realista y cálculo cinemático de rebote para la lechu
 Type: AI_ASSISTED
 Files: anomalies/lettuce.gd
 Change: Eliminación de la sobreescritura continua de velocidad vertical que provocaba que la lechuga se quedara pegada/flotando en el techo durante el slide del jugador. Implementación de física parabólica pura en caída libre con restitución en techo (e=0.8, rebote hacia abajo inmediato) y paredes (e=0.85). Cálculo cinemático de impulso exclusivamente al tocar el suelo con relación inversa entre altura y distancia: 1) Salto alto vertical (vy=8.6, vx=3.0) para sortear por arriba si el jugador se desliza a corta distancia (<3.8m); 2) Salto largo rasante (vy=4.6, vx=9.8) para escapar velozmente si el slide ocurre a distancia media; 3) Embestida rasante en picada (vy=4.2, vx=8.8) para castigar al jugador al finalizar su slide.
-Commit: 7b22496
+Commit: e164cf3
 Notes: Verificado con 209/209 comprobaciones en verde (ui_check 41/41, heat_system_test 32/32, round_manager_test 136/136) y ejecución headless limpia de test_lettuce.tscn y test_all_anomalies.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000032
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de hitbox sobredimensionada en el guisante e implementación de escalada en escaleras para todas las anomalías
+Type: AI_ASSISTED
+Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/pea.tscn, anomalies/pea_projectile.tscn
+Change: Corrección del tamaño de hitbox en el lanzaguisantes (SphereShape3D_hit reducido de 0.55 a 0.40 para quedar estrictamente contenido dentro del cuerpo esférico de radio 0.48, eliminando daños fantasma; proyectil ajustado de radio 0.22 a 0.18). Implementación de soporte universal de escalada vertical y navegación entre pisos en la clase base Anomaly (start_climb, process_climbing, helpers de niveles y escaleras) para que todas las entidades puedan subir y bajar escaleras. En pea.gd: búsqueda de escaleras hacia el nivel del jugador si este está en otro piso y kiteo vertical para escapar si el jugador se aproxima en cuerpo a cuerpo. En lettuce.gd: integración de tránsito vertical en escaleras para perseguir verticalmente al jugador o rotar de piso.
+Commit: cd8fb01
+Notes: Verificado con 209/209 comprobaciones automatizadas en verde y ejecuciones headless limpias de test_pea.tscn, test_lettuce.tscn, test_cucumber.tscn y test_all_anomalies.tscn.

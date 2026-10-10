@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://anomalies/pea_projectile.gd" id="1_script"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_proj"]
-radius = 0.22
+radius = 0.18
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pea"]
 albedo_color = Color(0.35, 0.95, 0.25, 1)
@@ -13,8 +13,8 @@ emission_energy_multiplier = 1.2
 
 [sub_resource type="SphereMesh" id="SphereMesh_proj"]
 material = SubResource("StandardMaterial3D_pea")
-radius = 0.22
-height = 0.44
+radius = 0.18
+height = 0.36
 
 [node name="PeaProjectile" type="Area3D"]
 collision_layer = 4

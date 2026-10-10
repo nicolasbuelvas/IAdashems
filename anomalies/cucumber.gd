@@ -11,13 +11,6 @@ extends Anomaly
 var speed: float = 9.2
 var stairs_mult: float = 0.75
 
-var is_climbing: bool = false
-var climb_target_y: float = 0.0
-var climb_exit_x: float = 0.0
-var climb_speed: float = 6.2
-var _climb_ladder_x: float = 0.0
-
-var _post_climb_cooldown: float = 0.0
 var _patrol_dir: float = 1.0
 var _dodge_jump_cooldown: float = 0.0
 
@@ -29,6 +22,7 @@ func _ready() -> void:
 		speed = cfg.get("CUCUMBER_SPEED") if cfg.get("CUCUMBER_SPEED") != null else speed
 		stairs_mult = cfg.get("CUCUMBER_STAIRS_MULT") if cfg.get("CUCUMBER_STAIRS_MULT") != null else stairs_mult
 	speed = maxf(speed, 9.2)
+	climb_speed = 6.2
 	_patrol_dir = 1.0 if (randf() > 0.5) else -1.0
 
 

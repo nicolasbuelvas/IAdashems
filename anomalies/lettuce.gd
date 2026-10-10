@@ -6,6 +6,7 @@ extends Anomaly
 ## Calcula la relación inversa entre altura y distancia horizontal:
 ## - Salto largo: Menor altura vertical, gran velocidad horizontal (escapar ante slide lejano).
 ## - Salto alto: Mayor altura vertical, menor distancia horizontal (esquivar por arriba ante slide cercano).
+## Escaleras: Capaz de subir y bajar escaleras entre pisos para perseguir al jugador o rotar niveles.
 ## Castigo: Si el jugador termina su slide y queda en recuperación, arremete velozmente en picada rasante.
 ## Captura: Deslizarse con Shift a través de ella.
 
@@ -26,10 +27,15 @@ func _ready() -> void:
 		base_speed = cfg.get("LETTUCE_SPEED") if cfg.get("LETTUCE_SPEED") != null else base_speed
 	base_speed = maxf(base_speed, 5.5)
 	_dir_x = 1.0 if (randf() > 0.5) else -1.0
+	climb_speed = 5.2
 
 
 func _physics_process(delta: float) -> void:
 	if is_contained:
+		return
+
+	# Estado de escalada vertical (subiendo o bajando entre pisos)
+	if process_climbing(delta):
 		return
 
 	var player := get_player_node()
@@ -40,7 +46,6 @@ func _physics_process(delta: float) -> void:
 	# 1. GRAVEDAD REAL CONTINUA EN EL AIRE:
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
-		# Resistencia aerodinámica suave
 		velocity.x = move_toward(velocity.x, _dir_x * 4.0, 1.8 * delta)
 
 	# 2. REBOTE FÍSICO EN TECHO SÓLIDO (NUNCA flotar ni quedarse pegada):
@@ -80,11 +85,26 @@ func _calculate_ground_bounce(player: Node3D, player_sliding: bool) -> void:
 	var launch_vx := 5.5
 
 	if player != null and is_instance_valid(player):
-		var same_floor := absf(player.global_position.y - global_position.y) < 2.0
+		var all_floors := get_all_floors()
+		var my_floor := get_closest_floor(all_floors, global_position.y)
+		var player_floor := get_closest_floor(all_floors, player.global_position.y)
+		var same_floor := absf(player_floor - my_floor) < 1.5
 		var dist_x := absf(player.global_position.x - global_position.x)
 		var dir_away := signf(global_position.x - player.global_position.x)
 		if dir_away == 0.0:
 			dir_away = 1.0
+
+		# EVALUACIÓN DE ESCALERAS EN EL SUELO:
+		if _post_climb_cooldown <= 0.0:
+			var ladders := get_ladders_touching_floor(my_floor)
+			for lad in ladders:
+				if absf(lad.global_position.x - global_position.x) < 0.8:
+					var dest_y := get_ladder_dest_y(lad, my_floor)
+					var towards_player := (player_floor > my_floor and dest_y > my_floor) or (player_floor < my_floor and dest_y < my_floor)
+					# Si el jugador está en otro piso y esta escalera va hacia él, o azar 30%
+					if (!same_floor and towards_player) or (same_floor and randf() < 0.25):
+						climb_ladder_safely(lad, dest_y)
+						return
 
 		# CASO 1: Jugador en slide (Shift)
 		if same_floor and player_sliding:
