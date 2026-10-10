@@ -6,6 +6,7 @@ const HEAT_MAX := 100.0
 const HEAT_PER_SEC_TIME := 1.11          # unos 90 s hasta el máximo sin otros factores
 const HEAT_PER_SEC_PER_ANOMALY := 0.2       # 0.3 dejaba la ronda 6 en ~34 s hasta el máximo; con 0.2, ~43 s
 const HEAT_PER_HIT := 10.0
+const HEAT_PENALTY_ON_DEATH := 30.0       # al morir y revivir, el sacrificio añade +30% de calor
 const HEAT_EXPIRED_MULTIPLIER := 3.0
 const HEAT_COOL_PER_CONTAIN := 20.0       # enfriamiento total por captura
 const HEAT_COOL_RATE := 8.0               # velocidad del enfriamiento gradual, por segundo

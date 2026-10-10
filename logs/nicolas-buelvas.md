@@ -577,3 +577,17 @@ Files: level/ladder.tscn
 Change: Se integró una abertura visual estructurada (CeilingOpeningHatch) en la parte superior de cada escalera (y = 4.0m) para evitar que las entidades y el jugador atraviesen el forjado como un sólido continuo: incluye una cavidad oscura de profundidad (HatchCavity), marco perimetral de madera (RimFront, RimBack, RimLeft, RimRight), escotilla abierta inclinada (OpenTrapdoor) y asas de seguridad metálicas (HandleLeft, HandleRight) que sobresalen hacia el piso superior. El marco visual no añade colisión obstructiva ni interfiere con la superficie de apoyo, asegurando que pararse allí no produzca caídas accidentales.
 Commit: f2c4552
 Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000043
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Priorización de la temperatura como mecánica principal, vidas con sprite de papa sin extremidades y silueta negra inferior, secuencia diegética de revivir a cambio de calor, sobrecalentamiento crítico con rotura de holders, modal GameOver de 3 opciones y texturas procedurales PBR de oficina
+Type: AI_ASSISTED
+Files: autoload/event_bus.gd, systems/heat_system.gd, systems/round_manager.gd, ui/hud.gd, ui/hud.tscn, ui/game_over_modal.gd, ui/game_over_modal.tscn, ui/audio_manager.gd, game/game.tscn, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/building.tscn, tools/generate_textures.py, tools/generate_crack.py
+Change: Eliminación de la mecánica de derrota por reloj (reloj oculto del HUD y temporizador desactivado como factor de derrota) priorizando la temperatura como única mecánica principal de tensión. Rediseño del HUD: reubicación de las vidas a la barra superior con el sprite de papa sin extremidades (Sprites/SE_ESTA_RESISTIENDO/papaXLL.png) montado sobre una silueta idéntica negra inferior que genera apariencia de borde negro/holder físico. Ocultación del slot de dash y estilización limpia del slot de herbicida. Implementación de secuencia de revivir con causalidad diegética pura: al llegar a 0 vidas, los 3 corazones se restauran sucesivamente con rebote elástico, seguido de sonido de vapor alarmante (sfx_heat_steam.ogg), pulso visual de la barra de calor y penalización de +30% de temperatura. En sobrecalentamiento crítico (100% calor): los corazones se evaporan suavemente uno por uno con sfx de fritura, se fracturan y destruyen los holders negros (sfx_comic_explosion.wav con grietas) y se ejecuta la muerte definitiva de la papa abriendo el modal de Game Over adaptado estrictamente a 3 opciones limpias con iconografía técnica (Reintentar donde estás, Reiniciar desde cero, Menú principal). Regla de audio: la música de Game Over suena exclusivamente al perder definitivamente; en muertes normales la música de gameplay continúa. Generación e integración de texturas procedurales PBR 100% legales y originales para paredes y forjados (cemento cepillado, ladrillo de oficina, panel de yeso/drywall y alfombra acústica modular), eliminando superficies planas grises en la arquitectura.
+Commit: 90963f5
+Notes: 215 comprobaciones automatizadas pasando sin errores (ui_check 44/44, heat_system_test 32/32, round_manager_test 139/139).

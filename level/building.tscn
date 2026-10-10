@@ -8,8 +8,10 @@
 [ext_resource type="PackedScene" path="res://level/hazards/rolling_chair.tscn" id="6_rolling_chair"]
 [ext_resource type="PackedScene" path="res://level/hazards/falling_tile.tscn" id="7_falling_tile"]
 [ext_resource type="PackedScene" path="res://level/props/filing_cabinet.tscn" id="8_filing_cabinet"]
-[ext_resource type="Material" path="res://level/materials/office_concrete.tres" id="9_concrete"]
-[ext_resource type="Material" path="res://level/materials/office_concrete_sidewalls.tres" id="10_concrete_sidewalls"]
+[ext_resource type="Texture2D" path="res://level/textures/office_concrete_wall.png" id="9_concrete"]
+[ext_resource type="Texture2D" path="res://level/textures/office_brick_wall.png" id="10_brick"]
+[ext_resource type="Texture2D" path="res://level/textures/office_drywall_panel.png" id="11_drywall"]
+[ext_resource type="Texture2D" path="res://level/textures/office_carpet_floor.png" id="12_carpet"]
 
 [sub_resource type="BoxShape3D" id="Shape_slab"]
 size = Vector3(50.0, 0.6, 4.0)
@@ -17,8 +19,15 @@ size = Vector3(50.0, 0.6, 4.0)
 [sub_resource type="BoxShape3D" id="Shape_wall"]
 size = Vector3(1.0, 13.0, 4.0)
 
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+albedo_color = Color(0.7, 0.72, 0.76, 1.0)
+albedo_texture = ExtResource("9_concrete")
+uv1_scale = Vector3(1, 4, 1)
+
 [sub_resource type="StandardMaterial3D" id="Mat_roof"]
-albedo_color = Color(0.22, 0.2, 0.19, 1.0)
+albedo_color = Color(0.65, 0.62, 0.6, 1.0)
+albedo_texture = ExtResource("11_drywall")
+uv1_scale = Vector3(16, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_desk"]
 albedo_color = Color(0.62, 0.48, 0.32, 1.0)
@@ -41,28 +50,58 @@ albedo_color = Color(0.95, 0.78, 0.1, 1.0)
 [sub_resource type="StandardMaterial3D" id="Mat_stripe_b"]
 albedo_color = Color(0.08, 0.08, 0.08, 1.0)
 
+[sub_resource type="StandardMaterial3D" id="Mat_floor_1"]
+albedo_color = Color(0.85, 0.82, 0.78, 1.0)
+albedo_texture = ExtResource("12_carpet")
+uv1_scale = Vector3(16, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_back_1"]
+albedo_color = Color(0.92, 0.88, 0.8, 1.0)
+albedo_texture = ExtResource("10_brick")
+uv1_scale = Vector3(16, 2, 1)
+
 [sub_resource type="BoxMesh" id="Mesh_floor_1"]
-material = ExtResource("9_concrete")
+material = SubResource("Mat_floor_1")
 size = Vector3(50.0, 0.6, 4.0)
 
 [sub_resource type="BoxMesh" id="Mesh_back_1"]
-material = ExtResource("9_concrete")
+material = SubResource("Mat_back_1")
 size = Vector3(49.0, 3.4, 0.2)
 
+[sub_resource type="StandardMaterial3D" id="Mat_floor_2"]
+albedo_color = Color(0.82, 0.84, 0.82, 1.0)
+albedo_texture = ExtResource("12_carpet")
+uv1_scale = Vector3(16, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_back_2"]
+albedo_color = Color(0.88, 0.92, 0.9, 1.0)
+albedo_texture = ExtResource("11_drywall")
+uv1_scale = Vector3(16, 2, 1)
+
 [sub_resource type="BoxMesh" id="Mesh_floor_2"]
-material = ExtResource("9_concrete")
+material = SubResource("Mat_floor_2")
 size = Vector3(50.0, 0.6, 4.0)
 
 [sub_resource type="BoxMesh" id="Mesh_back_2"]
-material = ExtResource("9_concrete")
+material = SubResource("Mat_back_2")
 size = Vector3(49.0, 3.4, 0.2)
 
+[sub_resource type="StandardMaterial3D" id="Mat_floor_3"]
+albedo_color = Color(0.82, 0.75, 0.72, 1.0)
+albedo_texture = ExtResource("12_carpet")
+uv1_scale = Vector3(16, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_back_3"]
+albedo_color = Color(0.9, 0.82, 0.8, 1.0)
+albedo_texture = ExtResource("10_brick")
+uv1_scale = Vector3(16, 2, 1)
+
 [sub_resource type="BoxMesh" id="Mesh_floor_3"]
-material = ExtResource("9_concrete")
+material = SubResource("Mat_floor_3")
 size = Vector3(50.0, 0.6, 4.0)
 
 [sub_resource type="BoxMesh" id="Mesh_back_3"]
-material = ExtResource("9_concrete")
+material = SubResource("Mat_back_3")
 size = Vector3(49.0, 3.4, 0.2)
 
 [sub_resource type="BoxMesh" id="Mesh_roof"]
@@ -70,7 +109,7 @@ material = SubResource("Mat_roof")
 size = Vector3(50.0, 0.6, 4.0)
 
 [sub_resource type="BoxMesh" id="Mesh_wall"]
-material = ExtResource("10_concrete_sidewalls")
+material = SubResource("Mat_wall")
 size = Vector3(1.0, 13.0, 4.0)
 
 [sub_resource type="BoxMesh" id="Mesh_desk"]

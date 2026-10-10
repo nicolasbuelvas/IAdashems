@@ -4,6 +4,9 @@
 [ext_resource type="PackedScene" path="res://ui/round_card.tscn" id="3_card"]
 [ext_resource type="Theme" path="res://ui/theme.tres" id="4_theme"]
 [ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="5_eyebrow"]
+[ext_resource type="Texture2D" path="res://Sprites/SE_ESTA_RESISTIENDO/papaXLL.png" id="6_papa"]
+[ext_resource type="Texture2D" path="res://ui/holder_cracked.png" id="7_crack"]
+[ext_resource type="PackedScene" path="res://ui/game_over_modal.tscn" id="8_game_over"]
 
 [sub_resource type="StyleBoxFlat" id="sb_life"]
 bg_color = Color(0.96, 0.72, 0.22, 1)
@@ -90,6 +93,7 @@ size_flags_horizontal = 3
 mouse_filter = 2
 
 [node name="ClockPanel" type="PanelContainer" parent="TopBar"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"Pill"
@@ -101,6 +105,161 @@ mouse_filter = 2
 theme_type_variation = &"TitleMd"
 text = "01:30"
 horizontal_alignment = 1
+
+[node name="LivesPanel" type="PanelContainer" parent="TopBar"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Pill"
+
+[node name="LivesRow" type="HBoxContainer" parent="TopBar/LivesPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Slot1" type="Control" parent="TopBar/LivesPanel/LivesRow"]
+custom_minimum_size = Vector2(36, 40)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Holder1" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot1"]
+modulate = Color(0.08, 0.08, 0.08, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_papa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Crack1" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot1"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("7_crack")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Life1" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_papa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot2" type="Control" parent="TopBar/LivesPanel/LivesRow"]
+custom_minimum_size = Vector2(36, 40)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Holder2" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot2"]
+modulate = Color(0.08, 0.08, 0.08, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_papa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Crack2" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot2"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("7_crack")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Life2" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_papa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot3" type="Control" parent="TopBar/LivesPanel/LivesRow"]
+custom_minimum_size = Vector2(36, 40)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Holder3" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot3"]
+modulate = Color(0.08, 0.08, 0.08, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_papa")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Crack3" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot3"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("7_crack")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Life3" type="TextureRect" parent="TopBar/LivesPanel/LivesRow/Slot3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("6_papa")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="TopSpacer2" type="Control" parent="TopBar"]
 layout_mode = 2
@@ -166,6 +325,7 @@ mouse_filter = 2
 theme_override_constants/separation = 12
 
 [node name="LivesPanel" type="PanelContainer" parent="BottomBar"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"Pill"
@@ -230,6 +390,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("sb_life")
 
 [node name="DashSlot" type="PanelContainer" parent="BottomBar"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"Pill"
@@ -312,3 +473,5 @@ text = ""
 
 [node name="RoundCard" parent="." instance=ExtResource("3_card")]
 layout_mode = 1
+
+[node name="GameOverModal" parent="." instance=ExtResource("8_game_over")]

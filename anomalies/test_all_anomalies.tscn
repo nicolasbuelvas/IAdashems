@@ -3,21 +3,30 @@
 [ext_resource type="Script" path="res://anomalies/test_arena_controller.gd" id="1_controller"]
 [ext_resource type="PackedScene" uid="uid://d310r1vedl67d" path="res://player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="3_camera"]
-[ext_resource type="PackedScene" uid="uid://cmf2f53o82h1z" path="res://ui/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" path="res://ui/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" path="res://level/ladder.tscn" id="5_ladder"]
 [ext_resource type="Theme" path="res://ui/theme.tres" id="6_theme"]
 [ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="7_eyebrow"]
 [ext_resource type="PackedScene" uid="uid://cmf2f53o82h1y" path="res://ui/hud.tscn" id="8_hud"]
 [ext_resource type="Script" path="res://systems/heat_system.gd" id="9_heat"]
+[ext_resource type="Texture2D" path="res://level/textures/office_concrete_wall.png" id="10_concrete"]
+[ext_resource type="Texture2D" path="res://level/textures/office_carpet_floor.png" id="11_carpet"]
+[ext_resource type="Texture2D" path="res://level/textures/office_drywall_panel.png" id="12_drywall"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_Basement"]
-albedo_color = Color(0.18, 0.16, 0.15, 1)
+albedo_color = Color(0.65, 0.65, 0.68, 1)
+albedo_texture = ExtResource("10_concrete")
+uv1_scale = Vector3(16, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_Floor"]
-albedo_color = Color(0.24, 0.22, 0.2, 1)
+albedo_color = Color(0.75, 0.75, 0.75, 1)
+albedo_texture = ExtResource("11_carpet")
+uv1_scale = Vector3(16, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_Ceiling"]
-albedo_color = Color(0.15, 0.14, 0.13, 1)
+albedo_color = Color(0.7, 0.7, 0.7, 1)
+albedo_texture = ExtResource("12_drywall")
+uv1_scale = Vector3(16, 2, 1)
 
 [sub_resource type="BoxShape3D" id="Shape_Platform"]
 size = Vector3(50, 0.6, 4)
@@ -536,7 +545,7 @@ theme_override_constants/separation = 12
 [node name="Eyebrow" type="Label" parent="GameOverUI/Center/Card/Rows"]
 layout_mode = 2
 label_settings = ExtResource("7_eyebrow")
-text = "PAPA COCINADA • SIN VIDAS"
+text = "♨ SOBRECALENTAMIENTO CRÍTICO"
 horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="GameOverUI/Center/Card/Rows"]
@@ -546,19 +555,17 @@ theme_override_colors/font_color = Color(0.95, 0.35, 0.25, 1)
 text = "GAME OVER"
 horizontal_alignment = 1
 
+[node name="Icon" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "💔 ♨"
+horizontal_alignment = 1
+
 [node name="Rule" type="ColorRect" parent="GameOverUI/Center/Card/Rows"]
 custom_minimum_size = Vector2(64, 4)
 layout_mode = 2
 size_flags_horizontal = 4
 color = Color(0.95, 0.35, 0.25, 1)
-
-[node name="Sub" type="Label" parent="GameOverUI/Center/Card/Rows"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.85, 0.8, 1)
-theme_override_font_sizes/font_size = 14
-text = "Has recibido 3 impactos y caíste derrotado ante las anomalías."
-horizontal_alignment = 1
-autowrap_mode = 3
 
 [node name="Gap" type="Control" parent="GameOverUI/Center/Card/Rows"]
 custom_minimum_size = Vector2(0, 6)
@@ -568,12 +575,28 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+focus_mode = 0
 theme_type_variation = &"PrimaryButton"
-text = "REINTENTAR SIMULACIÓN"
+text = "⟳ REINTENTAR"
+
+[node name="BtnRestartGame" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+focus_mode = 0
+text = "⏮ REINICIAR DESDE CERO"
+
+[node name="BtnMainMenu" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+focus_mode = 0
+text = "↶ MENÚ"
 
 [node name="BtnGameOverSetup" type="Button" parent="GameOverUI/Center/Card/Rows"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+visible = false
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 text = "CONFIGURAR ENTIDADES (F1)"
 

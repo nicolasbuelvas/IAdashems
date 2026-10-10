@@ -7,12 +7,12 @@
 
 | Integrante | Archivo | Entradas | Última entrada | Hora última |
 | :--- | :--- | --: | :--- | :--- |
-| Nicolas Buelvas | [nicolas-buelvas.md](nicolas-buelvas.md) | 42 | AI-IAdashems-NB-000042 | N/A |
-| Stiven Valencia | [stiven-valencia.md](stiven-valencia.md) | 22 | AI-IAdashems-SV-000022 | N/A |
+| Nicolas Buelvas | [nicolas-buelvas.md](nicolas-buelvas.md) | 43 | AI-IAdashems-NB-000043 | N/A |
+| Stiven Valencia | [stiven-valencia.md](stiven-valencia.md) | 24 | AI-IAdashems-SV-000024 | N/A |
 | Sebastian Marquez | [sebastian-marquez.md](sebastian-marquez.md) | 21 | AI-IAdashems-SM-000021 | N/A |
 | Carol Mosquera | [carol-mosquera.md](carol-mosquera.md) | 0 | — | — |
 
-**Total de entradas:** 85
+**Total de entradas:** 88
 
 ## Cómo agregar tu log
 

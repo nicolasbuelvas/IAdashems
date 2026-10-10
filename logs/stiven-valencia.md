@@ -272,3 +272,27 @@ Change: take_damage() sale sin hacer nada si is_climbing, aunque el golpe atravi
 Commit: PENDING
 Model: Luna 6 (Codex Free)
 Notes: Probado en el editor (MCP) con game/test/start_from_round.tscn: dash activo + animación dash -> start_climb -> al siguiente frame anim=idle y dash=false; take_damage(1) y take_damage(1, true) durante la subida: vida 3 -> 3; al salir de la escalera: anim idle, sprite en su altura base y alpha 1. Después de bajarse, la papa sí recibió daño de anomalías del piso 2: es lo esperado, porque la inmunidad solo vale en la escalera. La muerte por calor al 100 % (kill) sigue aplicando también en la escalera, porque es derrota de ronda y no daño. No hay animación propia de escalar: se usa idle.
+
+## AI-IAdashems-SV-000023
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: En feat/anomalies-core, corregir el game over: la tarjeta de inicio de ronda (Arial Black) salía antes del game over, y el botón "Menú" del game over fallaba
+Type: DEBUGGING
+Files: ui/game_over_modal.gd, ui/hud.gd, ui/round_card.gd, game/game.gd, autoload/game_manager.gd
+Change: (1) Menú: game_over_modal.gd emitía main_menu_pressed, el HUD ya cambiaba de escena y después el modal llamaba a get_tree().change_scene_to_file con get_tree() null. Ese error pausaba el juego en el editor y el estado se quedaba en ROUND_FAILED. Ahora el modal solo emite la señal, y el HUD usa GameManager.goto(&"menu"), que deja el estado en MENU. (2) Reintentar y reiniciar: el HUD reiniciaba la ronda llamando directamente a RoundManager, sin pasar por game.gd (sin ROUND_INTRO ni congelado, estado colgado en ROUND_FAILED). hud.gd ahora declara retry_requested y restart_game_requested, que game.gd ya escuchaba, y las emite cuando hay alguien conectado; si no, usa el camino anterior de la arena de prueba. "Reiniciar desde cero" usa GameManager.goto(&"game") y recarga la escena en la ronda 1. (3) Tarjeta antes del game over: si el calor llega al 100 % por señal durante la tarjeta (penalización del revive o daño), la tarjeta seguía visible y, al terminar su espera, game.gd descongelaba la ronda y pasaba a PLAYING en pleno game over. round_card.gd se oculta con heat_maxed o round_failed(heat) y no se muestra con round_started en ROUND_FAILED. game.gd no descongela si el estado ya no es ROUND_INTRO. GameManager acepta la transición ROUND_INTRO -> ROUND_FAILED.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Rama: se creó la rama local feat/anomalies-core desde origin. El cambio local de project.godot en main (import/blender desactivado, hecho por el editor) quedó en git stash ("main: project.godot ... antes de ir a feat/anomalies-core"). Tras el checkout, el editor tenía la caché de class_name desactualizada (PeaProjectile, FrenchFriesExplosion) y se reescaneó. Probado en el editor (MCP) en game/game.tscn: calor al 100 % -> modal sin tarjeta; game over durante la tarjeta -> la tarjeta se oculta al instante, la ronda sigue congelada y el estado se queda en ROUND_FAILED; REINTENTAR -> ROUND_INTRO, papa congelada con 3 vidas y la tarjeta se muestra; REINICIAR DESDE CERO -> recarga game.tscn en la ronda 1; MENÚ -> main_menu.tscn con estado MENU, sin pausa y sin error. Headless: round_manager_test 139 OK y heat_system_test 32 OK, sin fallos. No se reprodujo el caso exacto que vio SV con juego manual; el arreglo cubre el único camino encontrado (game over durante la tarjeta).
+
+## AI-IAdashems-SV-000024
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Traer origin/main a feat/anomalies-core y corregir los errores del merge
+Type: DEBUGGING
+Files: level/building.tscn, logs/INDICE_LOGS.md, ui/pause_menu.tscn, game/game.tscn, anomalies/test_all_anomalies.tscn, anomalies/test_cucumber.tscn, anomalies/test_lettuce.tscn, anomalies/test_pea.tscn
+Change: Merge --no-commit de origin/main (PR #14 feat/visuals: sombras, efecto de pantalla por calor, materiales office_concrete y Forward+). Conflictos: (1) level/building.tscn: las dos ramas texturizaban las mismas superficies; por decisión de SV se conserva todo anomalies-core (alfombra, ladrillo, drywall y concreto procedural) con git checkout --ours. main solo cambiaba materiales en ese archivo, así que no se pierde nada más. (2) logs/INDICE_LOGS.md: regenerado con tools/indice_logs.py. Error previo arreglado: pause_menu.tscn tenía uid://cmf2f53o82h1z, inválido porque los UID de Godot no usan la "z", y game.tscn avisaba "invalid UID" al cargar; test_pea.tscn apuntaba a un UID que no existía (…h10). Se quita el uid de la cabecera y de las referencias, que pasan a resolverse por ruta. Las fusiones automáticas (game.tscn con HeatScreenEffect y sombras, player.tscn con sprite sombreado, project.godot con forward_plus) se revisaron y son coherentes.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Verificado en el editor (MCP): Menú -> Nueva partida -> game.tscn, ronda 1 y PLAYING sin ERROR (solo avisos de estilo previos: UNUSED_SIGNAL, INTEGER_DIVISION y CONFUSABLE_LOCAL_DECLARATION en hud.gd). Captura: fondo de ladrillo, sombras, HUD con corazones y efecto de calor presente. Headless: round_manager_test 139 OK, heat_system_test 32 OK y level_layout_test 120 PASS, sin fallos. level/materials/office_concrete*.tres de main quedan sin usar en building.tscn. Al guardar pause_menu.tscn, Godot le asignará un UID válido nuevo. El merge queda sin commitear.

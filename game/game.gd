@@ -17,6 +17,13 @@ var _intro_token: int = 0
 func _ready() -> void:
 	EventBus.round_won.connect(_on_round_won)
 	EventBus.round_failed.connect(_on_round_failed)
+	var hud := get_node_or_null("HUDLayer/HUD")
+	if hud != null:
+		if hud.has_signal("retry_requested"):
+			hud.connect("retry_requested", _start_round_after_card)
+		if hud.has_signal("restart_game_requested"):
+			# Partida nueva de verdad: recarga la escena (pisos cerrados, ronda 1). goto(&"game") ya pone current_round = 1.
+			hud.connect("restart_game_requested", func(): GameManager.goto(&"game"))
 	_start_round_after_card()
 
 
@@ -32,6 +39,9 @@ func _start_round_after_card() -> void:
 	await get_tree().create_timer(RoundCard.duration_for(GameManager.current_round)).timeout
 	# La escena pudo cambiar durante la tarjeta (goto) o la ronda pudo reiniciarse: esta espera ya no manda.
 	if not is_inside_tree() or token != _intro_token:
+		return
+	# Game over durante la tarjeta (p. ej. una penalización de calor por señal): no se descongela ni pasa a PLAYING.
+	if GameManager.state != GameManager.ROUND_INTRO:
 		return
 	_set_round_frozen(false)
 	GameManager.set_state(GameManager.PLAYING)
@@ -57,10 +67,12 @@ func _on_round_won(round_number: int) -> void:
 	# En la ronda final no hace nada: EventBus.game_won lo lleva a outro (GameManager.game_won).
 
 
-func _on_round_failed(_reason: StringName) -> void:
-	# Se reintenta la misma ronda tras permitir ver la explosión de la papa.
-	# RoundManager decide qué se conserva: al morir, capturas y reloj; con el reloj agotado, nada.
+func _on_round_failed(reason: StringName) -> void:
+	# Si la derrota es por calor (game over definitivo), el HUD despliega el GameOverUI
+	# con las 3 opciones (reintentar turno actual, reiniciar desde cero, menú).
 	GameManager.set_state(GameManager.ROUND_FAILED)
+	if reason == &"heat":
+		return
 	await get_tree().create_timer(1.5).timeout
 	if is_inside_tree():
 		_start_round_after_card()

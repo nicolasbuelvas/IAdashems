@@ -32,6 +32,8 @@ func _ready() -> void:
 	EventBus.anomaly_contained.connect(_on_anomaly_contained)
 	EventBus.round_timer_expired.connect(_on_round_timer_expired)
 	EventBus.player_damaged.connect(_on_player_damaged)
+	if EventBus.has_signal("heat_penalty_requested"):
+		EventBus.heat_penalty_requested.connect(_on_heat_penalty_requested)
 
 
 func _process(delta: float) -> void:
@@ -100,6 +102,13 @@ func _on_player_damaged(_amount: int) -> void:
 	if not active:
 		return
 	heat += GameConfig.HEAT_PER_HIT
+	_publish()
+
+
+func _on_heat_penalty_requested(amount: float) -> void:
+	if not active:
+		return
+	heat += amount
 	_publish()
 
 
