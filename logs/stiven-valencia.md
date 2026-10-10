@@ -164,3 +164,52 @@ Change: Se eliminó el desplazamiento local de Ramp/MeshInstance3D; la malla y C
 Commit: PENDING
 Model: Grok 4.6 (Cursor Free)
 Notes: Godot 4.7.2 headless: tres raycasts coinciden con la superficie visible con error menor a 0.000001 unidades; el jugador aterriza en la rampa y permanece en el suelo. git diff --check sin errores. Corrección local en codex/fix-pr8-ramp-alignment sobre 6769df1; pendiente commit y publicación en el PR. Sin playtest visual interactivo. Los valores de GameConfig conservan su autoridad de balance.
+
+## AI-IAdashems-SV-000014
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Reaplicar el ajuste de salto sobre main (rediseño del salto de KODY-MH) y recalibrar los valores.
+Type: AI_ASSISTED
+Files: autoload/game_config.gd, player/player.gd, logs/stiven-valencia.md, logs/INDICE_LOGS.md
+Change: PLAYER_JUMP_VELOCITY pasa de 9.0 a 6.5 en autoload/game_config.gd y _FALLBACK_JUMP_VELOCITY en player/player.gd. _FALL_GRAVITY_MULTIPLIER pasa de 1.35 a 2.0 en player/player.gd; ya era constante en main, así que no se agregó una perilla nueva. La lógica de gravedad, el corte al soltar y el frenado del apex no cambian. Simulado con la lógica de main: con espacio mantenido, apex de 1.95 m a 1.03 m; toque corto, de 1.22 m a 0.65 m; aire total, de 0.83 s a 0.57 s; caída, de 0.38 s a 0.23 s.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: validate_script (MCP de Godot) compila player/player.gd y autoload/game_config.gd. La simulación está en el scratchpad, fuera del proyecto, replica player.gd de main a 60 Hz y no es una prueba en juego. El cambio local de SV-000013 (sin commit) estaba en un stash y no se reaplicó tal cual, porque su ID chocaba con la entrada SV-000013 de main. Pendiente de equipo: docs/spec-mvp-reparto.md:135 sigue con PLAYER_JUMP_VELOCITY := 9.0 y el valor de caída no está en el spec. Efecto de diseño: con 1.03 m no se llega al piso 2 (4 m) ni se pasa el bloqueo de 4.5 m.
+
+## AI-IAdashems-SV-000015
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Subir al doble el apex del salto manteniendo la duración de la caída.
+Type: AI_ASSISTED
+Files: autoload/game_config.gd, player/player.gd, logs/stiven-valencia.md, logs/INDICE_LOGS.md
+Change: PLAYER_JUMP_VELOCITY pasa de 6.5 a 9.2 en autoload/game_config.gd y _FALLBACK_JUMP_VELOCITY en player/player.gd. _FALL_GRAVITY_MULTIPLIER pasa de 2.0 a 4.0 en player/player.gd. Simulado con la lógica de main: con espacio mantenido, apex de 1.03 m a 2.04 m; caída desde el apex sigue en 0.23 s; aire total de 0.57 s a 0.70 s; toque corto de 0.65 m a 1.28 m. Consecuencia: la velocidad de impacto al aterrizar pasa de unos 9.5 m/s a unos 19 m/s.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: validate_script (MCP de Godot) compila player/player.gd y autoload/game_config.gd. La simulación replica player.gd de main a 60 Hz, fuera del proyecto; no es una prueba en juego. Si se quiere la misma velocidad de impacto que antes, la caída ×4.0 debe bajar a ×1.0 y la caída dura unos 0.43 s. Efecto de diseño: con 2.04 m todavía no se llega al piso 2 (4 m) ni se pasa el bloqueo de 4.5 m.
+
+## AI-IAdashems-SV-000016
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Hacer la caída 25% más lenta, manteniendo el apex del salto.
+Type: AI_ASSISTED
+Files: player/player.gd, logs/stiven-valencia.md, logs/INDICE_LOGS.md
+Change: _FALL_GRAVITY_MULTIPLIER pasa de 4.0 a 2.56 en player/player.gd. La duración de la caída pasa de 0.23 s a 0.29 s (+25%, modelo continuo: 4.0 / 1.25² = 2.56). El apex no cambia (2.04 m, manteniendo espacio). Consecuencia: la velocidad de impacto baja de unos 19 m/s a unos 15 m/s.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: validate_script (MCP de Godot) compila player/player.gd. La simulación a 60 Hz redondea a fotogramas (14 a 17 fotogramas), así que en el modelo discreto el aumento se ve como +21%; el valor 2.56 se eligió con el modelo continuo. No es una prueba en juego. Se interpretó "25% más lenta" como duración de la caída; si se quería que la velocidad de caída baje 25%, la duración sube 33% y el multiplicador sería 1.78.
+Corrección de Notes: si se quisiera que la velocidad de caída baje 25% (duración +33%), el multiplicador sería 2.25 (4.0 / (4/3)²), no 1.78.
+
+## AI-IAdashems-SV-000017
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Agregar un indicador de cooldown del herbicida en la HUD.
+Type: AI_ASSISTED
+Files: ui/hud.gd, ui/hud.tscn, logs/stiven-valencia.md, logs/INDICE_LOGS.md
+Change: ui/hud.tscn agrega CooldownBar (ProgressBar, 6 px en la base del icono del herbicida, oculta por defecto, máximo 1.0). ui/hud.gd la actualiza con progress en _on_herbicide_cooldown_changed (se muestra mientras progress < 1.0) y la oculta en _on_herbicide_ready. El icono conserva su oscurecimiento y su temblor. No hay señales nuevas: usa herbicide_cooldown_changed y herbicide_ready del contrato, y el HUD no lee otros nodos.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: validate_script (MCP de Godot) compila ui/hud.gd. La ruta BottomBar/HerbicideSlot/HerbicideRow/IconSlot/CooldownBar existe en ui/hud.tscn. No se verificó visualmente ni en juego. ui/hud.gd y ui/hud.tscn son de la persona D según el spec; el cambio es aditivo, pero conviene que D lo revise.

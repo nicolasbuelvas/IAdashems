@@ -19,7 +19,7 @@ const ROUND_MIN_TIME_LEFT := 10.0
 # Jugador
 const PLAYER_MAX_HP := 3
 const PLAYER_SPEED := 6.0
-const PLAYER_JUMP_VELOCITY := 9.0
+const PLAYER_JUMP_VELOCITY := 9.2         # apex de ~2.04 m manteniendo espacio
 const PLAYER_IFRAMES := 1.0
 const SLIDE_DURATION := 0.5
 const SLIDE_COOLDOWN := 0.6
