@@ -40,3 +40,14 @@ Files: enemy/enemy.gd, enemy/enemy.tscn, level/gridmap_collider.gd, PASILLO.tscn
 Change: Enemigo CharacterBody3D con Sprite3D que se aleja del jugador dentro de flee_distance sobre el eje del pasillo. Script gridmap_collider.gd genera colisiones desde las celdas del GridMap (piso id 46, pared id 85), reemplazando las colisiones manuales de piso y pared en PASILLO.tscn. Sin Godot en la sesion: no se ejecuto.
 Commit: PENDING (lo hace el usuario manualmente)
 Notes: Los topes LimiteFondo/LimiteFrente siguen manuales y hay que moverlos al ampliar el mapa. Los ids 46/85 se dedujeron del orden de Meshes.tscn; verificar en la MeshLibrary.
+
+## AI-IAdashems-CM-000004
+
+Timestamp: N/A
+Participant: CM (Carol Mosquera)
+Task: Preparar ramaEnemigoMapa para el merge con main (player y camara de main)
+Type: AI_ASSISTED
+Files: PASILLO.tscn, level/habitacion.tscn, level/follow_camera.gd (borrado), player/Sprite/PAPA_CORRIENDO (borrado)
+Change: PASILLO.tscn ahora agrupa GridMap y colisiones en un nodo Mapa rotado -90 grados en Y para que el pasillo corra por X (el player de main solo se mueve en X). Player y Enemy sin rotacion; se quito el override speed. Se usa la camara de main (player/follow_camera.tscn), inclinada 20 grados para que se vea el piso. habitacion.tscn usa la misma camara. Se borraron mi follow_camera.gd y mis sprites duplicados (identicos por hash a Sprites/PAPA_CORRIENDO de main). Sin Godot en la sesion: no probado.
+Commit: PENDING (lo hace el usuario manualmente)
+Notes: Hasta el merge, player/follow_camera.tscn y el player de main no existen en esta rama: no abrir PASILLO.tscn en el editor antes de mergear. Despues del merge revisar altura de camara y posicion z del jugador (piso entre z=-2 y 1).

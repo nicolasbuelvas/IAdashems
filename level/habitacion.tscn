@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://byvkno0k0dr4d" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-flat-window.fbx" id="2_window"]
 [ext_resource type="PackedScene" uid="uid://c2hw4v1ka0kmp" path="res://level/kenney_retro-urban-kit/Models/FBX format/scaffolding-floor.fbx" id="3_floor"]
 [ext_resource type="PackedScene" path="res://player/player.tscn" id="4_player"]
-[ext_resource type="Script" path="res://level/follow_camera.gd" id="5_cam"]
+[ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="5_cam"]
 
 [sub_resource type="BoxShape3D" id="Box_floor"]
 size = Vector3(15, 0.5, 3)
@@ -81,9 +81,6 @@ shape = SubResource("Box_side")
 
 [node name="Player" parent="." instance=ExtResource("4_player")]
 
-[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("target")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 6)
-script = ExtResource("5_cam")
-target = NodePath("../Player")
-min_x = -2.5
-max_x = 2.5
+[node name="FollowCamera" parent="." instance=ExtResource("5_cam")]
+transform = Transform3D(1, 0, 0, 0, 0.94, 0.342, 0, -0.342, 0.94, 0, 2, 12)
+target_path = NodePath("../Player")
