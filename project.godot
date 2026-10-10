@@ -21,9 +21,6 @@ EventBus="*res://autoload/event_bus.gd"
 GameConfig="*res://autoload/game_config.gd"
 GameManager="*res://autoload/game_manager.gd"
 AudioManager="*res://ui/audio_manager.gd"
-MCPScreenshot="*res://addons/godot_mcp/mcp_screenshot_service.gd"
-MCPInputService="*res://addons/godot_mcp/mcp_input_service.gd"
-MCPGameInspector="*res://addons/godot_mcp/mcp_game_inspector_service.gd"
 
 [display]
 

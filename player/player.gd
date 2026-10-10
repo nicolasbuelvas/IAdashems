@@ -83,6 +83,7 @@ var climb_speed: float = 4.5
 var _climb_ladder_x: float = 0.0
 var _prev_speed_threshold: bool = false
 var _prev_cooldown_progress: float = -1.0
+var _respawn_position: Vector3 = Vector3(-16.0, -3.5, 0.0)
 
 
 func _ready() -> void:
@@ -254,7 +255,7 @@ func take_damage(amount: int, pierce_slide: bool = false) -> void:
 	_blink_on = true
 	_apply_visual()
 	if _hp <= 0:
-		_die_and_explode()
+		_die_and_explode(false)
 
 
 func is_sliding() -> bool:
@@ -268,10 +269,10 @@ func is_invulnerable() -> bool:
 func kill() -> void:
 	if _dead:
 		return
-	_die_and_explode()
+	_die_and_explode(true)
 
 
-func _die_and_explode() -> void:
+func _die_and_explode(is_lethal_defeat: bool = false) -> void:
 	if _dead:
 		return
 	_dead = true
@@ -294,6 +295,14 @@ func _die_and_explode() -> void:
 	_explode_into_fries()
 	_emit_bus("player_died", [])
 
+	# Al morir por daño normal, revive en el spawn manteniendo tiempo y calor activos
+	if not is_lethal_defeat:
+		await get_tree().create_timer(1.2).timeout
+		if is_inside_tree() and _dead:
+			reset_to(_respawn_position)
+			_iframe_left = 2.5
+			_blink_on = true
+
 
 func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
 	if is_climbing or _dead:
@@ -313,6 +322,7 @@ func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
 
 
 func reset_to(spawn: Vector3) -> void:
+	_respawn_position = spawn
 	is_climbing = false
 	global_position = spawn
 	velocity = Vector3.ZERO

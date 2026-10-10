@@ -505,5 +505,19 @@ Task: Auditoría legal de assets externos e integración de estallido cómico re
 Type: AI_ASSISTED
 Files: Sprites/EXPLOSION/explosion_0000.png..0005.png, audio/sfx_comic_explosion.wav, player/french_fries_explosion.gd, player/player.gd, ui/audio_manager.gd
 Change: Auditoría legal exhaustiva sobre los enlaces de Deltarune: se determinó que los rips comerciales de Toby Fox están protegidos por copyright estricto y su inclusión directa acarrearía descalificación automática en Game Jams. Como solución 100% legal y libre de infracciones, se creó un asset procedural original inspirado en la estética retro cómica de Deltarune: 6 frames de animación de estallido cartoon (Sprites/EXPLOSION/) reproducidos mediante AnimatedSprite3D en billboard, y un efecto de audio de impacto crujiente bitcrushed (audio/sfx_comic_explosion.wav) a 44.1 kHz, reemplazando el humo anterior e integrándose con la caída balística de las papitas fritas.
-Commit: 1fb461a
+Commit: 41f64a8
 Notes: 209/209 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000038
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Quemado de oficina 'This is fine', soft-respawn con penalización de -15s, reseteo de capturas por calor/tiempo y tipografía Potato Sans
+Type: AI_ASSISTED
+Files: level/office_heat_visuals.gd, level/building.gd, anomalies/test_arena_controller.gd, player/player.gd, systems/round_manager.gd, systems/tests/round_manager_test.gd, ui/theme.tres, ui/style_eyebrow.tres, Sprites/FLAMES/flame_0..3.png, art/d-ui/fonts/Potato_sans-Bold.otf
+Change: 1) Implementación del efecto 'This is fine' mediante OfficeHeatVisuals: a mayor calor, la luz del sol se satura a naranja fuego incandescente, los escritorios se carbonizan a tonos carbón/hollín y brotan llamas animadas de cómic sobre el mobiliario al superar el 28% de calor. 2) Soft-respawn al morir por daño normal: la papa explota y revive a los 1.2s en su spawn con invulnerabilidad temporal; el tiempo y el calor siguen corriendo y se aplica un castigo de -15 segundos que desciende visualmente de 1 en 1 a 0.04s por tick. 3) Derrota por calor (100%) o tiempo (0s): limpia el progreso de capturas (contained_ids.clear()) reiniciando la ronda completa desde cero. 4) Integración e importación de la tipografía Potato Sans (Potato_sans-Bold.otf) como tipografía global en ui/theme.tres y ui/style_eyebrow.tres.
+Commit: 0da47af
+Notes: 332 comprobaciones automatizadas pasando sin errores.

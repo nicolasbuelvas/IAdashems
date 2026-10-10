@@ -8,6 +8,7 @@ const SCENE_CUCUMBER := preload("res://anomalies/cucumber.tscn")
 const SCENE_LETTUCE := preload("res://anomalies/lettuce.tscn")
 const SCENE_PEA := preload("res://anomalies/pea.tscn")
 const SCENE_LADDER := preload("res://level/ladder.tscn")
+const OfficeHeatVisualsScript := preload("res://level/office_heat_visuals.gd")
 
 @export var cucumber_count: int = 1
 @export var lettuce_count: int = 1
@@ -56,6 +57,9 @@ var timer_expired: bool = false
 
 
 func _ready() -> void:
+	var heat_fx := OfficeHeatVisualsScript.new()
+	add_child(heat_fx)
+	heat_fx.setup(self)
 	_init_setup_ui()
 	_connect_event_bus()
 	show_setup_editor()
@@ -94,8 +98,7 @@ func _connect_event_bus() -> void:
 func _on_heat_maxed() -> void:
 	if player != null and player.has_method("kill"):
 		player.call("kill")
-	else:
-		_on_player_died()
+	_show_game_over("Sobrecalentamiento crítico. La papa explotó.")
 
 
 func _init_setup_ui() -> void:
@@ -194,10 +197,46 @@ func _on_btn_retry_pressed() -> void:
 	_respawn_simulation()
 
 
+var _penalty_in_progress: bool = false
+
 func _on_player_died() -> void:
+	_apply_death_penalty()
+
+
+func _apply_death_penalty() -> void:
+	if _penalty_in_progress or timer_expired or _game_over_shown:
+		return
+	_penalty_in_progress = true
+	var penalty := 15
+	while penalty > 0 and time_left > 0.0 and not timer_expired:
+		time_left = maxf(time_left - 1.0, 0.0)
+		var bus := get_node_or_null("/root/EventBus")
+		if bus and bus.has_signal("round_timer_changed"):
+			bus.emit_signal("round_timer_changed", time_left)
+		penalty -= 1
+		if time_left <= 0.0:
+			_penalty_in_progress = false
+			_on_timer_expired()
+			return
+		await get_tree().create_timer(0.035).timeout
+	_penalty_in_progress = false
+
+
+func _on_timer_expired() -> void:
+	timer_expired = true
+	var bus := get_node_or_null("/root/EventBus")
+	if bus and bus.has_signal("round_timer_expired"):
+		bus.emit_signal("round_timer_expired")
+	_show_game_over("Tiempo agotado. La oficina se perdió.")
+
+
+func _show_game_over(reason_text: String) -> void:
 	if _game_over_shown:
 		return
 	_game_over_shown = true
+	var lbl := game_over_canvas.find_child("LabelReason", true, false) as Label
+	if lbl:
+		lbl.text = reason_text
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):
 		audio.call("play_music", "res://audio/bgm_game_over.ogg")
