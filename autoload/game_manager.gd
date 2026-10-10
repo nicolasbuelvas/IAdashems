@@ -26,7 +26,7 @@ const PAUSED := &"PAUSED"
 const _NEXT_STATES := {
 	MENU: [INTRO, ROUND_INTRO],
 	INTRO: [ROUND_INTRO, MENU],
-	ROUND_INTRO: [PLAYING],
+	ROUND_INTRO: [PLAYING, ROUND_FAILED],  # game over por calor durante la tarjeta (penalización por señal)
 	PLAYING: [ROUND_WON, ROUND_FAILED, PAUSED],
 	PAUSED: [PLAYING],
 	ROUND_WON: [ROUND_INTRO],

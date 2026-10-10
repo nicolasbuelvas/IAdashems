@@ -66,8 +66,9 @@ func _on_btn_restart_game() -> void:
 	restart_game_pressed.emit()
 
 
+## El cambio de escena lo hace quien escucha main_menu_pressed (hud.gd -> GameManager.goto).
+## Antes se cambiaba aquí también: el HUD ya había sacado la escena del árbol y get_tree() era null.
 func _on_btn_main_menu() -> void:
 	hide_modal()
 	get_tree().paused = false
 	main_menu_pressed.emit()
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")

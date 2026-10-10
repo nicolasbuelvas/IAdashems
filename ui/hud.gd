@@ -11,6 +11,9 @@ const REVIVE_HEAT_PENALTY := 30.0
 
 signal revive_completed(penalty_amount: float)
 signal breakdown_completed()
+## game.gd escucha estas dos para reiniciar con su flujo (ROUND_INTRO, tarjeta y congelado).
+signal retry_requested()
+signal restart_game_requested()
 
 @onready var heat_bar: ProgressBar = $"TopBar/HeatPanel/HeatRow/HeatBar"
 @onready var clock_label: Label = $"TopBar/ClockPanel/ClockLabel"
@@ -300,6 +303,9 @@ func _play_heat_critical_breakdown() -> void:
 
 func _on_game_over_retry() -> void:
 	_restore_holders_state()
+	if not get_signal_connection_list(&"retry_requested").is_empty():
+		retry_requested.emit()
+		return
 	var arena := get_tree().current_scene
 	if arena and arena.has_method("_on_btn_retry_pressed"):
 		arena.call("_on_btn_retry_pressed")
@@ -318,6 +324,9 @@ func _on_game_over_retry() -> void:
 
 func _on_game_over_restart_game() -> void:
 	_restore_holders_state()
+	if not get_signal_connection_list(&"restart_game_requested").is_empty():
+		restart_game_requested.emit()
+		return
 	var arena := get_tree().current_scene
 	if arena and arena.has_method("_on_btn_restart_game_pressed"):
 		arena.call("_on_btn_restart_game_pressed")
@@ -335,7 +344,11 @@ func _on_game_over_restart_game() -> void:
 
 
 func _on_game_over_main_menu() -> void:
-	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	var gm := get_node_or_null("/root/GameManager")
+	if gm:
+		gm.goto(&"menu")
+	else:
+		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 
 func _on_round_timer_changed(seconds_left: float) -> void:

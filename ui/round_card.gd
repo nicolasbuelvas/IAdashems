@@ -54,6 +54,8 @@ func attach_source(source: Node) -> void:
 		return
 	_connect_if_missing(&"round_started", _on_round_started)
 	_connect_if_missing(&"floor_unlocked", _on_floor_unlocked)
+	_connect_if_missing(&"heat_maxed", _on_game_over)
+	_connect_if_missing(&"round_failed", _on_round_failed)
 
 
 func _connect_if_missing(signal_name: StringName, handler: Callable) -> void:
@@ -62,8 +64,24 @@ func _connect_if_missing(signal_name: StringName, handler: Callable) -> void:
 
 
 ## Contrato: round_started(round_number: int, remaining: int)
+## En game over (ROUND_FAILED) no se muestra: el reintento pasa antes a ROUND_INTRO desde game.gd.
 func _on_round_started(round_number: int, _remaining: int) -> void:
+	var gm := get_node_or_null("/root/GameManager")
+	if gm != null and gm.state == gm.ROUND_FAILED:
+		return
 	show_turn(round_number)
+
+
+## round_failed(reason): por calor es game over; la tarjeta no puede quedar encima del modal.
+func _on_round_failed(reason: StringName) -> void:
+	if reason == &"heat":
+		_on_game_over()
+
+
+func _on_game_over() -> void:
+	_token += 1
+	hide()
+	floor_notice.visible = false
 
 
 ## Contrato: floor_unlocked(floor_number: int)

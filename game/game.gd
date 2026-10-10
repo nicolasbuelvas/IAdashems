@@ -22,10 +22,8 @@ func _ready() -> void:
 		if hud.has_signal("retry_requested"):
 			hud.connect("retry_requested", _start_round_after_card)
 		if hud.has_signal("restart_game_requested"):
-			hud.connect("restart_game_requested", func():
-				GameManager.current_round = 1
-				_start_round_after_card()
-			)
+			# Partida nueva de verdad: recarga la escena (pisos cerrados, ronda 1). goto(&"game") ya pone current_round = 1.
+			hud.connect("restart_game_requested", func(): GameManager.goto(&"game"))
 	_start_round_after_card()
 
 
@@ -41,6 +39,9 @@ func _start_round_after_card() -> void:
 	await get_tree().create_timer(RoundCard.duration_for(GameManager.current_round)).timeout
 	# La escena pudo cambiar durante la tarjeta (goto) o la ronda pudo reiniciarse: esta espera ya no manda.
 	if not is_inside_tree() or token != _intro_token:
+		return
+	# Game over durante la tarjeta (p. ej. una penalización de calor por señal): no se descongela ni pasa a PLAYING.
+	if GameManager.state != GameManager.ROUND_INTRO:
 		return
 	_set_round_frozen(false)
 	GameManager.set_state(GameManager.PLAYING)
