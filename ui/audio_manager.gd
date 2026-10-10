@@ -29,6 +29,8 @@ var _bgm_player: AudioStreamPlayer
 var _steam_player: AudioStreamPlayer
 var _current_bgm_track: AudioStream = null
 
+var _lpf_effect_idx: int = -1
+
 var _sfx_pool: Array[AudioStreamPlayer] = []
 const SFX_POOL_SIZE := 8
 var _sfx_index := 0
@@ -56,6 +58,32 @@ func _get_stream(path: String) -> AudioStream:
 func _ensure_buses() -> void:
 	_ensure_bus("Music")
 	_ensure_bus("SFX")
+	_setup_low_pass_filter()
+
+
+func _setup_low_pass_filter() -> void:
+	var bus_idx := AudioServer.get_bus_index("Music")
+	if bus_idx < 0:
+		return
+	for i in AudioServer.get_bus_effect_count(bus_idx):
+		if AudioServer.get_bus_effect(bus_idx, i) is AudioEffectLowPassFilter:
+			_lpf_effect_idx = i
+			AudioServer.set_bus_effect_enabled(bus_idx, _lpf_effect_idx, false)
+			return
+	var lpf := AudioEffectLowPassFilter.new()
+	lpf.cutoff_hz = 950.0
+	lpf.resonance = 0.7
+	_lpf_effect_idx = AudioServer.get_bus_effect_count(bus_idx)
+	AudioServer.add_bus_effect(bus_idx, lpf, _lpf_effect_idx)
+	AudioServer.set_bus_effect_enabled(bus_idx, _lpf_effect_idx, false)
+
+
+func set_muffled(muffled: bool) -> void:
+	var bus_idx := AudioServer.get_bus_index("Music")
+	if bus_idx >= 0 and _lpf_effect_idx >= 0:
+		AudioServer.set_bus_effect_enabled(bus_idx, _lpf_effect_idx, muffled)
+	if _bgm_player != null:
+		_bgm_player.volume_db = -4.0 if muffled else 0.0
 
 
 func _ensure_bus(bus_name: String) -> void:
@@ -158,9 +186,14 @@ func _connect_event_bus() -> void:
 	if bus.has_signal("game_won"):
 		bus.connect("game_won", func(): play_bgm(PATH_BGM_VICTORY, true))
 	if bus.has_signal("pause_toggled"):
-		bus.connect("pause_toggled", func(_p): play_sfx(PATH_SFX_UI_PAUSE))
+		bus.connect("pause_toggled", _on_pause_toggled)
 	if bus.has_signal("heat_changed"):
 		bus.connect("heat_changed", _on_heat_changed)
+
+
+func _on_pause_toggled(paused: bool) -> void:
+	play_sfx(PATH_SFX_UI_PAUSE)
+	set_muffled(paused)
 
 
 func _on_heat_changed(val: float, max_val: float) -> void:
@@ -186,6 +219,7 @@ func _check_initial_scene_music() -> void:
 
 
 func _on_scene_changed(scene: Node) -> void:
+	set_muffled(false)
 	var sname := scene.name.to_lower()
 	if sname.contains("menu") or sname.contains("options") or sname.contains("intro"):
 		play_bgm(PATH_BGM_MENU)

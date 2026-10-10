@@ -90,10 +90,17 @@ func _on_FullscreenCheck_toggled(button_pressed: bool) -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		_select_current_resolution()
 
 
 func _on_ResolutionOption_item_selected(index: int) -> void:
-	DisplayServer.window_set_size(resolution_option.get_item_metadata(index))
+	var target_size: Vector2i = resolution_option.get_item_metadata(index)
+	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN or DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		fullscreen_check.set_pressed_no_signal(false)
+	DisplayServer.window_set_size(target_size)
+	var screen_size := DisplayServer.screen_get_size()
+	DisplayServer.window_set_position((screen_size - target_size) / 2)
 
 
 func _on_BackButton_pressed() -> void:
