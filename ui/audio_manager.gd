@@ -179,7 +179,8 @@ func _connect_event_bus() -> void:
 			if _steam_player != null and _steam_player.playing:
 				_steam_player.stop()
 			play_sfx(PATH_SFX_COMIC_EXPLOSION, 3.0)
-			play_bgm(PATH_BGM_GAME_OVER, true)
+			# Nota: la música de gameover solo debe sonar al perder definitivamente.
+			# En muerte normal la papa revive a cambio de calor y la música de gameplay sigue.
 		)
 	if bus.has_signal("herbicide_fired"):
 		bus.connect("herbicide_fired", func(): play_sfx(PATH_SFX_PLAYER_HERBICIDE))

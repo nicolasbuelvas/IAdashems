@@ -32,7 +32,8 @@ func _ready() -> void:
 	EventBus.anomaly_contained.connect(_on_anomaly_contained)
 	EventBus.round_timer_expired.connect(_on_round_timer_expired)
 	EventBus.player_damaged.connect(_on_player_damaged)
-	EventBus.player_died.connect(_on_player_died)
+	if EventBus.has_signal("heat_penalty_requested"):
+		EventBus.heat_penalty_requested.connect(_on_heat_penalty_requested)
 
 
 func _process(delta: float) -> void:
@@ -104,12 +105,11 @@ func _on_player_damaged(_amount: int) -> void:
 	_publish()
 
 
-func _on_player_died() -> void:
+func _on_heat_penalty_requested(amount: float) -> void:
 	if not active:
 		return
-	heat += GameConfig.HEAT_PENALTY_ON_DEATH
+	heat += amount
 	_publish()
-	EventBus.lives_sacrificed_for_heat.emit(GameConfig.HEAT_PENALTY_ON_DEATH)
 
 
 func _on_anomaly_spawned(anomaly: Node) -> void:

@@ -51,7 +51,7 @@ var _game_over_shown: bool = false
 @onready var btn_retry: Button = %BtnRetry
 @onready var btn_restart_game: Button = %BtnRestartGame
 @onready var btn_main_menu: Button = %BtnMainMenu
-var btn_game_over_setup: Button = null
+@onready var btn_game_over_setup: Button = %BtnGameOverSetup
 
 
 var time_left: float = 90.0
@@ -59,7 +59,6 @@ var timer_expired: bool = false
 
 
 func _ready() -> void:
-	btn_game_over_setup = get_node_or_null("%BtnGameOverSetup") as Button
 	var heat_fx := OfficeHeatVisualsScript.new()
 	add_child(heat_fx)
 	heat_fx.setup(self)
@@ -130,12 +129,9 @@ func _init_setup_ui() -> void:
 	
 	btn_start.pressed.connect(_on_btn_start_pressed)
 	btn_retry.pressed.connect(_on_btn_retry_pressed)
-	if btn_restart_game != null:
-		btn_restart_game.pressed.connect(_on_btn_restart_game_pressed)
-	if btn_main_menu != null:
-		btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
-	if btn_game_over_setup != null:
-		btn_game_over_setup.pressed.connect(show_setup_editor)
+	btn_restart_game.pressed.connect(_on_btn_restart_game_pressed)
+	btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
+	btn_game_over_setup.pressed.connect(show_setup_editor)
 	
 	var btn_reopen := get_node_or_null("HUDLayer/BtnReopenSetup") as Button
 	if btn_reopen != null:
@@ -198,15 +194,16 @@ func _on_btn_retry_pressed() -> void:
 func _on_btn_restart_game_pressed() -> void:
 	game_over_canvas.visible = false
 	get_tree().paused = false
-	var gm := get_node_or_null("/root/GameManager")
-	if gm:
-		gm.state = GameManager.PLAYING
-		gm.current_round = 1
-	_set_floors(1)
 	cucumber_count = 1
 	lettuce_count = 0
 	pea_count = 0
+	active_floors = 1
 	_update_entity_labels()
+	_update_floor_buttons()
+	var gm := get_node_or_null("/root/GameManager")
+	if gm:
+		gm.state = GameManager.PLAYING
+	_apply_floor_configuration()
 	_respawn_simulation()
 
 
@@ -216,31 +213,21 @@ func _on_btn_main_menu_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
 
 
-var _penalty_in_progress: bool = false
-
 func _on_player_died() -> void:
-	if _game_over_shown:
-		return
-	var hs := get_node_or_null("HeatSystem")
-	if hs and hs.has_method("debug_add_heat"):
-		hs.call("debug_add_heat", 30.0)
-	var bus := get_node_or_null("/root/EventBus")
-	if bus and bus.has_signal("lives_sacrificed_for_heat"):
-		bus.emit_signal("lives_sacrificed_for_heat", 30.0)
-
-
-func _apply_death_penalty() -> void:
 	pass
 
 
-func _show_game_over(_reason_text: String = "") -> void:
+func _show_game_over(reason_text: String) -> void:
 	if _game_over_shown:
 		return
 	_game_over_shown = true
+	var lbl := game_over_canvas.find_child("LabelReason", true, false) as Label
+	if lbl:
+		lbl.text = reason_text
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):
 		audio.call("play_music", "res://audio/bgm_game_over.ogg")
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.5).timeout
 	game_over_canvas.visible = true
 	get_tree().paused = true
 

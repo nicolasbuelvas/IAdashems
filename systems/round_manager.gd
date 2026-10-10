@@ -26,6 +26,7 @@ const ROUNDS := [
 @export var player: Node3D
 ## Rutas por tipo. game/test/test_game.tscn las cambia por los dummies. Siempre se usa esta variable, nunca SCENES.
 @export var anomaly_scenes: Dictionary = SCENES
+## Desactiva el conteo y derrota por reloj en partida normal (la temperatura es la mecánica principal).
 @export var enable_timer_limit: bool = true
 
 var current_round: int = 0
@@ -256,7 +257,20 @@ func _on_player_died() -> void:
 
 
 func _apply_death_penalty() -> void:
-	if not active:
+	if not active or _penalty_in_progress or not enable_timer_limit:
 		return
-	time_left = maxf(time_left - 15.0, 10.0)
-	EventBus.round_timer_changed.emit(time_left)
+	_penalty_in_progress = true
+	var penalty := 15
+	while penalty > 0 and active and time_left > 0.0:
+		time_left = maxf(time_left - 1.0, 0.0)
+		EventBus.round_timer_changed.emit(time_left)
+		penalty -= 1
+		if time_left <= 0.0:
+			_penalty_in_progress = false
+			if not expired_emitted:
+				expired_emitted = true
+				EventBus.round_timer_expired.emit()
+			_fail(&"time")
+			return
+		await get_tree().create_timer(0.04).timeout
+	_penalty_in_progress = false

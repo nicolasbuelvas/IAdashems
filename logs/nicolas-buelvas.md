@@ -575,7 +575,7 @@ Task: Apertura visual y escotilla en el techo/piso superior de las escaleras
 Type: AI_ASSISTED
 Files: level/ladder.tscn
 Change: Se integró una abertura visual estructurada (CeilingOpeningHatch) en la parte superior de cada escalera (y = 4.0m) para evitar que las entidades y el jugador atraviesen el forjado como un sólido continuo: incluye una cavidad oscura de profundidad (HatchCavity), marco perimetral de madera (RimFront, RimBack, RimLeft, RimRight), escotilla abierta inclinada (OpenTrapdoor) y asas de seguridad metálicas (HandleLeft, HandleRight) que sobresalen hacia el piso superior. El marco visual no añade colisión obstructiva ni interfiere con la superficie de apoyo, asegurando que pararse allí no produzca caídas accidentales.
-Commit: 53ddbfc
+Commit: f2c4552
 Notes: 332 comprobaciones automatizadas pasando sin errores.
 
 
@@ -585,23 +585,9 @@ Notes: 332 comprobaciones automatizadas pasando sin errores.
 
 Timestamp: N/A
 Participant: NB (Nicolas Buelvas)
-Task: Temperatura como mecánica principal, vidas de papa, sacrificio al revivir, ruptura de holders y texturas de oficina
+Task: Priorización de la temperatura como mecánica principal, vidas con sprite de papa sin extremidades y silueta negra inferior, secuencia diegética de revivir a cambio de calor, sobrecalentamiento crítico con rotura de holders, modal GameOver de 3 opciones y texturas procedurales PBR de oficina
 Type: AI_ASSISTED
-Files: autoload/event_bus.gd, autoload/game_config.gd, systems/heat_system.gd, systems/round_manager.gd, ui/hud.gd, ui/hud.tscn, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/building.tscn, Textures/office_brick_wall.png, Textures/office_concrete_floor.png, Textures/office_drywall_panel.png, Textures/office_carpet_tiles.png, art/d-ui/holder_cracked.png, audio/sfx_holder_crack.wav
-Change: Se eliminó el tiempo como condición de derrota o presión, consolidando la temperatura como la mecánica principal. Se integraron las cabezas de papa (Sprites/SE_ESTA_RESISTIENDO/papaXLL.png) como corazones de vida en el HUD. Al agotarse las vidas, el jugador revive a cambio de un aumento de +30% de calor (HEAT_PENALTY_ON_DEATH) con banner visual y audio de vapor. Al llegar al 100% de calor, las vidas restantes se drenan suavemente una a una y los holders de los corazones se fracturan con sfx_holder_crack.wav dando paso al Game Over. Se adaptó la pantalla de Game Over con las 3 opciones requeridas: Reintentar turno actual, Reiniciar desde cero y Menú principal. Se crearon y aplicaron 4 texturas procedurales originales para paredes y suelos de oficina (ladrillo, drywall, concreto pulido y alfombra) eliminando los colores planos.
-Commit: f71a34c
-Notes: 332 comprobaciones automatizadas pasando sin errores.
-
-
----
-
-## AI-IAdashems-NB-000044
-
-Timestamp: N/A
-Participant: NB (Nicolas Buelvas)
-Task: Eliminación del reloj de tiempo, temperatura y corazones de papa prominentes, orden de sacrificio al revivir, rotura de holders y texturas de pared
-Type: AI_ASSISTED
-Files: ui/hud.tscn, ui/hud.gd, systems/round_manager.gd, game/game.tscn, game/game.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/building.tscn, Textures/office_concrete_wall.png, art/d-ui/heart_potato.png
-Change: Se eliminó el reloj y la mecánica de tiempo de la interfaz y del flujo de juego, priorizando exclusivamente la temperatura como condición central y los corazones de papa sin extremidades en holders ampliados de 48x48. Al morir, la secuencia visual y sonora refleja claramente que las vidas se regeneran primero y a cambio la temperatura sube +30% con sonido de vapor e iconografía pura (♨ +30%) sin texto AI-slop. Al llegar al 100% de calor, las vidas restantes se drenan suavemente una a una, se fracturan los holders físicos con sonido de rotura y vibración, y se abre el Game Over adaptado a 3 únicas opciones: Reintentar, Reiniciar desde cero y Menú. Se aplicaron texturas originales de cemento, ladrillo, drywall y alfombra a todas las paredes y pisos de la oficina eliminando superficies planas.
-Commit: PENDING
-Notes: 139 comprobaciones en round_manager_test, 32 en heat_system_test y 120 en level_layout_test pasando sin errores.
+Files: autoload/event_bus.gd, systems/heat_system.gd, systems/round_manager.gd, ui/hud.gd, ui/hud.tscn, ui/game_over_modal.gd, ui/game_over_modal.tscn, ui/audio_manager.gd, game/game.tscn, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/building.tscn, tools/generate_textures.py, tools/generate_crack.py
+Change: Eliminación de la mecánica de derrota por reloj (reloj oculto del HUD y temporizador desactivado como factor de derrota) priorizando la temperatura como única mecánica principal de tensión. Rediseño del HUD: reubicación de las vidas a la barra superior con el sprite de papa sin extremidades (Sprites/SE_ESTA_RESISTIENDO/papaXLL.png) montado sobre una silueta idéntica negra inferior que genera apariencia de borde negro/holder físico. Ocultación del slot de dash y estilización limpia del slot de herbicida. Implementación de secuencia de revivir con causalidad diegética pura: al llegar a 0 vidas, los 3 corazones se restauran sucesivamente con rebote elástico, seguido de sonido de vapor alarmante (sfx_heat_steam.ogg), pulso visual de la barra de calor y penalización de +30% de temperatura. En sobrecalentamiento crítico (100% calor): los corazones se evaporan suavemente uno por uno con sfx de fritura, se fracturan y destruyen los holders negros (sfx_comic_explosion.wav con grietas) y se ejecuta la muerte definitiva de la papa abriendo el modal de Game Over adaptado estrictamente a 3 opciones limpias con iconografía técnica (Reintentar donde estás, Reiniciar desde cero, Menú principal). Regla de audio: la música de Game Over suena exclusivamente al perder definitivamente; en muertes normales la música de gameplay continúa. Generación e integración de texturas procedurales PBR 100% legales y originales para paredes y forjados (cemento cepillado, ladrillo de oficina, panel de yeso/drywall y alfombra acústica modular), eliminando superficies planas grises en la arquitectura.
+Commit: 90963f5
+Notes: 215 comprobaciones automatizadas pasando sin errores (ui_check 44/44, heat_system_test 32/32, round_manager_test 139/139).
