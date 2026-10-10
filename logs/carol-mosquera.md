@@ -51,3 +51,14 @@ Files: PASILLO.tscn, level/habitacion.tscn, level/follow_camera.gd (borrado), pl
 Change: PASILLO.tscn ahora agrupa GridMap y colisiones en un nodo Mapa rotado -90 grados en Y para que el pasillo corra por X (el player de main solo se mueve en X). Player y Enemy sin rotacion; se quito el override speed. Se usa la camara de main (player/follow_camera.tscn), inclinada 20 grados para que se vea el piso. habitacion.tscn usa la misma camara. Se borraron mi follow_camera.gd y mis sprites duplicados (identicos por hash a Sprites/PAPA_CORRIENDO de main). Sin Godot en la sesion: no probado.
 Commit: PENDING (lo hace el usuario manualmente)
 Notes: Hasta el merge, player/follow_camera.tscn y el player de main no existen en esta rama: no abrir PASILLO.tscn en el editor antes de mergear. Despues del merge revisar altura de camara y posicion z del jugador (piso entre z=-2 y 1).
+
+## AI-IAdashems-CM-000005
+
+Timestamp: N/A
+Participant: CM (Carol Mosquera)
+Task: Convertir el pasillo en nodo base de habitacion (largo/alto configurables, apilables y conectables) y ajustar la camara
+Type: AI_GENERATED
+Files: level/habitacion_base.gd, level/habitacion_base.tscn, level/conexion_habitacion.gd, level/conexion_habitacion.tscn, player/follow_camera.gd, player/follow_camera.tscn, PASILLO.tscn
+Change: HabitacionBase (@tool) genera con el GridMap piso, pared de fondo, paredes de extremo y colisiones segun `ancho` y `alto`. ConexionHabitacion teletransporta al jugador a otra conexion al pulsar W/flecha arriba (se enlaza de vuelta sola). PASILLO.tscn ahora usa dos habitaciones apiladas (Pasillo ancho 23, Piso2 ancho 14 alto 4) conectadas. Camara: ortografica size 16 (antes 10) y centrada en el cuerpo del jugador con target_offset (0,1,0), con snap inicial. Sin Godot en la sesion: no se ejecuto.
+Commit: PENDING (lo hace el usuario manualmente)
+Notes: Reemplaza el GridMap pintado a mano de PASILLO.tscn por el generado (mismo contenido: piso id 46, pared id 85). Verificar en el editor la altura de colisiones de pared y el tamano de camara. gridmap_collider.gd ya no se usa.

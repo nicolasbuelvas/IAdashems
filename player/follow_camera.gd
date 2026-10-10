@@ -3,6 +3,9 @@ extends Camera3D
 @export var target_path: NodePath
 @export var follow_speed := 6.0
 @export var fixed_z := 12.0
+## Punto que se mantiene centrado, relativo al origen del jugador (sus pies):
+## sube la mira hacia el centro del cuerpo.
+@export var target_offset := Vector3(0.0, 1.0, 0.0)
 
 var _target: Node3D
 
@@ -16,12 +19,20 @@ func _ready() -> void:
 			_target = players[0] as Node3D
 	position.z = fixed_z
 	current = true
+	if is_instance_valid(_target):
+		_snap_to_target()
 
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(_target):
 		return
+	var goal := _target.global_position + target_offset
 	var weight := 1.0 - exp(-follow_speed * delta)
-	global_position.x = lerpf(global_position.x, _target.global_position.x, weight)
-	global_position.y = lerpf(global_position.y, _target.global_position.y, weight)
+	global_position.x = lerpf(global_position.x, goal.x, weight)
+	global_position.y = lerpf(global_position.y, goal.y, weight)
 	global_position.z = fixed_z
+
+
+func _snap_to_target() -> void:
+	var goal := _target.global_position + target_offset
+	global_position = Vector3(goal.x, goal.y, fixed_z)

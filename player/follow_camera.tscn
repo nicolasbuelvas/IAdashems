@@ -4,7 +4,7 @@
 
 [node name="FollowCamera" type="Camera3D"]
 projection = 1
-size = 10.0
+size = 16.0
 current = true
 script = ExtResource("1_camera")
 fixed_z = 12.0
