@@ -11,8 +11,12 @@ const _FALLBACK_IFRAMES := 1.0
 const _FALLBACK_SLIDE_DURATION := 0.5
 const _FALLBACK_SLIDE_COOLDOWN := 0.6
 const _FALLBACK_SLIDE_SPEED := 11.0
+const _FALLBACK_HERBICIDE_SPEED := 14.0
+const _FALLBACK_HERBICIDE_COOLDOWN := 5.0
+const _HERBICIDE_SCENE: PackedScene = preload("res://player/herbicide.tscn")
 const _BLINK_INTERVAL := 0.08
 const _SLIDE_ALPHA := 0.4
+const HEAT_HIGH_THRESHOLD := 70.0
 
 var move_speed: float = _FALLBACK_SPEED
 var jump_velocity: float = _FALLBACK_JUMP_VELOCITY
@@ -21,6 +25,8 @@ var iframe_duration: float = _FALLBACK_IFRAMES
 var slide_duration: float = _FALLBACK_SLIDE_DURATION
 var slide_cooldown: float = _FALLBACK_SLIDE_COOLDOWN
 var slide_speed: float = _FALLBACK_SLIDE_SPEED
+var herbicide_speed: float = _FALLBACK_HERBICIDE_SPEED
+var herbicide_cooldown: float = _FALLBACK_HERBICIDE_COOLDOWN
 
 var _hp: int = _FALLBACK_MAX_HP
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -30,11 +36,15 @@ var _facing: float = 1.0
 var _slide_dir: float = 1.0
 var _slide_time_left: float = 0.0
 var _slide_cooldown_left: float = 0.0
+var _herbicide_cooldown_left: float = 0.0
+var _last_aim_direction := Vector2.RIGHT
 var _iframe_left: float = 0.0
 var _blink_accum: float = 0.0
 var _blink_on: bool = false
 var _dead: bool = false
 var _visual: GeometryInstance3D
+var _animated_sprite: AnimatedSprite3D
+var _heat_active := false
 
 
 func _ready() -> void:
@@ -43,13 +53,16 @@ func _ready() -> void:
 	floor_constant_speed = true
 	floor_snap_length = 0.4
 	floor_max_angle = deg_to_rad(60.0)
-	_visual = get_node_or_null("AnimatedSprite3D") as GeometryInstance3D
+	_animated_sprite = get_node_or_null("AnimatedSprite3D") as AnimatedSprite3D
+	_visual = _animated_sprite
 	if _visual == null:
 		_visual = get_node_or_null("MeshInstance3D") as GeometryInstance3D
 	_apply_game_config()
 	_hp = max_hp
 	_apply_visual()
 	_emit_bus("player_health_changed", [_hp, max_hp])
+	_connect_heat_changed()
+	_update_animation()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -58,6 +71,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_jump_queued = true
 		elif event.physical_keycode == KEY_SHIFT:
 			_slide_queued = true
+		elif event.physical_keycode == KEY_E:
+			_fire_herbicide()
 
 
 func _physics_process(delta: float) -> void:
@@ -69,6 +84,8 @@ func _physics_process(delta: float) -> void:
 
 	_update_slide(delta)
 	_update_iframes(delta)
+	_update_herbicide_cooldown(delta)
+	_update_aim_direction()
 
 	var input_x := _horizontal_axis()
 	if input_x != 0.0:
@@ -84,6 +101,7 @@ func _physics_process(delta: float) -> void:
 	velocity.z = 0.0
 	move_and_slide()
 	global_position.z = 0.0
+	_update_animation()
 
 
 func take_damage(amount: int) -> void:
@@ -120,6 +138,7 @@ func reset_to(spawn: Vector3) -> void:
 	_slide_queued = false
 	_slide_time_left = 0.0
 	_slide_cooldown_left = 0.0
+	_herbicide_cooldown_left = 0.0
 	_iframe_left = 0.0
 	_blink_on = false
 	_blink_accum = 0.0
@@ -174,6 +193,8 @@ func _apply_visual() -> void:
 	var alpha := _SLIDE_ALPHA if is_sliding() else 1.0
 	if _blink_on:
 		_visual.modulate = Color(1.0, 0.25, 0.25, alpha)
+	elif _heat_active:
+		_visual.modulate = Color(1.0, 0.48, 0.2, alpha)
 	else:
 		_visual.modulate = Color(1.0, 1.0, 1.0, alpha)
 
@@ -189,6 +210,8 @@ func _apply_game_config() -> void:
 	slide_duration = _cfg_float(cfg, "SLIDE_DURATION", slide_duration)
 	slide_cooldown = _cfg_float(cfg, "SLIDE_COOLDOWN", slide_cooldown)
 	slide_speed = _cfg_float(cfg, "SLIDE_SPEED", slide_speed)
+	herbicide_speed = _cfg_float(cfg, "HERBICIDE_SPEED", herbicide_speed)
+	herbicide_cooldown = _cfg_float(cfg, "HERBICIDE_COOLDOWN", herbicide_cooldown)
 
 
 func _cfg_float(cfg: Node, property: String, fallback: float) -> float:
@@ -227,3 +250,93 @@ func _wants_jump() -> bool:
 		_jump_queued = false
 		return true
 	return false
+
+
+func _update_aim_direction() -> void:
+	var aim := Vector2.ZERO
+	if Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT):
+		aim.x -= 1.0
+	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
+		aim.x += 1.0
+	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
+		aim.y += 1.0
+	if Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN):
+		aim.y -= 1.0
+	if not aim.is_zero_approx():
+		_last_aim_direction = aim.normalized()
+
+
+func _fire_herbicide() -> void:
+	if _dead or _herbicide_cooldown_left > 0.0:
+		return
+	var projectile := _HERBICIDE_SCENE.instantiate() as Area3D
+	if projectile == null:
+		return
+	projectile.set("direction", Vector3(_last_aim_direction.x, _last_aim_direction.y, 0.0))
+	projectile.set("speed", herbicide_speed)
+	var scene_root := get_tree().current_scene
+	if scene_root == null:
+		scene_root = get_tree().root
+	scene_root.add_child(projectile)
+	projectile.global_position = global_position + Vector3(0.0, 0.9, 0.0) + projectile.direction * 0.55
+	_herbicide_cooldown_left = herbicide_cooldown
+	_emit_bus("herbicide_fired", [])
+	_emit_bus("herbicide_cooldown_changed", [0.0])
+
+
+func _update_herbicide_cooldown(delta: float) -> void:
+	if _herbicide_cooldown_left <= 0.0:
+		return
+	_herbicide_cooldown_left = maxf(_herbicide_cooldown_left - delta, 0.0)
+	var progress := 1.0 - _herbicide_cooldown_left / herbicide_cooldown
+	_emit_bus("herbicide_cooldown_changed", [clampf(progress, 0.0, 1.0)])
+	if _herbicide_cooldown_left == 0.0:
+		_emit_bus("herbicide_ready", [])
+
+
+func _on_contact_area_body_entered(body: Node3D) -> void:
+	_try_player_contact(body)
+
+
+func _on_contact_area_area_entered(area: Area3D) -> void:
+	_try_player_contact(area)
+
+
+func _try_player_contact(anomaly: Node) -> void:
+	if anomaly.is_in_group("anomaly") and anomaly.has_method("on_player_contact"):
+		anomaly.call("on_player_contact", self)
+
+
+func _connect_heat_changed() -> void:
+	var bus := get_node_or_null("/root/EventBus")
+	if bus == null:
+		var scene_root := get_tree().current_scene
+		if scene_root != null:
+			bus = scene_root.find_child("EventBus", true, false)
+	if bus != null and bus.has_signal("heat_changed"):
+		var callback := Callable(self, "_on_heat_changed")
+		if not bus.is_connected("heat_changed", callback):
+			bus.connect("heat_changed", callback)
+
+
+func _on_heat_changed(value: float, _max_value: float) -> void:
+	_heat_active = value >= HEAT_HIGH_THRESHOLD
+	_apply_visual()
+
+
+func _update_animation() -> void:
+	if _animated_sprite == null:
+		return
+	_animated_sprite.flip_h = _facing < 0.0
+	if is_sliding():
+		if _animated_sprite.animation != &"dash" or not _animated_sprite.is_playing():
+			_animated_sprite.play(&"dash")
+	elif is_on_floor() and absf(velocity.x) > 0.1:
+		if _animated_sprite.animation != &"correr" or not _animated_sprite.is_playing():
+			_animated_sprite.play(&"correr")
+	else:
+		if _animated_sprite.animation != &"correr" or _animated_sprite.is_playing():
+			_animated_sprite.animation = &"correr"
+			_animated_sprite.stop()
+			_animated_sprite.frame = 0
+			_animated_sprite.frame_progress = 0.0
