@@ -2,7 +2,10 @@ extends Camera3D
 
 @export var target_path: NodePath
 @export var follow_speed := 6.0
-@export var fixed_z := 12.0
+@export var fixed_z := 13.0
+@export var y_offset := 1.2
+@export var pitch_deg := -6.5
+@export var yaw_deg := -3.5
 @export var look_ahead_distance := 1.0
 @export var look_ahead_speed := 5.0
 @export var look_ahead_reference_speed := 11.0
@@ -19,6 +22,8 @@ func _ready() -> void:
 		if not players.is_empty():
 			_target = players[0] as Node3D
 	position.z = fixed_z
+	rotation_degrees.x = pitch_deg
+	rotation_degrees.y = yaw_deg
 	current = true
 
 
@@ -36,5 +41,5 @@ func _process(delta: float) -> void:
 	var follow_weight := 1.0 - exp(-follow_speed * delta)
 	var focus_x := _target.global_position.x + _look_ahead_x
 	global_position.x = lerpf(global_position.x, focus_x, follow_weight)
-	global_position.y = lerpf(global_position.y, _target.global_position.y, follow_weight)
+	global_position.y = lerpf(global_position.y, _target.global_position.y + y_offset, follow_weight)
 	global_position.z = fixed_z

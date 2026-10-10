@@ -393,5 +393,19 @@ Task: Ampliación de arena a 50m, generación de 2-4 escaleras aleatorias por pi
 Type: AI_ASSISTED
 Files: anomalies/cucumber.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
 Change: Ampliación dimensional de la arena en test_all_anomalies.tscn (plataformas y techos ampliados de 28m a 50m, muros exteriores reposicionados a X=±25m y contenedores a X=±22m). Sistema de generación procedural en test_arena_controller.gd que genera entre 2 y 4 escaleras dinámicas por transición de piso en posiciones aleatorias válidas bien distribuidas cada vez que se reinicia la partida. En cucumber.gd: velocidad base incrementada a 9.2 m/s (superior a la velocidad base de 8.0 m/s del jugador), velocidad de escalada elevada a 6.2 m/s, aceleración aumentada a 50.0 m/s² y cooldown post-escalada reducido a 0.6s. Detección reactiva de deslizamientos (slide) del jugador con ráfaga de sprint a 12.4 m/s y salto evasivo cercano para evitar capturas fáciles.
-Commit: 766d813
+Commit: d4b31fc
 Notes: Verificado con 209/209 checks automatizados en verde y ejecuciones headless limpias.
+
+
+---
+
+## AI-IAdashems-NB-000030
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Perspectiva 3D con relieve visible en cámara de seguimiento
+Type: AI_ASSISTED
+Files: player/follow_camera.gd, player/follow_camera.tscn
+Change: Transición de proyección ortogonal plana a proyección en perspectiva 3D (FOV 48.0, distancia fixed_z = 13.0m). Inclinación leve de cámara (pitch de -6.5° y yaw sutil de -3.5° con elevación y_offset = 1.2m) permitiendo apreciar el relieve tridimensional, caras superiores y profundidad de plataformas, techos, peldaños de escaleras y personajes en 2.5D.
+Commit: fbc6508
+Notes: Verificado con 209/209 comprobaciones automatizadas en verde y captura visual directa en D3D12.
