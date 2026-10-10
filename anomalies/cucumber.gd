@@ -8,17 +8,18 @@ extends Anomaly
 ## 3) Evitar a toda costa ir más allá a la izquierda o derecha de la escalera (evitando acorralarse a sí misma).
 ## Captura: Tocarla directamente (inofensiva).
 
-var speed: float = 6.4
-var stairs_mult: float = 0.6
+var speed: float = 9.2
+var stairs_mult: float = 0.75
 
 var is_climbing: bool = false
 var climb_target_y: float = 0.0
 var climb_exit_x: float = 0.0
-var climb_speed: float = 4.5
+var climb_speed: float = 6.2
 var _climb_ladder_x: float = 0.0
 
 var _post_climb_cooldown: float = 0.0
 var _patrol_dir: float = 1.0
+var _dodge_jump_cooldown: float = 0.0
 
 
 func _ready() -> void:
@@ -27,7 +28,7 @@ func _ready() -> void:
 	if cfg:
 		speed = cfg.get("CUCUMBER_SPEED") if cfg.get("CUCUMBER_SPEED") != null else speed
 		stairs_mult = cfg.get("CUCUMBER_STAIRS_MULT") if cfg.get("CUCUMBER_STAIRS_MULT") != null else stairs_mult
-	speed = maxf(speed, 6.4)
+	speed = maxf(speed, 9.2)
 	_patrol_dir = 1.0 if (randf() > 0.5) else -1.0
 
 
@@ -37,7 +38,7 @@ func _physics_process(delta: float) -> void:
 
 	# Estado de escalada vertical (transición no cancelable)
 	if is_climbing:
-		global_position.x = move_toward(global_position.x, _climb_ladder_x, 10.0 * delta)
+		global_position.x = move_toward(global_position.x, _climb_ladder_x, 12.0 * delta)
 		global_position.y = move_toward(global_position.y, climb_target_y, climb_speed * delta)
 		global_position.z = 0.0
 		velocity = Vector3.ZERO
@@ -45,7 +46,7 @@ func _physics_process(delta: float) -> void:
 			is_climbing = false
 			global_position.x = climb_exit_x
 			velocity = Vector3.ZERO
-			_post_climb_cooldown = 1.2
+			_post_climb_cooldown = 0.6
 		return
 		
 	if not is_on_floor():
@@ -53,6 +54,8 @@ func _physics_process(delta: float) -> void:
 		
 	if _post_climb_cooldown > 0.0:
 		_post_climb_cooldown -= delta
+	if _dodge_jump_cooldown > 0.0:
+		_dodge_jump_cooldown -= delta
 
 	# Reconocimiento dinámico de niveles y escaleras
 	var all_floors := _get_all_floors()
@@ -62,6 +65,7 @@ func _physics_process(delta: float) -> void:
 
 	var player := get_player_node()
 	var move_x := 0.0
+	var speed_multiplier := 1.0
 
 	if player != null and is_instance_valid(player):
 		var player_floor := _get_closest_floor(all_floors, player.global_position.y)
@@ -70,6 +74,16 @@ func _physics_process(delta: float) -> void:
 		var player_ladder_x: float = float(player.get("_climb_ladder_x") if player.get("_climb_ladder_x") != null else player.global_position.x)
 		var player_target_y: float = float(player.get("climb_target_y") if player.get("climb_target_y") != null else player.global_position.y)
 		var player_dest_floor := _get_closest_floor(all_floors, player_target_y)
+		var player_sliding := bool(player.has_method("is_sliding") and player.call("is_sliding"))
+		var dist_to_player := absf(global_position.x - player.global_position.x)
+
+		# REACCIÓN A SLIDE / DASH DEL JUGADOR:
+		# Si la papa viene a toda velocidad con slide en el mismo piso, sprint de adrenalina y salto evasivo
+		if same_floor and player_sliding and dist_to_player < 9.0:
+			speed_multiplier = 1.35
+			if dist_to_player < 3.5 and is_on_floor() and _dodge_jump_cooldown <= 0.0:
+				velocity.y = 8.0
+				_dodge_jump_cooldown = 1.0
 
 		# REGLA 2: Cuando el jugador sube o baja una escalera,
 		# ir inmediatamente a la escalera CONTRARIA para cumplir la primera regla.
@@ -78,7 +92,7 @@ func _physics_process(delta: float) -> void:
 			if opposite_ladder != null:
 				var dist_to_opp := opposite_ladder.global_position.x - global_position.x
 				if absf(dist_to_opp) > 0.5:
-					# Correr hacia la escalera contraria
+					# Correr a toda prisa hacia la escalera contraria
 					move_x = signf(dist_to_opp)
 				else:
 					# Ya en la escalera contraria:
@@ -88,7 +102,7 @@ func _physics_process(delta: float) -> void:
 						var dest_y := _get_ladder_dest_y(opposite_ladder, my_floor)
 						_climb_ladder(opposite_ladder, dest_y)
 					else:
-						# Alejarse del punto donde está subiendo el jugador
+						# Alejarse del punto donde está emergiendo el jugador
 						move_x = -signf(player_ladder_x - global_position.x)
 			else:
 				move_x = -signf(player_ladder_x - global_position.x)
@@ -145,11 +159,11 @@ func _physics_process(delta: float) -> void:
 	# Delimitación horizontal estricta (no salir jamás del corredor entre escaleras)
 	global_position.x = clampf(global_position.x, safe_bounds.x, safe_bounds.y)
 
-	var current_speed := speed * (stairs_mult if in_stairs else 1.0)
+	var current_speed := speed * speed_multiplier * (stairs_mult if in_stairs else 1.0)
 	if move_x != 0.0:
-		velocity.x = move_toward(velocity.x, move_x * current_speed, 35.0 * delta)
+		velocity.x = move_toward(velocity.x, move_x * current_speed, 50.0 * delta)
 	else:
-		velocity.x = move_toward(velocity.x, _patrol_dir * current_speed, 20.0 * delta)
+		velocity.x = move_toward(velocity.x, _patrol_dir * current_speed, 25.0 * delta)
 		
 	velocity.z = 0.0
 	move_and_slide()
@@ -206,7 +220,7 @@ func _get_ladders_touching_floor(floor_y: float) -> Array[Node3D]:
 
 func _get_safe_x_range(ladders: Array[Node3D]) -> Vector2:
 	if ladders.is_empty():
-		return Vector2(-8.5, 8.5)
+		return Vector2(-19.0, 19.0)
 	var min_x := INF
 	var max_x := -INF
 	for lad in ladders:

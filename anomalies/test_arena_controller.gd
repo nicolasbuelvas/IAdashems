@@ -2,11 +2,12 @@ class_name TestArenaController
 extends Node3D
 
 ## Controlador de la arena de pruebas y simulador de anomalías.
-## Configura cantidad de entidades y pisos (1 a 3 + sótano base con 2 escaleras por piso).
+## Configura cantidad de entidades y pisos (1 a 3 + sótano base con escaleras aleatorias válidas).
 
 const SCENE_CUCUMBER := preload("res://anomalies/cucumber.tscn")
 const SCENE_LETTUCE := preload("res://anomalies/lettuce.tscn")
 const SCENE_PEA := preload("res://anomalies/pea.tscn")
+const SCENE_LADDER := preload("res://level/ladder.tscn")
 
 @export var cucumber_count: int = 1
 @export var lettuce_count: int = 1
@@ -21,6 +22,7 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 
 @onready var floor_2_node: Node3D = $Architecture/Floor2
 @onready var floor_3_node: Node3D = $Architecture/Floor3
+@onready var ladders_basement: Node3D = $Architecture/Basement/Ladders_Basement
 @onready var ladders_f1_f2: Node3D = $Architecture/Ladders_F1_F2
 @onready var ladders_f2_f3: Node3D = $Architecture/Ladders_F2_F3
 
@@ -192,14 +194,52 @@ func _apply_floor_configuration() -> void:
 	ladders_f2_f3.process_mode = Node.PROCESS_MODE_INHERIT if (active_floors >= 3) else Node.PROCESS_MODE_DISABLED
 
 
+func _spawn_random_ladders(container: Node3D, bot_y: float, top_y: float) -> void:
+	if container == null:
+		return
+	for child in container.get_children():
+		child.queue_free()
+		
+	# Mínimo 2 escaleras, y hasta 4 al azar en posiciones válidas bien distribuidas
+	var count := randi_range(2, 4)
+	var positions: Array[float] = []
+	
+	if count == 2:
+		positions.append(randf_range(-19.0, -8.0))
+		positions.append(randf_range(8.0, 19.0))
+	elif count == 3:
+		positions.append(randf_range(-19.0, -9.0))
+		positions.append(randf_range(-4.0, 4.0))
+		positions.append(randf_range(9.0, 19.0))
+	else:
+		positions.append(randf_range(-19.5, -11.0))
+		positions.append(randf_range(-8.0, -2.0))
+		positions.append(randf_range(2.0, 8.0))
+		positions.append(randf_range(11.0, 19.5))
+		
+	for x_pos in positions:
+		var ladder := SCENE_LADDER.instantiate() as Node3D
+		ladder.position = Vector3(x_pos, bot_y - 0.5, 0.0)
+		ladder.set("bottom_y", bot_y)
+		ladder.set("top_y", top_y)
+		container.add_child(ladder)
+
+
 func _respawn_simulation() -> void:
 	for child in anomalies_container.get_children():
 		child.queue_free()
+		
+	# Generar escaleras dinámicas en posiciones aleatorias válidas (mínimo 2 por piso)
+	_spawn_random_ladders(ladders_basement, -3.5, 0.5)
+	if active_floors >= 2:
+		_spawn_random_ladders(ladders_f1_f2, 0.5, 4.5)
+	if active_floors >= 3:
+		_spawn_random_ladders(ladders_f2_f3, 4.5, 8.5)
 	
 	if player != null and player.has_method("reset_to"):
-		player.call("reset_to", Vector3(-10.0, -3.5, 0.0))
+		player.call("reset_to", Vector3(-16.0, -3.5, 0.0))
 	elif player != null:
-		player.global_position = Vector3(-10.0, -3.5, 0.0)
+		player.global_position = Vector3(-16.0, -3.5, 0.0)
 		player.velocity = Vector3.ZERO
 		
 	var bus := get_node_or_null("/root/EventBus")
@@ -218,21 +258,21 @@ func _respawn_simulation() -> void:
 		var cuc := SCENE_CUCUMBER.instantiate() as Anomaly
 		anomalies_container.add_child(cuc)
 		var f_y: float = floor_heights[i % floor_heights.size()]
-		var pos_x: float = -4.0 + float(i) * 5.0
+		var pos_x: float = randf_range(-15.0, 15.0)
 		cuc.global_position = Vector3(pos_x, f_y, 0.0)
 		
 	for i in range(lettuce_count):
 		var let := SCENE_LETTUCE.instantiate() as Anomaly
 		anomalies_container.add_child(let)
 		var f_y: float = floor_heights[(i + 1) % floor_heights.size()]
-		var pos_x: float = randf_range(-6.0, 7.0)
+		var pos_x: float = randf_range(-16.0, 16.0)
 		let.global_position = Vector3(pos_x, f_y + 0.5, 0.0)
 		
 	for i in range(pea_count):
 		var pea := SCENE_PEA.instantiate() as Anomaly
 		anomalies_container.add_child(pea)
 		var f_y: float = floor_heights[(i + 2) % floor_heights.size()]
-		var pos_x: float = randf_range(-3.0, 9.0)
+		var pos_x: float = randf_range(-14.0, 14.0)
 		pea.global_position = Vector3(pos_x, f_y, 0.0)
 		
 	var total_anomalies := cucumber_count + lettuce_count + pea_count

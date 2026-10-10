@@ -379,5 +379,19 @@ Task: Eliminación de modo entrenamiento, restauración de editor pre-partida e 
 Type: AI_ASSISTED
 Files: anomalies/cucumber.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/ladder.gd
 Change: Eliminación completa de artefactos de entrenamiento (SessionCard, estilos, temporizador de supervivencia y textos asociados). Restauración del modal de configuración interactiva pre-partida al iniciar la escena test_all_anomalies.tscn, permitiendo seleccionar cantidades independientes de cada categoría (Pepino, Lechuga, Guisante) y número de pisos antes de iniciar la simulación. En ladder.gd: eliminación del bloque invasivo que forzaba descensos en anomalías interfiriendo con su IA. En cucumber.gd: implementación estricta de las 3 reglas maestras: 1) Estar y desplazarse siempre a un piso diferente del jugador mediante escaleras libres, 2) Al escalar el jugador, correr hacia la escalera contraria en el piso actual para escapar y mantener niveles disjuntos, 3) Acotación horizontal estricta [min_ladder_x, max_ladder_x] calculando salidas seguras hacia el interior del piso para evitar acorralarse contra muros exteriores.
-Commit: 7533dbd
+Commit: e452fc7
 Notes: Verificado con 209/209 comprobaciones en verde (tools/ui_check.gd 41/41, systems/tests/heat_system_test.gd 32/32, systems/tests/round_manager_test.gd 136/136) y ejecución headless limpia de test_all_anomalies.tscn y test_cucumber.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000029
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Ampliación de arena a 50m, generación de 2-4 escaleras aleatorias por piso y agilidad aumentada en corredor
+Type: AI_ASSISTED
+Files: anomalies/cucumber.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
+Change: Ampliación dimensional de la arena en test_all_anomalies.tscn (plataformas y techos ampliados de 28m a 50m, muros exteriores reposicionados a X=±25m y contenedores a X=±22m). Sistema de generación procedural en test_arena_controller.gd que genera entre 2 y 4 escaleras dinámicas por transición de piso en posiciones aleatorias válidas bien distribuidas cada vez que se reinicia la partida. En cucumber.gd: velocidad base incrementada a 9.2 m/s (superior a la velocidad base de 8.0 m/s del jugador), velocidad de escalada elevada a 6.2 m/s, aceleración aumentada a 50.0 m/s² y cooldown post-escalada reducido a 0.6s. Detección reactiva de deslizamientos (slide) del jugador con ráfaga de sprint a 12.4 m/s y salto evasivo cercano para evitar capturas fáciles.
+Commit: 766d813
+Notes: Verificado con 209/209 checks automatizados en verde y ejecuciones headless limpias.
