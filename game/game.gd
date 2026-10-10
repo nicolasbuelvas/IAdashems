@@ -4,8 +4,9 @@ extends Node3D
 ## Contrato: docs/spec-mvp-reparto.md (4 y 5, persona C) y docs/flujo-subagentes-persona-C.md (2).
 
 const TOTAL_ROUNDS := 6
-## Tiempo de la tarjeta "Turno N" (ui/hud.tscn la muestra con round_started). Es presentación, no balance: no va en GameConfig.
-const ROUND_INTRO_SECONDS := 2.0
+## Tarjeta de ronda (ui/hud.tscn la muestra con round_started). Su duración por ronda la define ella:
+## es presentación, no balance, así que no va en GameConfig.
+const RoundCard := preload("res://ui/round_card.gd")
 ## Nodos que se congelan durante ROUND_INTRO: papa, reloj, calor y anomalías. Si alguno no existe en la escena, se omite.
 const ROUND_FROZEN_NODES := ["Player", "RoundManager", "HeatSystem", "Anomalies"]
 
@@ -29,7 +30,7 @@ func _ready() -> void:
 
 
 ## Entra en ROUND_INTRO. Arranca la ronda de inmediato (round_started dispara la tarjeta "Turno N" del HUD y
-## reset_to coloca la papa), congela la ronda durante ROUND_INTRO_SECONDS y luego la descongela y pasa a PLAYING.
+## reset_to coloca la papa), congela la ronda mientras dura la tarjeta (RoundCard.duration_for) y luego la descongela y pasa a PLAYING.
 ## En ROUND_INTRO no se juega: la papa, el reloj, el calor y las anomalías están congelados.
 func _start_round_after_card() -> void:
 	_intro_token += 1
@@ -37,7 +38,7 @@ func _start_round_after_card() -> void:
 	GameManager.set_state(GameManager.ROUND_INTRO)
 	$RoundManager.start_round(GameManager.current_round)
 	_set_round_frozen(true)
-	await get_tree().create_timer(ROUND_INTRO_SECONDS).timeout
+	await get_tree().create_timer(RoundCard.duration_for(GameManager.current_round)).timeout
 	# La escena pudo cambiar durante la tarjeta (goto) o la ronda pudo reiniciarse: esta espera ya no manda.
 	if not is_inside_tree() or token != _intro_token:
 		return

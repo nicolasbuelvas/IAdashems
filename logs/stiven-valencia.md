@@ -224,3 +224,51 @@ Change: Causa, reproducida en el editor: al pulsar una tecla en el outro, goto(&
 Commit: PENDING
 Model: Luna 6 (Codex Free)
 Notes: Probado en el editor (MCP): ronda 6 con las 6 capturadas -> Outro (estado OUTRO) -> tecla -> Credits (CREDITS) -> "Volver al menú" -> MainMenu (MENU), sin errores de outro.gd. Archivos de D (scenes/): avisar. Pendiente de D: el texto "[texto de cierre]" del outro sigue como placeholder. Avisos no bloqueantes vistos en el log: UID inválido de pause_menu en game.tscn y división entera en hud.gd:66 y options_menu.gd:105.
+
+## AI-IAdashems-SV-000019
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Pantalla de inicio de ronda: blanca, sin animación ni transición, con texto. Rondas 1-3 con imagen de la anomalía y verbo; rondas 4-6 solo 1-2 palabras y menos tiempo
+Type: AI_GENERATED
+Files: ui/round_card.tscn, ui/round_card.gd, game/game.gd, tools/ui_check.gd
+Change: La tarjeta de ronda pasa a ser una pantalla blanca opaca que cubre todo, sin fundidos, con texto negro en Arial Black (SystemFont "Arial Black", fallback Arial). Ronda 1: HonguitoMamadisimo_0000.png + "ATRÁPALO". Ronda 2: LechugonXLL.png + "PATÉALO" / "con SHIFT". Ronda 3: verde_0000.png + "DISPÁRALE" / "con "E"". Rondas 4-6: "MÁS PLAGA", "SIN PIEDAD", "PISO FINAL", centrados y sin imagen. Duración: 2,5 s con imagen y 1,5 s sin imagen (RoundCard.duration_for). game.gd ya no usa ROUND_INTRO_SECONDS: congela la ronda durante RoundCard.duration_for(current_round), así que la tarjeta y la espera coinciden. Se mantiene el aviso pequeño "¡NUEVO PISO HABILITADO!" en las rondas 3 y 6. Se actualizaron los chequeos de la tarjeta en tools/ui_check.gd.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: validate_script (MCP) OK en game/game.gd y ui/round_card.gd. tools/ui_check.gd en headless: los 9 chequeos de round_card pasan; el total da 4 fallos en main_menu porque las fuentes Potato Sans no están importadas en .godot en headless (ajeno a este cambio). No se revisó visualmente en partida. Riesgo: Arial Black es fuente del sistema; fuera de Windows usa una sustituta.
+
+## AI-IAdashems-SV-000020
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Investigar el bug de la papa que empieza fuera del spawn en la ronda 6 y armar una escena para empezar desde la ronda 5
+Type: TESTING
+Files: game/test/start_from_round.gd, game/test/start_from_round.tscn
+Change: Escena de debug nueva: fija GameManager.current_round con el export start_round (1-6, por defecto 5) y carga game/game.tscn con change_scene_to_file. No usa GameManager.goto(&"game") porque ese reinicia la ronda a 1. Se abre y se lanza con F6. Sin cambios en el código del juego por el bug de la ronda 6.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Probado en el editor (MCP): la escena entra a game.tscn en la ronda 5 con la papa en PlayerSpawn (-19, 1, 0). Bug de la ronda 6 sin reproducir: saltando directo a la 6, ganando la 5 con la papa en el piso 2 y ganándola a media escalera, la papa arranca en el spawn. Descartado: RoundManager.start_round hace reset_to(PlayerSpawn) igual en todas las rondas, y las trampas activas en la ronda 6 están en el piso 3. LaddersF3/Ladder_L (x=-18) queda cerca del spawn, pero su área empieza a la altura del piso 2 y solo actúa con W. Siguiente paso: SV reproduce con esta escena y reporta cuándo pasa (al pasar de la 5 a la 6, al reintentar o al reaparecer tras daño) y dónde aparece la papa.
+
+## AI-IAdashems-SV-000021
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Corregir el bug de la ronda 6: la papa empieza donde terminó la ronda 5 en lugar del spawn
+Type: DEBUGGING
+Files: level/ladder.gd
+Change: Causa, reproducida en el editor con game/test/start_from_round.tscn: si la ronda 5 termina con la papa en una escalera y W/S pulsada, RoundManager.start_round(6) la teletransporta al spawn con reset_to, pero get_overlapping_bodies() del Area3D de la escalera no se actualiza hasta el siguiente paso de física. En ese frame la escalera todavía ve a la papa y llama a start_climb, que la devuelve a la X de la escalera y la hace subir. Arreglo: ladder.gd comprueba con _is_really_inside() que la posición real del cuerpo esté dentro de la caja del área (más INSIDE_MARGIN = 1 m) antes de engancharlo.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Antes: tras ganar la ronda 5 en la escalera del piso 2 (x=14) con W pulsada, la ronda 6 empezaba en (14, 4.15) escalando. Después: empieza en el spawn (-19, 0, 0) sin escalar. Se comprobó que subir escaleras sigue funcionando (papa en (-14, 0.1) con W -> escala). level_layout_test headless: 120 PASS, 0 FAIL. Corrige la nota pendiente de AI-IAdashems-SV-000020: el bug no era exclusivo de la ronda 6; pasa al cambiar de ronda siempre que la papa esté en una escalera con W/S pulsada.
+
+## AI-IAdashems-SV-000022
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: La papa no recibe daño mientras sube o baja escaleras, y corregir animaciones mezcladas al engancharse (p. ej. el dash seguía animándose durante la subida)
+Type: AI_ASSISTED
+Files: player/player.gd
+Change: take_damage() sale sin hacer nada si is_climbing, aunque el golpe atraviese el dash (pierce_slide). is_invulnerable() también devuelve true al escalar, así que los proyectiles del guisante no la golpean. Causa de las animaciones: mientras is_climbing, _physics_process sale antes de _update_animation(), así que el sprite se quedaba con la animación que tenía al engancharse (dash o disparar) y con el offset vertical del dash. start_climb() ahora cierra el dash (cooldown + player_slide_ended si estaba activo), anula el recovery y el arrastre del dash, corta el tween de squash y reaplica el visual. Además, la rama de escalera llama cada frame a _update_climb_animation(): idle (correr si no existe) con el leve balanceo que ya había.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Probado en el editor (MCP) con game/test/start_from_round.tscn: dash activo + animación dash -> start_climb -> al siguiente frame anim=idle y dash=false; take_damage(1) y take_damage(1, true) durante la subida: vida 3 -> 3; al salir de la escalera: anim idle, sprite en su altura base y alpha 1. Después de bajarse, la papa sí recibió daño de anomalías del piso 2: es lo esperado, porque la inmunidad solo vale en la escalera. La muerte por calor al 100 % (kill) sigue aplicando también en la escalera, porque es derrota de ronda y no daño. No hay animación propia de escalar: se usa idle.

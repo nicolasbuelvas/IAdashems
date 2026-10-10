@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/test/start_from_round.gd" id="1_start"]
+
+[node name="StartFromRound" type="Node"]
+script = ExtResource("1_start")
+start_round = 5

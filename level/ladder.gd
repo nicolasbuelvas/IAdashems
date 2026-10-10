@@ -9,6 +9,9 @@ extends Node3D
 @export var bottom_exit_offset_x: float = -0.8
 @export var top_exit_offset_x: float = 1.0
 
+## Holgura (m) sobre la caja del área para el cuerpo que la toca (origen del cuerpo en los pies).
+const INSIDE_MARGIN := 1.0
+
 @onready var area: Area3D = $Area3D
 
 
@@ -27,7 +30,9 @@ func _physics_process(_delta: float) -> void:
 			continue
 		if body.get("_post_climb_cooldown") != null and body.get("_post_climb_cooldown") > 0.0:
 			continue
-			
+		if not _is_really_inside(body):
+			continue
+
 		var ladder_x := global_position.x
 		var mid_y := (bottom_y + top_y) * 0.5
 		var is_near_bottom := body.global_position.y < mid_y
@@ -42,3 +47,16 @@ func _physics_process(_delta: float) -> void:
 				body.call("start_climb", top_y, ladder_x + top_exit_offset_x, ladder_x)
 			elif is_near_top and wants_down:
 				body.call("start_climb", bottom_y, ladder_x + bottom_exit_offset_x, ladder_x)
+
+
+## get_overlapping_bodies() se actualiza en el paso de física, no al mover un cuerpo. Tras un
+## teletransporte (reset_to al empezar ronda) la escalera aún ve a la papa en ese frame y, con W/S
+## pulsada, la volvía a enganchar en su sitio viejo. Se comprueba la posición real contra la caja del área.
+func _is_really_inside(body: Node3D) -> bool:
+	var shape_node := area.get_node_or_null(^"CollisionShape3D") as CollisionShape3D
+	var box := shape_node.shape as BoxShape3D if shape_node != null else null
+	if box == null:
+		return true
+	var local := shape_node.global_transform.affine_inverse() * body.global_position
+	var half := box.size * 0.5 + Vector3(INSIDE_MARGIN, INSIDE_MARGIN, INSIDE_MARGIN)
+	return absf(local.x) <= half.x and absf(local.y) <= half.y and absf(local.z) <= half.z

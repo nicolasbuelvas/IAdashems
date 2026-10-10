@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="2_camera"]
 [ext_resource type="PackedScene" path="res://anomalies/pea.tscn" id="3_pea"]
 [ext_resource type="PackedScene" uid="uid://cmf2f53o82h10" path="res://ui/pause_menu.tscn" id="4_pause"]
-[ext_resource type="PackedScene" path="res://level/ladder.tscn" id="5_ladder"]
+[ext_resource type="PackedScene" uid="uid://ctq0k40s1e3g7" path="res://level/ladder.tscn" id="5_ladder"]
 
 [sub_resource type="BoxShape3D" id="Shape_Floor1"]
 size = Vector3(26, 1, 4)
