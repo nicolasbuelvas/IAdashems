@@ -152,3 +152,15 @@ Change: game/game.tscn instancia player/player.tscn y lo asigna a RoundManager.p
 Commit: PENDING
 Model: Grok 4.6 (Cursor Free)
 Notes: Resultados reportados por el agente con Godot 4.7.2 en headless (no re-ejecutados al escribir esta entrada): heat 32/0, rondas 136/0, autoplay de 6 rondas hasta game_won sin ERROR ni WARNING. game/game.tscn con la papa real solo falla porque faltan anomalies/*.tscn; en disco, anomalies/ contiene solo .gdkeep. Revisión con la papa real (reportada por el agente): la subida de rampa funciona, el bloqueo no se salta (salto de 4,21 m frente a pared de 4,5 m), los pinchos hacen daño, y la derrota y el reintento funcionan por vida y por calor. Pendiente de otros: B debe entregar cucumber/lettuce/pea.tscn; D debe corregir set_input_as_handled en intro y outro, conectar los goto y los botones de menú y pausa, resolver el UID duplicado de credits/round_card y el HEAT_HIGH_THRESHOLD duplicado; A debe quitar los fallbacks de balance, cambiar connect con string y limitar la cámara al nivel. No ejecutar --import headless: borra los autoloads MCP de project.godot. Siguiente paso: entrega de B y correcciones de D y A, y después repetir la prueba de integración con los anomalies reales.
+
+## AI-IAdashems-SV-000013
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Corregir el desajuste visual y físico de la rampa de prueba detectado en el PR #8 de KODY-MH
+Type: DEBUGGING
+Files: player/test_player.tscn
+Change: Se eliminó el desplazamiento local de Ramp/MeshInstance3D; la malla y CollisionShape3D ahora comparten transformación y dimensiones.
+Commit: PENDING
+Model: Grok 4.6 (Cursor Free)
+Notes: Godot 4.7.2 headless: tres raycasts coinciden con la superficie visible con error menor a 0.000001 unidades; el jugador aterriza en la rampa y permanece en el suelo. git diff --check sin errores. Corrección local en codex/fix-pr8-ramp-alignment sobre 6769df1; pendiente commit y publicación en el PR. Sin playtest visual interactivo. Los valores de GameConfig conservan su autoridad de balance.

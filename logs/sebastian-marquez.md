@@ -89,3 +89,80 @@ Files: player/player.gd, player/player.tscn
 Change: Idle usa el frame con menor espacio transparente bajo los pies; se ajustó el offset vertical de sprite y dash. Se mantiene la separación de collider sólido y ContactArea sensor.
 Commit: PENDING
 Notes: Godot 4.7.1 headless validó carga sin errores; ventana abierta para confirmación visual del apoyo.
+
+## AI-IAdashems-SM-000008
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Mejorar el peso del salto y la sensación del dash; restringir disparo y acciones simultáneas
+Type: AI_ASSISTED
+Files: player/player.gd
+Change: Ajustada la gravedad efectiva del jugador con aceleración al caer y al soltar Espacio, extendido el dash a 0.65 s con frenado gradual, squash/stretch visual al despegar/aterrizar y restringido el herbicida a disparos horizontales. Salto, dash y disparo se bloquean entre sí en el mismo ciclo; el dash exige estar en el suelo.
+Limitaciones: Los valores son una primera pasada de balance y requieren playtest visual para confirmar altura, duración y sensación.
+Commit: PENDING
+
+## AI-IAdashems-SM-000009
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Añadir aceleración y suavizar los cambios de dirección del jugador
+Type: AI_ASSISTED
+Files: player/player.gd
+Change: El movimiento horizontal ahora acelera hasta la velocidad objetivo, frena al soltar y usa una respuesta diferenciada al invertir dirección y durante el aire. El sprite mantiene su orientación mientras el impulso cambia, para evitar un giro visual instantáneo.
+Limitaciones: Parámetros iniciales de control; requieren ajuste mediante playtest, especialmente la inversión de dirección en el aire.
+Commit: PENDING
+
+## AI-IAdashems-SM-000010
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Mejorar el comportamiento de seguimiento de cámara con anticipación suave
+Type: AI_ASSISTED
+Files: player/follow_camera.gd
+Change: La cámara ya existente ahora anticipa horizontalmente según la velocidad real del jugador. La anticipación y el seguimiento usan suavizado exponencial independiente para mostrar más recorrido al moverse y recentrar con suavidad al frenar o cambiar de dirección.
+Limitaciones: Distancia y velocidad de anticipación son parámetros iniciales; pendientes de ajustar en playtest con el nivel completo y sus límites.
+Commit: PENDING
+
+## AI-IAdashems-SM-000011
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Hacer más progresiva la aceleración, conservar impulso tras el dash y afinar salto/cámara
+Type: AI_ASSISTED
+Files: player/player.gd, player/follow_camera.gd
+Change: Reducida la aceleración y frenado horizontal para tardar cerca de 0.33 s en alcanzar velocidad de carrera y cerca de 0.4 s en invertirla. El dash termina conservando velocidad por 0.55 s; el salto tiene gravedad reducida de forma breve cerca del ápice y al soltar Espacio cae más rápido. La cámara sigue el impulso con anticipación suavizada.
+Limitaciones: Parámetros de balance iniciales; faltan pruebas jugables para valorar la curva de velocidad y el arrastre tras el dash en el nivel completo.
+Commit: PENDING
+
+## AI-IAdashems-SM-000012
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Aumentar velocidad de carrera y hacer el dash dependiente del momentum; permitir salto con control aéreo
+Type: AI_ASSISTED
+Files: player/player.gd, player/follow_camera.gd
+Change: Velocidad máxima base 8, aceleración de suelo más gradual y umbral de dash al 72 % de la velocidad máxima en la dirección solicitada. El dash mantiene dirección fija; saltar lo termina, conserva el impulso y permite corregir trayectoria en el aire. Se ajustó la anticipación de cámara al nuevo rango de velocidades.
+Limitaciones: El umbral y la transferencia del impulso requieren playtest para confirmar que el dash se siente alcanzable y que el salto durante dash queda legible.
+Commit: PENDING
+
+## AI-IAdashems-SM-000013
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Alargar el dash hasta perder velocidad y penalizar su finalización sin cancelarlo
+Type: AI_ASSISTED
+Files: player/player.gd
+Change: El dash conserva dirección fija durante el impulso y la fase de frenado hasta velocidad casi cero. Saltar durante el dash lo cancela y pasa el momentum al control aéreo; dejar que termine aplica 1 s de recuperación sin movimiento ni acciones.
+Limitaciones: La duración real depende de la velocidad de entrada, el frenado y las colisiones; requiere playtest para balancear longitud, recuperación e invulnerabilidad.
+Commit: PENDING
+
+## AI-IAdashems-SM-000014
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Suavizar el castigo al completar el dash e integrar los cambios de main
+Type: AI_ASSISTED
+Files: player/player.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: La recuperación de 1 s reduce la velocidad horizontal al 55 % y permite saltar y disparar; se elimina la inmovilización y el descarte de entradas. Se integraron los cambios disponibles de origin/main mediante merge.
+Limitaciones: El porcentaje de velocidad es un valor inicial para probar. La compilación y el gameplay deben verificarse en Godot después de resolver la integración.
+Commit: PENDING
