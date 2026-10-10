@@ -35,6 +35,8 @@ target_path = NodePath("../Player")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 rotation = Vector3(-0.9, 0.4, 0)
+# Iluminación de relleno global; las sombras las proyecta CameraKeyLight.
+shadow_enabled = false
 
 [node name="HeatScreenEffect" parent="." instance=ExtResource("9_heat_effect")]
 

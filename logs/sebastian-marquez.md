@@ -221,3 +221,14 @@ Files: effects/heat_screen_effect.gd, effects/heat_screen_effect.gdshader, effec
 Change: La escena principal escucha heat_changed y aumenta gradualmente una distorsión térmica, una viñeta roja en los bordes y vibración suave de cámara desde HEAT_HIGH_THRESHOLD. La capa de efectos se dibuja debajo del HUD; no se modificó su contenido ni el escenario.
 Commit: PENDING
 Notes: git diff --check pasó. Godot no está disponible en PATH, por lo que no se pudo validar la importación del shader ni probar visualmente los efectos en runtime; valores de distorsión y vibración quedan sujetos a ajuste visual.
+
+## AI-IAdashems-SM-000020
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Aplicar concreto PBR a la oficina y agregar sombras proyectadas reversibles
+Type: AI_ASSISTED
+Files: level/materials/office_concrete.tres, level/building.tscn, game/game.tscn, player/player.tscn, player/herbicide.tscn, anomalies/cucumber.tscn, anomalies/pea.tscn, anomalies/lettuce.tscn, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: Se creó un material propio desde los mapas color, roughness, normal GL y AO, con repetición para las superficies largas y sin displacement. Se aplicó a pisos y paredes de fondo; la luz direccional principal proyecta sombras de opacidad reducida y los sprites recortan alfa para formar siluetas. Las sombras se revierten desactivando shadow_enabled en esa luz.
+Commit: PENDING
+Notes: git diff --check y validaciones estáticas de rutas/referencias completadas. No hay ejecutable Godot disponible en PATH; faltan validación de carga de escenas, revisión visual del tiling y medición de rendimiento en la PC del equipo.
