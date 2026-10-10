@@ -24,6 +24,9 @@ const _JUMP_APEX_GRAVITY_MULTIPLIER := 0.72
 const _JUMP_APEX_VELOCITY_RATIO := 0.25
 const _DASH_MIN_SPEED_RATIO := 0.72
 const _DASH_CARRY_DURATION := 0.55
+const _DASH_BRAKING := 9.0
+const _DASH_STOP_SPEED := 0.2
+const _DASH_RECOVERY_DURATION := 1.0
 const _DASH_CARRY_DECELERATION := 10.0
 const _DASH_EXIT_SPEED_RATIO := 0.9
 const _FALLBACK_HERBICIDE_SPEED := 14.0
@@ -52,6 +55,8 @@ var _herbicide_queued: bool = false
 var _slide_queued: bool = false
 var _facing: float = 1.0
 var _slide_dir: float = 1.0
+var _dash_active: bool = false
+var _dash_recovery_left: float = 0.0
 var _slide_time_left: float = 0.0
 var _slide_cooldown_left: float = 0.0
 var _dash_carry_time_left: float = 0.0
@@ -105,6 +110,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	_jump_started_this_frame = false
+	if _dash_recovery_left > 0.0:
+		_dash_recovery_left = maxf(_dash_recovery_left - delta, 0.0)
+		if _dash_recovery_left > 0.0:
+			_jump_queued = false
+			_slide_queued = false
+			_herbicide_queued = false
 	if not is_on_floor():
 		var gravity_multiplier := 1.0
 		if velocity.y < 0.0:
@@ -132,12 +143,17 @@ func _physics_process(delta: float) -> void:
 	if not is_sliding() and input_x != 0.0 and (is_zero_approx(velocity.x) or signf(velocity.x) == signf(input_x)):
 		_facing = signf(input_x)
 
-	if is_sliding():
-		var slide_progress := 1.0 - _slide_time_left / slide_duration
-		var deceleration := smoothstep(0.7, 1.0, slide_progress)
-		var dash_exit_speed := maxf(move_speed, slide_speed * _DASH_EXIT_SPEED_RATIO)
-		var current_slide_speed := lerpf(slide_speed, dash_exit_speed, deceleration)
-		velocity.x = _slide_dir * current_slide_speed
+	if _dash_recovery_left > 0.0:
+		velocity.x = 0.0
+	elif is_sliding():
+		if _slide_time_left > 0.0:
+			var slide_progress := 1.0 - _slide_time_left / slide_duration
+			var deceleration := smoothstep(0.7, 1.0, slide_progress)
+			var dash_exit_speed := maxf(move_speed, slide_speed * _DASH_EXIT_SPEED_RATIO)
+			var current_slide_speed := lerpf(slide_speed, dash_exit_speed, deceleration)
+			velocity.x = _slide_dir * current_slide_speed
+		else:
+			velocity.x = move_toward(velocity.x, 0.0, _DASH_BRAKING * delta)
 	elif _dash_carry_time_left > 0.0:
 		var carry_ratio := _dash_carry_time_left / _DASH_CARRY_DURATION
 		if input_x == _dash_carry_direction:
@@ -185,7 +201,7 @@ func take_damage(amount: int) -> void:
 
 
 func is_sliding() -> bool:
-	return _slide_time_left > 0.0
+	return _dash_active
 
 
 func is_invulnerable() -> bool:
@@ -203,6 +219,8 @@ func reset_to(spawn: Vector3) -> void:
 	_herbicide_queued = false
 	_slide_time_left = 0.0
 	_slide_cooldown_left = 0.0
+	_dash_active = false
+	_dash_recovery_left = 0.0
 	_dash_carry_time_left = 0.0
 	_dash_carry_speed = 0.0
 	_dash_carry_direction = 0.0
@@ -219,28 +237,36 @@ func _update_slide(delta: float) -> void:
 		_slide_queued = false
 		_try_start_slide()
 	if _jump_started_this_frame and is_sliding():
-		# El salto termina el dash; su impulso pasa al control aéreo.
-		_finish_slide()
+		# El salto cancela el dash y conserva su impulso para el control aéreo.
+		_finish_slide(true)
 	if is_sliding():
-		_slide_time_left -= delta
-		if _slide_time_left <= 0.0:
-			_finish_slide()
+		if _slide_time_left > 0.0:
+			_slide_time_left = maxf(_slide_time_left - delta, 0.0)
+		if _slide_time_left <= 0.0 and absf(velocity.x) <= _DASH_STOP_SPEED:
+			velocity.x = 0.0
+			_finish_slide(false)
 	elif _slide_cooldown_left > 0.0:
 		_slide_cooldown_left -= delta
 
 
-func _finish_slide() -> void:
+func _finish_slide(cancelled_by_jump: bool) -> void:
 	_slide_time_left = 0.0
+	_dash_active = false
 	_slide_cooldown_left = slide_cooldown
-	_dash_carry_direction = _slide_dir
-	_dash_carry_speed = maxf(absf(velocity.x), move_speed)
-	_dash_carry_time_left = _DASH_CARRY_DURATION
+	if cancelled_by_jump:
+		_dash_carry_direction = _slide_dir
+		_dash_carry_speed = maxf(absf(velocity.x), move_speed)
+		_dash_carry_time_left = _DASH_CARRY_DURATION
+	else:
+		_dash_carry_time_left = 0.0
+		_dash_recovery_left = _DASH_RECOVERY_DURATION
+		velocity.x = 0.0
 	_emit_bus("player_slide_ended", [])
 	_apply_visual()
 
 
 func _try_start_slide() -> void:
-	if is_sliding() or _slide_cooldown_left > 0.0 or _dead:
+	if is_sliding() or _slide_cooldown_left > 0.0 or _dash_recovery_left > 0.0 or _dead:
 		return
 	if not is_on_floor() or _jump_started_this_frame:
 		return
@@ -251,6 +277,7 @@ func _try_start_slide() -> void:
 	var minimum_dash_speed := move_speed * _DASH_MIN_SPEED_RATIO
 	if velocity.x * _slide_dir < minimum_dash_speed:
 		return
+	_dash_active = true
 	_slide_time_left = slide_duration
 	_emit_bus("player_slide_started", [])
 	_apply_visual()
@@ -352,7 +379,7 @@ func _update_aim_direction() -> void:
 
 
 func _fire_herbicide() -> void:
-	if _dead or _herbicide_cooldown_left > 0.0:
+	if _dead or _herbicide_cooldown_left > 0.0 or _dash_recovery_left > 0.0:
 		return
 	if is_sliding() or not is_on_floor() or _jump_started_this_frame:
 		return

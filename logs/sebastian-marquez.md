@@ -144,3 +144,14 @@ Files: player/player.gd, player/follow_camera.gd
 Change: Velocidad máxima base 8, aceleración de suelo más gradual y umbral de dash al 72 % de la velocidad máxima en la dirección solicitada. El dash mantiene dirección fija; saltar lo termina, conserva el impulso y permite corregir trayectoria en el aire. Se ajustó la anticipación de cámara al nuevo rango de velocidades.
 Limitaciones: El umbral y la transferencia del impulso requieren playtest para confirmar que el dash se siente alcanzable y que el salto durante dash queda legible.
 Commit: PENDING
+
+## AI-IAdashems-SM-000013
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Alargar el dash hasta perder velocidad y penalizar su finalización sin cancelarlo
+Type: AI_ASSISTED
+Files: player/player.gd
+Change: El dash conserva dirección fija durante el impulso y la fase de frenado hasta velocidad casi cero. Saltar durante el dash lo cancela y pasa el momentum al control aéreo; dejar que termine aplica 1 s de recuperación sin movimiento ni acciones.
+Limitaciones: La duración real depende de la velocidad de entrada, el frenado y las colisiones; requiere playtest para balancear longitud, recuperación e invulnerabilidad.
+Commit: PENDING
