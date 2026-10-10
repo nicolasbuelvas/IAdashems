@@ -255,3 +255,185 @@ Files: art/d-ui/menu_background.png, art/d-ui/options_background.png, art/d-ui/c
 Change: Eliminación de las tarjetas y textos estáticos antiguos horneados en las imágenes de fondo mediante difuminado y composición limpia, dejando únicamente la UI interactiva de Godot. Actualización del menú de opciones con señal back_requested para integrarse como submenú tanto en el menú principal como en el menú de pausa durante el juego: al abrir opciones desde la pausa, el botón Volver regresa a la pausa sin reiniciar ni destruir la partida.
 Commit: PENDING
 Notes: Verificado con tools/ui_check.gd (41/41 PASS) y systems/tests/heat_system_test.gd (32/32 PASS).
+
+
+---
+
+## AI-IAdashems-NB-000020
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Implementación completa de las 3 anomalías (Pepino, Lechuga, Guisante) y mapas de prueba
+Type: AI_ASSISTED
+Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/cucumber.tscn, anomalies/lettuce.gd, anomalies/lettuce.tscn, anomalies/pea.gd, anomalies/pea.tscn, anomalies/pea_projectile.gd, anomalies/pea_projectile.tscn, anomalies/test_cucumber.tscn, anomalies/test_lettuce.tscn, anomalies/test_pea.tscn, anomalies/test_all_anomalies.tscn
+Change: Creación de la clase base Anomaly cumpliendo el contrato de RoundManager y EventBus (spawn_id, anomaly_spawned, tween hacia contenedor más cercano con anomaly_contained). Pepino (Cápsula esmeralda) huye en X, se ralentiza en escaleras y se acorrala contra paredes; captura por contacto directo. Lechuga (Esfera lima) rebota por suelos y paredes, hiere al contacto y se captura deslizándose con Shift. Lanzaguisantes (Esfera verde oscura) avanza lento, dispara proyectiles de guisante cada 2.5s e hiere al contacto; se captura con impacto de herbicida (E). Creación de 4 mapas de prueba 3D de 2 pisos con rampa/escalera funcional (StairsArea en grupo stairs), contenedores y cámara.
+Commit: ee34f15
+Notes: Verificado con tools/ui_check.gd (41/41 PASS), systems/tests/heat_system_test.gd (32/32 PASS) y systems/tests/round_manager_test.gd (136/136 PASS). Total: 209 comprobaciones automatizadas en verde.
+
+
+---
+
+## AI-IAdashems-NB-000021
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Escalera vertical tipo Minecraft con animación bloqueante no cancelable
+Type: AI_ASSISTED
+Files: level/ladder.gd, level/ladder.tscn, player/player.gd, anomalies/cucumber.gd, anomalies/test_cucumber.tscn, anomalies/test_lettuce.tscn, anomalies/test_pea.tscn, anomalies/test_all_anomalies.tscn
+Change: Reemplazo de rampas inclinadas por escaleras totalmente verticales 3D estilo Minecraft (rieles y travesaños) en todos los mapas de prueba de 2 pisos. Implementación de estado de escalada bloqueante (is_climbing / start_climb): al presionar W abajo o S arriba en el área de la escalera, el personaje queda fijado a la escalera y realiza la subida o bajada completa hasta el piso destino sin poder cancelar la animación con saltos, desplazamientos, dash ni ataques. Se habilitó también el uso de la escalera para la evasión del pepino.
+Commit: 53ca582
+Notes: Verificado en headless (test suites 209/209 PASS y ejecución de mapas de test).
+
+
+---
+
+## AI-IAdashems-NB-000022
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Editor manual interactivo, IA táctica coordinada Pac-Man y arena multinivel con sótano
+Type: AI_ASSISTED
+Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
+Change: Incorporación de panel pre-partida y reconfigurable en vivo (F1) para personalizar cantidad de anomalías por especie, selector de 1 a 3 pisos y 6 niveles de dificultad de IA. Estructura de arena con sótano base donde spawnea el jugador por defecto y pisos superiores con techos sólidos para rebotes 2D. IA táctica: el pepino es omnisciente en niveles altos, usa escaleras para escapar y utiliza aliados como escudos humanos (Pac-Man); la lechuga rebota elásticamente en techos y suelos, esquiva saltando si el jugador hace slide y se abalanza tras fallos del dash; el lanzaguisantes ejecuta leading shots predictivos según la velocidad del jugador y kitea a distancia media.
+Commit: 803300f
+Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless limpia de test_all_anomalies.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000023
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Rediseño visual del editor de anomalías con tema retro corporativo y controles nativos
+Type: AI_ASSISTED
+Files: anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
+Change: Eliminación de SpinBoxes y OptionButtons genéricos por defecto de Godot. Reemplazo por tarjeta corporativa PanelContainer integrada con res://ui/theme.tres, tipografías Fredoka y Nunito, filete ambar y steppers circulares minimalistas (◄ / ►) con insignias de conteo independientes para cada especie. Selector horizontal de dificultad con indicador de puntos (● / ○) y caja descriptiva con auto-ajuste de texto. Botones de segmento para selección de pisos y botón primario ambar 'COMENZAR SIMULACIÓN'. Ocultamiento automático del HUD durante la edición para evitar solapamientos visuales.
+Commit: 97f08e0
+Notes: Verificado con tools/ui_check.gd (41/41 PASS), systems/tests/heat_system_test.gd (32/32 PASS) y systems/tests/round_manager_test.gd (136/136 PASS). Total: 209 checks en verde.
+
+
+---
+
+## AI-IAdashems-NB-000024
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Ajuste de altura de tarjeta del editor (botón jugar visible) y 2 escaleras mínimas por piso
+Type: AI_ASSISTED
+Files: anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
+Change: Optimización de altura y márgenes verticales de la tarjeta del editor manual (de 580px a ~480px) asegurando que el botón 'COMENZAR SIMULACIÓN' se mantenga visible y holgado en cualquier resolución de ventana. Adición de 2 escaleras verticales independientes (izquierda a X=-7m y derecha a X=+7m) entre cada par de niveles (Sótano a P1, P1 a P2, y P2 a P3), garantizando siempre doble vía de escape/acceso tanto para la papa como para las anomalías.
+Commit: 57f5de3
+Notes: Verificado con 209/209 comprobaciones en verde y ejecución en headless.
+
+
+---
+
+## AI-IAdashems-NB-000025
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de movimiento activo en pepino, eliminación de dificultad y simplificación del editor
+Type: AI_ASSISTED
+Files: anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
+Change: Corrección del bug donde el pepino se congelaba en paredes o permanecía estático en pisos distintos al jugador: ahora patrulla activamente, corre en todo momento, huye dinámicamente y busca escaleras o rebota al tocar muros sin bloquearse a velocidad 0. Eliminación de la dificultad artificial en favor de que todas las entidades operen permanentemente en su condición máxima y más inteligente (pepino con escudos y evasión, lechuga con rebote 2D suelo/techo y castigo de slide, lanzaguisantes con leading shot y kiteo). Simplificación de la tarjeta modal del editor a 360px de altura, garantizando visibilidad holgada del botón de jugar.
+Commit: 06aa919
+Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless limpia.
+
+
+---
+
+## AI-IAdashems-NB-000026
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Pantalla de Game Over, integración de HUD oficial, dispersión de pepinos y escaleras alternadas
+Type: AI_ASSISTED
+Files: level/ladder.gd, anomalies/cucumber.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
+Change: Integración de la escena oficial res://ui/hud.tscn en la arena mostrando corazones, barra de calor, reloj y conteo de anomalías. Implementación de pantalla modal GameOverUI disparada al morir tras recibir 3 impactos (player_died), pausando la escena y reproduciendo bgm_game_over.ogg con opciones de reintento o reconfiguración. Corrección táctica de los pepinos: dispersión lateral activa para no amontonarse en manadas, búsqueda activa de descenso por escaleras para escapar hacia pisos inferiores y eliminación del bloqueo en paredes. Reubicación alternada de las escaleras entre pisos (Sótano a P1 en X=±9m, P1 a P2 en X=±3m, P2 a P3 en X=±8.5m), evitando que se suba de un nivel a otro en línea recta continua sin recorrer la plataforma.
+Commit: fd0e4b0
+Notes: Verificado con 209/209 comprobaciones en verde y ejecución en headless.
+
+
+---
+
+## AI-IAdashems-NB-000027
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: IA evasiva con conciencia de escaleras no cancelables y corrección de volumen de trigger
+Type: AI_ASSISTED
+Files: level/ladder.tscn, level/ladder.gd, anomalies/cucumber.gd
+Change: Corrección del volumen de colisión de la escalera (Shape_LadderArea ampliado de 4.2m a 5.4m de altura) para detectar confiablemente entidades en la plataforma superior. Ajuste en ladder.gd para evaluar mitad de altura y permitir descensos seguros verificando que el jugador no esté acampando abajo. En cucumber.gd: detección táctica de que el movimiento en escalera es una acción bloqueada y no cancelable (si el jugador escala, queda vulnerable y el pepino aprovecha para reubicarse; el pepino busca escaleras de descenso libres de jugador y escapa a pisos inferiores con cooldown de salida para evitar oscilaciones de reentrada).
+Commit: 221dd4d
+Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless.
+
+
+---
+
+## AI-IAdashems-NB-000028
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Eliminación de modo entrenamiento, restauración de editor pre-partida e IA evasiva de corredor con 3 reglas maestras
+Type: AI_ASSISTED
+Files: anomalies/cucumber.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/ladder.gd
+Change: Eliminación completa de artefactos de entrenamiento (SessionCard, estilos, temporizador de supervivencia y textos asociados). Restauración del modal de configuración interactiva pre-partida al iniciar la escena test_all_anomalies.tscn, permitiendo seleccionar cantidades independientes de cada categoría (Pepino, Lechuga, Guisante) y número de pisos antes de iniciar la simulación. En ladder.gd: eliminación del bloque invasivo que forzaba descensos en anomalías interfiriendo con su IA. En cucumber.gd: implementación estricta de las 3 reglas maestras: 1) Estar y desplazarse siempre a un piso diferente del jugador mediante escaleras libres, 2) Al escalar el jugador, correr hacia la escalera contraria en el piso actual para escapar y mantener niveles disjuntos, 3) Acotación horizontal estricta [min_ladder_x, max_ladder_x] calculando salidas seguras hacia el interior del piso para evitar acorralarse contra muros exteriores.
+Commit: e452fc7
+Notes: Verificado con 209/209 comprobaciones en verde (tools/ui_check.gd 41/41, systems/tests/heat_system_test.gd 32/32, systems/tests/round_manager_test.gd 136/136) y ejecución headless limpia de test_all_anomalies.tscn y test_cucumber.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000029
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Ampliación de arena a 50m, generación de 2-4 escaleras aleatorias por piso y agilidad aumentada en corredor
+Type: AI_ASSISTED
+Files: anomalies/cucumber.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
+Change: Ampliación dimensional de la arena en test_all_anomalies.tscn (plataformas y techos ampliados de 28m a 50m, muros exteriores reposicionados a X=±25m y contenedores a X=±22m). Sistema de generación procedural en test_arena_controller.gd que genera entre 2 y 4 escaleras dinámicas por transición de piso en posiciones aleatorias válidas bien distribuidas cada vez que se reinicia la partida. En cucumber.gd: velocidad base incrementada a 9.2 m/s (superior a la velocidad base de 8.0 m/s del jugador), velocidad de escalada elevada a 6.2 m/s, aceleración aumentada a 50.0 m/s² y cooldown post-escalada reducido a 0.6s. Detección reactiva de deslizamientos (slide) del jugador con ráfaga de sprint a 12.4 m/s y salto evasivo cercano para evitar capturas fáciles.
+Commit: d4b31fc
+Notes: Verificado con 209/209 checks automatizados en verde y ejecuciones headless limpias.
+
+
+---
+
+## AI-IAdashems-NB-000030
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Perspectiva 3D con relieve visible en cámara de seguimiento
+Type: AI_ASSISTED
+Files: player/follow_camera.gd, player/follow_camera.tscn
+Change: Transición de proyección ortogonal plana a proyección en perspectiva 3D (FOV 48.0, distancia fixed_z = 13.0m). Inclinación leve de cámara (pitch de -6.5° y yaw sutil de -3.5° con elevación y_offset = 1.2m) permitiendo apreciar el relieve tridimensional, caras superiores y profundidad de plataformas, techos, peldaños de escaleras y personajes en 2.5D.
+Commit: dc3dbdf
+Notes: Verificado con 209/209 comprobaciones automatizadas en verde y captura visual directa en D3D12.
+
+
+---
+
+## AI-IAdashems-NB-000031
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Física balística realista y cálculo cinemático de rebote para la lechuga
+Type: AI_ASSISTED
+Files: anomalies/lettuce.gd
+Change: Eliminación de la sobreescritura continua de velocidad vertical que provocaba que la lechuga se quedara pegada/flotando en el techo durante el slide del jugador. Implementación de física parabólica pura en caída libre con restitución en techo (e=0.8, rebote hacia abajo inmediato) y paredes (e=0.85). Cálculo cinemático de impulso exclusivamente al tocar el suelo con relación inversa entre altura y distancia: 1) Salto alto vertical (vy=8.6, vx=3.0) para sortear por arriba si el jugador se desliza a corta distancia (<3.8m); 2) Salto largo rasante (vy=4.6, vx=9.8) para escapar velozmente si el slide ocurre a distancia media; 3) Embestida rasante en picada (vy=4.2, vx=8.8) para castigar al jugador al finalizar su slide.
+Commit: e164cf3
+Notes: Verificado con 209/209 comprobaciones en verde (ui_check 41/41, heat_system_test 32/32, round_manager_test 136/136) y ejecución headless limpia de test_lettuce.tscn y test_all_anomalies.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000032
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de hitbox sobredimensionada en el guisante e implementación de escalada en escaleras para todas las anomalías
+Type: AI_ASSISTED
+Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/pea.tscn, anomalies/pea_projectile.tscn
+Change: Corrección del tamaño de hitbox en el lanzaguisantes (SphereShape3D_hit reducido de 0.55 a 0.40 para quedar estrictamente contenido dentro del cuerpo esférico de radio 0.48, eliminando daños fantasma; proyectil ajustado de radio 0.22 a 0.18). Implementación de soporte universal de escalada vertical y navegación entre pisos en la clase base Anomaly (start_climb, process_climbing, helpers de niveles y escaleras) para que todas las entidades puedan subir y bajar escaleras. En pea.gd: búsqueda de escaleras hacia el nivel del jugador si este está en otro piso y kiteo vertical para escapar si el jugador se aproxima en cuerpo a cuerpo. En lettuce.gd: integración de tránsito vertical en escaleras para perseguir verticalmente al jugador o rotar de piso.
+Commit: cd8fb01
+Notes: Verificado con 209/209 comprobaciones automatizadas en verde y ejecuciones headless limpias de test_pea.tscn, test_lettuce.tscn, test_cucumber.tscn y test_all_anomalies.tscn.

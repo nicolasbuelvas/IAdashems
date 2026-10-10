@@ -1,0 +1,579 @@
+[gd_scene load_steps=24 format=3]
+
+[ext_resource type="Script" path="res://anomalies/test_arena_controller.gd" id="1_controller"]
+[ext_resource type="PackedScene" uid="uid://d310r1vedl67d" path="res://player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="3_camera"]
+[ext_resource type="PackedScene" uid="uid://cmf2f53o82h1z" path="res://ui/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" path="res://level/ladder.tscn" id="5_ladder"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="6_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="7_eyebrow"]
+[ext_resource type="PackedScene" uid="uid://cmf2f53o82h1y" path="res://ui/hud.tscn" id="8_hud"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_Basement"]
+albedo_color = Color(0.18, 0.16, 0.15, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Floor"]
+albedo_color = Color(0.24, 0.22, 0.2, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Ceiling"]
+albedo_color = Color(0.15, 0.14, 0.13, 1)
+
+[sub_resource type="BoxShape3D" id="Shape_Platform"]
+size = Vector3(50, 0.6, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_Platform"]
+material = SubResource("Mat_Floor")
+size = Vector3(50, 0.6, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_Ceiling"]
+size = Vector3(50, 0.4, 4)
+
+[sub_resource type="BoxMesh" id="Mesh_Ceiling"]
+material = SubResource("Mat_Ceiling")
+size = Vector3(50, 0.4, 4)
+
+[sub_resource type="BoxShape3D" id="Shape_Wall"]
+size = Vector3(1, 18, 4)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Container"]
+albedo_color = Color(0.96, 0.68, 0.22, 1)
+emission_enabled = true
+emission = Color(0.96, 0.68, 0.22, 1)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="CylinderMesh" id="Mesh_Container"]
+material = SubResource("Mat_Container")
+top_radius = 0.45
+bottom_radius = 0.5
+height = 1.0
+
+[sub_resource type="CylinderShape3D" id="Shape_Container"]
+height = 1.0
+radius = 0.5
+
+[sub_resource type="StyleBoxFlat" id="Style_Card"]
+content_margin_left = 32.0
+content_margin_top = 22.0
+content_margin_right = 32.0
+content_margin_bottom = 22.0
+bg_color = Color(0.10, 0.07, 0.05, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.68, 0.22, 0.85)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.96, 0.68, 0.22, 0.18)
+shadow_size = 20
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="Style_StepperVal"]
+content_margin_left = 10.0
+content_margin_right = 10.0
+bg_color = Color(0.14, 0.1, 0.08, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.26, 0.18, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="TestAllAnomalies" type="Node3D"]
+script = ExtResource("1_controller")
+
+[node name="Architecture" type="Node3D" parent="."]
+
+[node name="Basement" type="Node3D" parent="Architecture"]
+
+[node name="Floor_Sotano" type="StaticBody3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.3, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Basement/Floor_Sotano"]
+shape = SubResource("Shape_Platform")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Basement/Floor_Sotano"]
+mesh = SubResource("Mesh_Platform")
+
+[node name="Ceiling_Sotano" type="StaticBody3D" parent="Architecture/Basement"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Basement/Ceiling_Sotano"]
+shape = SubResource("Shape_Ceiling")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Basement/Ceiling_Sotano"]
+mesh = SubResource("Mesh_Ceiling")
+
+[node name="Container_Sotano" type="Area3D" parent="Architecture/Basement" groups=["container"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, -3.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Basement/Container_Sotano"]
+mesh = SubResource("Mesh_Container")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Basement/Container_Sotano"]
+shape = SubResource("Shape_Container")
+
+[node name="Ladders_Basement" type="Node3D" parent="Architecture/Basement"]
+
+[node name="Ladder_Sotano_Left" parent="Architecture/Basement/Ladders_Basement" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, -4, 0)
+bottom_y = -3.5
+top_y = 0.5
+bottom_exit_offset_x = 1.2
+top_exit_offset_x = 1.2
+
+[node name="Ladder_Sotano_Right" parent="Architecture/Basement/Ladders_Basement" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, -4, 0)
+bottom_y = -3.5
+top_y = 0.5
+bottom_exit_offset_x = -1.2
+top_exit_offset_x = -1.2
+
+[node name="Floor1" type="Node3D" parent="Architecture"]
+
+[node name="Floor_F1" type="StaticBody3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor1/Floor_F1"]
+shape = SubResource("Shape_Platform")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor1/Floor_F1"]
+mesh = SubResource("Mesh_Platform")
+
+[node name="Ceiling_F1" type="StaticBody3D" parent="Architecture/Floor1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor1/Ceiling_F1"]
+shape = SubResource("Shape_Ceiling")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor1/Ceiling_F1"]
+mesh = SubResource("Mesh_Ceiling")
+
+[node name="Container_F1" type="Area3D" parent="Architecture/Floor1" groups=["container"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor1/Container_F1"]
+mesh = SubResource("Mesh_Container")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor1/Container_F1"]
+shape = SubResource("Shape_Container")
+
+[node name="Ladders_F1_F2" type="Node3D" parent="Architecture"]
+
+[node name="Ladder_F1_F2_Left" parent="Architecture/Ladders_F1_F2" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0)
+bottom_y = 0.5
+top_y = 4.5
+bottom_exit_offset_x = 1.2
+top_exit_offset_x = 1.2
+
+[node name="Ladder_F1_F2_Right" parent="Architecture/Ladders_F1_F2" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0)
+bottom_y = 0.5
+top_y = 4.5
+bottom_exit_offset_x = -1.2
+top_exit_offset_x = -1.2
+
+[node name="Floor2" type="Node3D" parent="Architecture"]
+
+[node name="Floor_F2" type="StaticBody3D" parent="Architecture/Floor2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.7, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor2/Floor_F2"]
+shape = SubResource("Shape_Platform")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor2/Floor_F2"]
+mesh = SubResource("Mesh_Platform")
+
+[node name="Ceiling_F2" type="StaticBody3D" parent="Architecture/Floor2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.8, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor2/Ceiling_F2"]
+shape = SubResource("Shape_Ceiling")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor2/Ceiling_F2"]
+mesh = SubResource("Mesh_Ceiling")
+
+[node name="Container_F2" type="Area3D" parent="Architecture/Floor2" groups=["container"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 4.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor2/Container_F2"]
+mesh = SubResource("Mesh_Container")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor2/Container_F2"]
+shape = SubResource("Shape_Container")
+
+[node name="Ladders_F2_F3" type="Node3D" parent="Architecture"]
+
+[node name="Ladder_F2_F3_Left" parent="Architecture/Ladders_F2_F3" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 4, 0)
+bottom_y = 4.5
+top_y = 8.5
+bottom_exit_offset_x = 1.2
+top_exit_offset_x = 1.2
+
+[node name="Ladder_F2_F3_Right" parent="Architecture/Ladders_F2_F3" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 4, 0)
+bottom_y = 4.5
+top_y = 8.5
+bottom_exit_offset_x = -1.2
+top_exit_offset_x = -1.2
+
+[node name="Floor3" type="Node3D" parent="Architecture"]
+
+[node name="Floor_F3" type="StaticBody3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.7, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor3/Floor_F3"]
+shape = SubResource("Shape_Platform")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor3/Floor_F3"]
+mesh = SubResource("Mesh_Platform")
+
+[node name="Ceiling_F3" type="StaticBody3D" parent="Architecture/Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.8, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor3/Ceiling_F3"]
+shape = SubResource("Shape_Ceiling")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor3/Ceiling_F3"]
+mesh = SubResource("Mesh_Ceiling")
+
+[node name="Container_F3" type="Area3D" parent="Architecture/Floor3" groups=["container"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 8.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/Floor3/Container_F3"]
+mesh = SubResource("Mesh_Container")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor3/Container_F3"]
+shape = SubResource("Shape_Container")
+
+[node name="WallLeft" type="StaticBody3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 4, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/WallLeft"]
+shape = SubResource("Shape_Wall")
+
+[node name="WallRight" type="StaticBody3D" parent="Architecture"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 4, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/WallRight"]
+shape = SubResource("Shape_Wall")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, -3.5, 0)
+
+[node name="FollowCamera" parent="." instance=ExtResource("3_camera")]
+target_path = NodePath("../Player")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.354, 0.354, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 15, 0)
+light_energy = 1.15
+
+[node name="SpawnedAnomalies" type="Node3D" parent="."]
+
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="HUD" parent="HUDLayer" instance=ExtResource("8_hud")]
+
+[node name="BtnReopenSetup" type="Button" parent="HUDLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 80.0
+offset_right = -24.0
+offset_bottom = 118.0
+theme = ExtResource("6_theme")
+text = "CONFIGURAR (F1)"
+
+[node name="SetupUI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 15
+
+[node name="Backdrop" type="ColorRect" parent="SetupUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.04, 0.03, 0.02, 0.82)
+
+[node name="Center" type="CenterContainer" parent="SetupUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Card" type="PanelContainer" parent="SetupUI/Center"]
+custom_minimum_size = Vector2(580, 0)
+layout_mode = 2
+theme = ExtResource("6_theme")
+theme_override_styles/panel = SubResource("Style_Card")
+
+[node name="Rows" type="VBoxContainer" parent="SetupUI/Center/Card"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Eyebrow" type="Label" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+label_settings = ExtResource("7_eyebrow")
+text = "LABORATORIO DE PRUEBAS • SIMULADOR"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+theme_type_variation = &"TitleMd"
+text = "EDITOR DE ANOMALÍAS"
+horizontal_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="SetupUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(60, 3)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.96, 0.68, 0.22, 1)
+
+[node name="RowCuc" type="HBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblCucTag" type="Label" parent="SetupUI/Center/Card/Rows/RowCuc"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = "Pepinos (Cucumis • Evasores)"
+
+[node name="BtnCucMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowCuc"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 34)
+layout_mode = 2
+text = "◄"
+
+[node name="ValBoxCuc" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowCuc"]
+custom_minimum_size = Vector2(42, 34)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_StepperVal")
+
+[node name="LblCucVal" type="Label" parent="SetupUI/Center/Card/Rows/RowCuc/ValBoxCuc"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
+theme_override_font_sizes/font_size = 17
+text = "1"
+horizontal_alignment = 1
+
+[node name="BtnCucPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowCuc"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 34)
+layout_mode = 2
+text = "►"
+
+[node name="RowLet" type="HBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblLetTag" type="Label" parent="SetupUI/Center/Card/Rows/RowLet"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = "Lechugas (Lactuca • Rebote 2D)"
+
+[node name="BtnLetMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowLet"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 34)
+layout_mode = 2
+text = "◄"
+
+[node name="ValBoxLet" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowLet"]
+custom_minimum_size = Vector2(42, 34)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_StepperVal")
+
+[node name="LblLetVal" type="Label" parent="SetupUI/Center/Card/Rows/RowLet/ValBoxLet"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
+theme_override_font_sizes/font_size = 17
+text = "1"
+horizontal_alignment = 1
+
+[node name="BtnLetPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowLet"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 34)
+layout_mode = 2
+text = "►"
+
+[node name="RowPea" type="HBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblPeaTag" type="Label" parent="SetupUI/Center/Card/Rows/RowPea"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = "Lanzaguisantes (Pisum • Artilleros)"
+
+[node name="BtnPeaMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowPea"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 34)
+layout_mode = 2
+text = "◄"
+
+[node name="ValBoxPea" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowPea"]
+custom_minimum_size = Vector2(42, 34)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_StepperVal")
+
+[node name="LblPeaVal" type="Label" parent="SetupUI/Center/Card/Rows/RowPea/ValBoxPea"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
+theme_override_font_sizes/font_size = 17
+text = "1"
+horizontal_alignment = 1
+
+[node name="BtnPeaPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowPea"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38, 34)
+layout_mode = 2
+text = "►"
+
+[node name="HSeparator1" type="HSeparator" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+
+[node name="FloorsSection" type="VBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LblFloorsHeader" type="Label" parent="SetupUI/Center/Card/Rows/FloorsSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.78, 0.7, 1)
+theme_override_font_sizes/font_size = 13
+text = "Pisos Habilitados (2 escaleras alternadas + sótano base):"
+horizontal_alignment = 1
+
+[node name="FloorButtons" type="HBoxContainer" parent="SetupUI/Center/Card/Rows/FloorsSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="BtnFloor1" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1 PISO"
+
+[node name="BtnFloor2" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"PrimaryButton"
+text = "2 PISOS"
+
+[node name="BtnFloor3" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "3 PISOS"
+
+[node name="Gap" type="Control" parent="SetupUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="BtnStart" type="Button" parent="SetupUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "COMENZAR SIMULACIÓN"
+
+[node name="GameOverUI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 18
+visible = false
+
+[node name="Backdrop" type="ColorRect" parent="GameOverUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.12, 0.02, 0.02, 0.88)
+
+[node name="Center" type="CenterContainer" parent="GameOverUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Card" type="PanelContainer" parent="GameOverUI/Center"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+theme = ExtResource("6_theme")
+theme_override_styles/panel = SubResource("Style_Card")
+
+[node name="Rows" type="VBoxContainer" parent="GameOverUI/Center/Card"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Eyebrow" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+label_settings = ExtResource("7_eyebrow")
+text = "PAPA COCINADA • SIN VIDAS"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+theme_type_variation = &"TitleLg"
+theme_override_colors/font_color = Color(0.95, 0.35, 0.25, 1)
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="GameOverUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(64, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.95, 0.35, 0.25, 1)
+
+[node name="Sub" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.8, 1)
+theme_override_font_sizes/font_size = 14
+text = "Has recibido 3 impactos y caíste derrotado ante las anomalías."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Gap" type="Control" parent="GameOverUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+
+[node name="BtnRetry" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "REINTENTAR SIMULACIÓN"
+
+[node name="BtnGameOverSetup" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "CONFIGURAR ENTIDADES (F1)"
+
+[node name="PauseLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="PauseMenu" parent="PauseLayer" instance=ExtResource("4_pause")]
