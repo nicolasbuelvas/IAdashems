@@ -1,26 +1,26 @@
-[gd_scene format=3 uid="uid://cmf2f53o82h1w"]
+[gd_scene load_steps=5 format=3 uid="uid://cmf2f53o82h1w"]
 
-[ext_resource type="Script" path="res://scenes/outro.gd" id="1_fghij"]
+[ext_resource type="PackedScene" path="res://ui/backdrop.tscn" id="1_bg"]
+[ext_resource type="Script" path="res://scenes/outro.gd" id="2_script"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="3_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="4_eyebrow"]
 
 [node name="Outro" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource("1_fghij")
+theme = ExtResource("3_theme")
+script = ExtResource("2_script")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0, 0, 0, 1)
+[node name="Backdrop" parent="." instance=ExtResource("1_bg")]
 
 [node name="WhiteFlash" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 2
 color = Color(1, 1, 1, 1)
 visible = false
 
@@ -31,16 +31,44 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Rows" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(640, 0)
 layout_mode = 2
-theme_override_constants/separation = 12
+mouse_filter = 2
+theme_override_constants/separation = 16
 
-[node name="ClosingLabel" type="Label" parent="Center/Rows"]
+[node name="Eyebrow" type="Label" parent="Center/Rows"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 36
+mouse_filter = 2
+label_settings = ExtResource("4_eyebrow")
+text = "GRUPO TUBÉRCULO S.A.S."
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="Center/Rows"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "TitleLg"
+text = "FIN DE LA JORNADA"
+horizontal_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="Center/Rows"]
+custom_minimum_size = Vector2(72, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+color = Color(0.909804, 0.639216, 0.239216, 1)
+
+[node name="Body" type="Label" parent="Center/Rows"]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Muted"
 text = "[texto de cierre]"
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="ContinueHint" type="Label" parent="Center/Rows"]
 layout_mode = 2
-text = "Pulsa cualquier tecla para continuar"
+mouse_filter = 2
+label_settings = ExtResource("4_eyebrow")
+text = "PULSA CUALQUIER TECLA PARA CONTINUAR"
 horizontal_alignment = 1

@@ -1,20 +1,20 @@
-[gd_scene format=3 uid="uid://cmf2f53o82h1v"]
+[gd_scene load_steps=6 format=3 uid="uid://cmf2f53o82h1v"]
 
-[ext_resource type="Script" path="res://scenes/intro.gd" id="1_abcde"]
+[ext_resource type="PackedScene" path="res://ui/backdrop.tscn" id="1_bg"]
+[ext_resource type="Script" path="res://scenes/intro.gd" id="2_script"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="3_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="4_eyebrow"]
+[ext_resource type="Texture2D" path="res://art/d-ui/PAPA_0003.png" id="5_mascot"]
 
 [node name="Intro" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource("1_abcde")
+theme = ExtResource("3_theme")
+script = ExtResource("2_script")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0, 0, 0, 1)
+[node name="Backdrop" parent="." instance=ExtResource("1_bg")]
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -23,21 +23,46 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Rows" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(680, 0)
 layout_mode = 2
-theme_override_constants/separation = 12
+mouse_filter = 2
+theme_override_constants/separation = 16
 
-[node name="StudioLabel" type="Label" parent="Center/Rows"]
+[node name="Mascot" type="TextureRect" parent="Center/Rows"]
+custom_minimum_size = Vector2(230, 268)
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Grupo Tubérculo S.A.S. presenta"
+size_flags_horizontal = 4
+mouse_filter = 2
+texture = ExtResource("5_mascot")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Eyebrow" type="Label" parent="Center/Rows"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = ExtResource("4_eyebrow")
+text = "GRUPO TUBÉRCULO S.A.S. PRESENTA"
 horizontal_alignment = 1
 
-[node name="ScenePlaceholder" type="Label" parent="Center/Rows"]
+[node name="Title" type="Label" parent="Center/Rows"]
 layout_mode = 2
-text = "[papa dormida en su escritorio]"
+mouse_filter = 2
+theme_type_variation = "TitleLg"
+text = "PHYTOPHTHORA INFESTANS"
 horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="Center/Rows"]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Muted"
+text = "[la papa dormida en su escritorio despierta]"
+horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="ContinueHint" type="Label" parent="Center/Rows"]
 layout_mode = 2
-text = "Pulsa cualquier tecla para continuar"
+mouse_filter = 2
+label_settings = ExtResource("4_eyebrow")
+text = "PULSA CUALQUIER TECLA PARA CONTINUAR"
 horizontal_alignment = 1

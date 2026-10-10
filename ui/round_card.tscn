@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmf2f53o82h1x"]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://ui/round_card.gd" id="1_card"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="2_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="3_eyebrow"]
 
 [node name="RoundCard" type="Control"]
 layout_mode = 3
@@ -9,15 +11,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 visible = false
 mouse_filter = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_card")
 
-[node name="Bg" type="ColorRect" parent="."]
+[node name="Dim" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-color = Color(0, 0, 0, 0.75)
+color = Color(0, 0, 0, 0.55)
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -27,21 +30,36 @@ anchor_bottom = 1.0
 mouse_filter = 2
 
 [node name="Rows" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(520, 0)
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 14
+
+[node name="TopRule" type="ColorRect" parent="Center/Rows"]
+custom_minimum_size = Vector2(160, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+color = Color(0.909804, 0.639216, 0.239216, 1)
 
 [node name="TurnLabel" type="Label" parent="Center/Rows"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/font_size = 64
-text = "TURNO 1"
+theme_type_variation = "TitleXl"
+text = "TURNO 01"
 horizontal_alignment = 1
 
 [node name="FloorNotice" type="Label" parent="Center/Rows"]
-layout_mode = 2
 visible = false
+layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/font_size = 28
-text = "¡Nuevo piso habilitado!"
+label_settings = ExtResource("3_eyebrow")
+text = "¡NUEVO PISO HABILITADO!"
 horizontal_alignment = 1
+
+[node name="BottomRule" type="ColorRect" parent="Center/Rows"]
+custom_minimum_size = Vector2(160, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+color = Color(0.909804, 0.639216, 0.239216, 1)

@@ -1,58 +1,135 @@
-[gd_scene format=3 uid="uid://cmf2f53o82h1u"]
+[gd_scene load_steps=6 format=3 uid="uid://cmf2f53o82h1u"]
 
-[ext_resource type="Script" path="res://scenes/main_menu.gd" id="1_v143r"]
+[ext_resource type="PackedScene" path="res://ui/backdrop.tscn" id="1_bg"]
+[ext_resource type="Script" path="res://scenes/main_menu.gd" id="2_script"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="3_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="4_eyebrow"]
+[ext_resource type="Texture2D" path="res://art/d-ui/PAPA_0000.png" id="5_mascot"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource("1_v143r")
+theme = ExtResource("3_theme")
+script = ExtResource("2_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Backdrop" parent="." instance=ExtResource("1_bg")]
+
+[node name="Brand" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0, 0, 0, 1)
+anchors_preset = 0
+offset_left = 72.0
+offset_top = 54.0
+offset_right = 664.0
+offset_bottom = 320.0
+mouse_filter = 2
+theme_override_constants/separation = 14
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Eyebrow" type="Label" parent="Brand"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = ExtResource("4_eyebrow")
+text = "GRUPO TUBÉRCULO S.A.S.  ·  DEPARTAMENTO DE CONTENCIÓN"
+
+[node name="Title" type="Label" parent="Brand"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "TitleXl"
+text = "PHYTOPHTHORA\nINFESTANS"
+
+[node name="Rule" type="ColorRect" parent="Brand"]
+custom_minimum_size = Vector2(96, 4)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+color = Color(0.909804, 0.639216, 0.239216, 1)
+
+[node name="Tagline" type="Label" parent="Brand"]
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Muted"
+text = "Eres una papa empleada. Contén las anomalías que tu propia empresa provoca antes de que el calor te cocine."
+autowrap_mode = 2
+
+[node name="Mascot" type="TextureRect" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 2
+anchor_top = 1.0
 anchor_bottom = 1.0
+offset_left = 78.0
+offset_top = -358.0
+offset_right = 372.0
+offset_bottom = -34.0
+mouse_filter = 2
+texture = ExtResource("5_mascot")
+expand_mode = 1
+stretch_mode = 4
 
-[node name="Rows" type="VBoxContainer" parent="Center"]
-layout_mode = 2
-theme_override_constants/separation = 16
+[node name="MenuCard" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -452.0
+offset_top = -186.0
+offset_right = -72.0
+offset_bottom = 186.0
 
-[node name="Title" type="Label" parent="Center/Rows"]
+[node name="Menu" type="VBoxContainer" parent="MenuCard"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 56
-text = "PHYTOPHTHORA INFESTANS"
-horizontal_alignment = 1
+theme_override_constants/separation = 12
 
-[node name="Subtitle" type="Label" parent="Center/Rows"]
+[node name="MenuEyebrow" type="Label" parent="MenuCard/Menu"]
 layout_mode = 2
-text = "Grupo Tubérculo S.A.S."
-horizontal_alignment = 1
+mouse_filter = 2
+label_settings = ExtResource("4_eyebrow")
+text = "MENÚ PRINCIPAL"
 
-[node name="Spacer" type="Control" parent="Center/Rows"]
+[node name="TitleSlot" type="Control" parent="MenuCard/Menu"]
+custom_minimum_size = Vector2(0, 6)
 layout_mode = 2
-custom_minimum_size = Vector2(0, 24)
+mouse_filter = 2
 
-[node name="NewGameButton" type="Button" parent="Center/Rows"]
+[node name="NewGameButton" type="Button" parent="MenuCard/Menu"]
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
+theme_type_variation = "PrimaryButton"
 text = "Nueva partida"
 
-[node name="OptionsButton" type="Button" parent="Center/Rows"]
+[node name="OptionsButton" type="Button" parent="MenuCard/Menu"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
 text = "Opciones"
 
-[node name="QuitButton" type="Button" parent="Center/Rows"]
+[node name="QuitButton" type="Button" parent="MenuCard/Menu"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
 text = "Salir"
-[connection signal="pressed" from="Center/Rows/QuitButton" to="." method="_on_QuitButton_pressed"]
+
+[node name="Footer" type="Label" parent="MenuCard/Menu"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Muted"
+text = "v0.1 MVP · Equipo IAdashems"
+horizontal_alignment = 1
+
+[node name="ControlsHint" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -640.0
+offset_top = -46.0
+offset_right = -72.0
+offset_bottom = -22.0
+mouse_filter = 2
+theme_type_variation = "Muted"
+text = "WASD mover   ·   ESPACIO saltar   ·   SHIFT deslizar   ·   E herbicida"
+horizontal_alignment = 2
+[connection signal="pressed" from="MenuCard/Menu/QuitButton" to="." method="_on_QuitButton_pressed"]
