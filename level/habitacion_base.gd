@@ -4,8 +4,12 @@ extends Node3D
 ## Habitación base 2.5D: genera piso, pared de fondo y paredes de los extremos con
 ## el GridMap del edificio, más sus colisiones. Se ajusta con `ancho` y `alto`
 ## (en celdas). El origen del nodo es la esquina izquierda del piso: la habitación
-## se extiende hacia +X. Para apilar una sobre otra, sube la de arriba `alto`
-## unidades en Y (el piso de la de arriba hace de techo de la de abajo).
+## se extiende hacia +X. Para armar un mapa, coloca varias instancias:
+## - Lado a lado: separa `ancho` unidades en X y desmarca `cerrar_derecha` de una
+##   y `cerrar_izquierda` de la otra para poder caminar de una a otra.
+## - Una sobre otra: sube la de arriba `alto` unidades en Y (su piso hace de techo
+##   de la de abajo; desmarca `cerrar_techo` en la de abajo) y abre un hueco con
+##   `huecos_piso` en la de arriba, donde va una Escalera (o se sube saltando).
 
 const PROFUNDIDAD := 3
 const _LIBRARY := preload("res://MeshesLibrary/MeshLibraryBuilding.meshlib")
@@ -41,6 +45,12 @@ const _META := &"_habitacion_generado"
 @export var cerrar_techo: bool = true:
 	set(valor):
 		cerrar_techo = valor
+		_reconstruir()
+## Huecos en el piso, como Vector2i(columna_inicial, cuantas_columnas). Sirven para
+## subir por una escalera o saltando desde la habitación de abajo, o para caer a ella.
+@export var huecos_piso: Array[Vector2i] = []:
+	set(valor):
+		huecos_piso = valor
 		_reconstruir()
 @export var item_piso: int = 46:
 	set(valor):
@@ -79,10 +89,12 @@ func _crear_gridmap() -> void:
 	gridmap.cell_size = Vector3.ONE
 	# Columna i del mundo (X) -> celda z = -(i + 1). Profundidad: celdas x = -2..0
 	# son el piso y x = -3 la pared de fondo.
+	var hueco := _columnas_hueco()
 	for i in range(ancho):
 		var z := -(i + 1)
-		for x in range(-2, 1):
-			gridmap.set_cell_item(Vector3i(x, 0, z), item_piso)
+		if not hueco[i]:
+			for x in range(-2, 1):
+				gridmap.set_cell_item(Vector3i(x, 0, z), item_piso)
 		for y in range(alto):
 			gridmap.set_cell_item(Vector3i(-3, y, z), item_pared)
 	if cerrar_izquierda:
@@ -108,8 +120,17 @@ func _crear_colisiones() -> void:
 	var piso_base := _PISO_Y - _GROSOR_PISO
 	var alto_m := float(alto)
 	var z_centro := -0.5  # las celdas x = -2..0 cubren z de -2 a 1
-	_caja(cuerpo, Vector3(ancho, _GROSOR_PISO, PROFUNDIDAD),
-			Vector3(ancho * 0.5, piso_base + _GROSOR_PISO * 0.5, z_centro))
+	var hueco := _columnas_hueco()
+	var inicio := -1
+	for i in range(ancho + 1):
+		var libre := i < ancho and not hueco[i]
+		if libre and inicio < 0:
+			inicio = i
+		elif not libre and inicio >= 0:
+			var largo := i - inicio
+			_caja(cuerpo, Vector3(largo, _GROSOR_PISO, PROFUNDIDAD),
+					Vector3(inicio + largo * 0.5, piso_base + _GROSOR_PISO * 0.5, z_centro))
+			inicio = -1
 	_caja(cuerpo, Vector3(ancho, alto_m, 1.0),
 			Vector3(ancho * 0.5, piso_base + alto_m * 0.5, -2.5))
 	if cerrar_izquierda:
@@ -122,6 +143,16 @@ func _crear_colisiones() -> void:
 		_caja(cuerpo, Vector3(ancho, _GROSOR_PISO, PROFUNDIDAD),
 				Vector3(ancho * 0.5, piso_base + alto_m + _GROSOR_PISO * 0.5, z_centro))
 	add_child(cuerpo)
+
+
+## 1 en las columnas (0..ancho-1) que tienen hueco en el piso.
+func _columnas_hueco() -> PackedByteArray:
+	var columnas := PackedByteArray()
+	columnas.resize(ancho)
+	for h in huecos_piso:
+		for i in range(maxi(h.x, 0), mini(h.x + h.y, ancho)):
+			columnas[i] = 1
+	return columnas
 
 
 func _caja(cuerpo: StaticBody3D, tamano: Vector3, centro: Vector3) -> void:

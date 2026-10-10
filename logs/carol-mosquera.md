@@ -62,3 +62,14 @@ Files: level/habitacion_base.gd, level/habitacion_base.tscn, level/conexion_habi
 Change: HabitacionBase (@tool) genera con el GridMap piso, pared de fondo, paredes de extremo y colisiones segun `ancho` y `alto`. ConexionHabitacion teletransporta al jugador a otra conexion al pulsar W/flecha arriba (se enlaza de vuelta sola). PASILLO.tscn ahora usa dos habitaciones apiladas (Pasillo ancho 23, Piso2 ancho 14 alto 4) conectadas. Camara: ortografica size 16 (antes 10) y centrada en el cuerpo del jugador con target_offset (0,1,0), con snap inicial. Sin Godot en la sesion: no se ejecuto.
 Commit: PENDING (lo hace el usuario manualmente)
 Notes: Reemplaza el GridMap pintado a mano de PASILLO.tscn por el generado (mismo contenido: piso id 46, pared id 85). Verificar en el editor la altura de colisiones de pared y el tamano de camara. gridmap_collider.gd ya no se usa.
+
+## AI-IAdashems-CM-000006
+
+Timestamp: N/A
+Participant: CM (Carol Mosquera)
+Task: Quitar las conexiones por zona azul, mapa de 4 habitaciones y escaleras verticales
+Type: AI_GENERATED
+Files: level/habitacion_base.gd, level/escalera.gd, level/escalera.tscn, player/player.gd, PASILLO.tscn, level/conexion_habitacion.gd (borrado), level/conexion_habitacion.tscn (borrado)
+Change: Se eliminaron las ConexionHabitacion. HabitacionBase gana `huecos_piso` (huecos en el piso, con colision partida). Nueva Escalera (Area3D @tool) con peldanos generados; el jugador la trepa con W/S estando frente a ella, la suelta con A/D arriba o abajo, o con salto (player.gd: _update_climb). PASILLO.tscn ahora tiene 4 habitaciones (Hab_1A, Hab_1B abajo; Hab_2A, Hab_2B arriba) unidas caminando, con un hueco de 3 columnas en el piso de Hab_2B y una Escalera debajo (tambien se puede subir saltando). Sin Godot en la sesion: no se ejecuto.
+Commit: PENDING (lo hace el usuario manualmente)
+Notes: Verificar en el editor el agarre y salida de la escalera (hover al salir por arriba) y que el hueco quede alineado con la escalera (x=9.5 local de Hab_1B). Los umbrales _CLIMB_SPEED y _LADDER_TOP_HOVER en player.gd son ajustables.

@@ -18,6 +18,9 @@ const _BLINK_INTERVAL := 0.08
 const _SLIDE_ALPHA := 0.4
 const _DASH_VISUAL_OFFSET_Y := 0.18
 const HEAT_HIGH_THRESHOLD := 70.0
+const _CLIMB_SPEED := 4.0
+## Tiempo sin gravedad al salir de una escalera por arriba, para cruzar el hueco.
+const _LADDER_TOP_HOVER := 0.35
 
 var move_speed: float = _FALLBACK_SPEED
 var jump_velocity: float = _FALLBACK_JUMP_VELOCITY
@@ -47,6 +50,9 @@ var _visual: GeometryInstance3D
 var _animated_sprite: AnimatedSprite3D
 var _sprite_base_y := 0.0
 var _heat_active := false
+var _ladder: Escalera
+var _climbing := false
+var _ladder_hover_left := 0.0
 
 
 func _ready() -> void:
@@ -80,7 +86,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
+	if _update_climb(delta):
+		return
+
+	if not is_on_floor() and _ladder_hover_left <= 0.0:
 		velocity.y -= _gravity * delta
 
 	if _wants_jump() and is_on_floor():
@@ -106,6 +115,64 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	global_position.z = 0.0
 	_update_animation()
+
+
+## Lo llama la Escalera al entrar o salir de su zona.
+func set_ladder(ladder: Escalera) -> void:
+	_ladder = ladder
+
+
+func clear_ladder(ladder: Escalera) -> void:
+	if _ladder == ladder:
+		_ladder = null
+		_climbing = false
+
+
+func is_climbing() -> bool:
+	return _climbing
+
+
+## Trepa la escalera si el jugador está frente a una y pulsa W (sube) o S (baja).
+## Devuelve true si este frame lo movió la escalera.
+func _update_climb(delta: float) -> bool:
+	_ladder_hover_left = maxf(_ladder_hover_left - delta, 0.0)
+	if _ladder == null or _dead:
+		_climbing = false
+		return false
+	var vertical := _vertical_axis()
+	if not _climbing:
+		if vertical == 0.0 or is_sliding():
+			return false
+		_climbing = true
+		_slide_queued = false
+
+	var top := _ladder.y_cima()
+	var at_top := global_position.y >= top - 0.05
+	var at_bottom := is_on_floor() and global_position.y <= _ladder.global_position.y + 0.2
+	if _jump_queued:
+		_jump_queued = false
+		_climbing = false
+		velocity.y = jump_velocity * 0.6
+		return false
+	if _horizontal_axis() != 0.0 and (at_top or at_bottom):
+		_climbing = false
+		if at_top:
+			velocity.y = 0.0
+			_ladder_hover_left = _LADDER_TOP_HOVER
+		return false
+	if vertical < 0.0 and at_bottom:
+		_climbing = false
+		return false
+
+	global_position.x = move_toward(global_position.x, _ladder.global_position.x, 8.0 * delta)
+	velocity = Vector3(0.0, vertical * _CLIMB_SPEED, 0.0)
+	if vertical > 0.0 and at_top:
+		velocity.y = 0.0
+		global_position.y = top
+	move_and_slide()
+	global_position.z = 0.0
+	_update_animation()
+	return true
 
 
 func take_damage(amount: int) -> void:
@@ -246,6 +313,15 @@ func _horizontal_axis() -> float:
 		axis -= 1.0
 	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
 		axis += 1.0
+	return axis
+
+
+func _vertical_axis() -> float:
+	var axis := 0.0
+	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
+		axis += 1.0
+	if Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN):
+		axis -= 1.0
 	return axis
 
 
