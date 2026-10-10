@@ -232,3 +232,14 @@ Files: level/materials/office_concrete.tres, level/building.tscn, game/game.tscn
 Change: Se creó un material propio desde los mapas color, roughness, normal GL y AO, con repetición para las superficies largas y sin displacement. Se aplicó a pisos y paredes de fondo; la luz direccional principal proyecta sombras de opacidad reducida y los sprites recortan alfa para formar siluetas. Las sombras se revierten desactivando shadow_enabled en esa luz.
 Commit: PENDING
 Notes: git diff --check y validaciones estáticas de rutas/referencias completadas. No hay ejecutable Godot disponible en PATH; faltan validación de carga de escenas, revisión visual del tiling y medición de rendimiento en la PC del equipo.
+
+## AI-IAdashems-SM-000021
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Completar textura de paredes laterales y activar iluminación frontal con sombras
+Type: DEBUGGING
+Files: level/materials/office_concrete_sidewalls.tres, level/building.tscn, player/follow_camera.tscn, game/game.tscn, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: Se asignó concreto PBR con escala UV propia a las paredes laterales. Se añadió un foco cálido hijo de la cámara, dirigido hacia el jugador y la pared de fondo, y se trasladó a ese foco la única sombra en tiempo real; la direccional queda como luz de relleno sin sombras. La casilla CameraKeyLight.shadow_enabled permite apagar las sombras sin quitar iluminación.
+Commit: PENDING
+Notes: Validaciones estáticas de rutas, materiales y configuración de luz realizadas; git diff --check pasó. Godot no está disponible en PATH, así que la apariencia y el costo real de la luz quedan pendientes de comprobar en la PC del equipo. Los .import de texturas son metadatos generados por Godot para los mapas usados.
