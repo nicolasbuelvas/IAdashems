@@ -63,4 +63,17 @@ Timestamp: N/A
 Participant: NB (Nicolas Buelvas)
 Task: Desarrollar la escena del Outro (outro.tscn)
 Type: AI_ASSISTED
-Commit: abb500b
+
+
+---
+
+## AI-IAdashems-NB-000006
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Desarrollar la escena de créditos (credits.tscn)
+Type: AI_ASSISTED
+Files: scenes/credits.tscn, scenes/credits.gd
+Change: Se creó el script credits.gd con funcionalidad de avance por botón y se implementó el diseño visual de la escena de créditos con un título, nombres del equipo y un botón para volver al menú.
+Commit: PENDING
+Notes: La navegación real al menú se integrará cuando GameManager.goto() esté disponible.
