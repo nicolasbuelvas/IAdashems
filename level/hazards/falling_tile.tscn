@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://level/hazard.gd" id="1_hazard"]
+
+[sub_resource type="BoxShape3D" id="Shape_hit"]
+size = Vector3(1.2, 1.6, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_tile"]
+albedo_color = Color(0.88, 0.86, 0.78, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_shadow"]
+albedo_color = Color(0.9, 0.1, 0.1, 0.55)
+transparency = 1
+shading_mode = 0
+
+[sub_resource type="BoxMesh" id="Mesh_tile"]
+material = SubResource("Mat_tile")
+size = Vector3(1.2, 0.15, 0.9)
+
+[sub_resource type="CylinderMesh" id="Mesh_shadow"]
+material = SubResource("Mat_shadow")
+top_radius = 0.6
+bottom_radius = 0.6
+height = 0.02
+
+[sub_resource type="BoxShape3D" id="Shape_trigger"]
+size = Vector3(2.2, 2.8, 1.0)
+
+[node name="FallingTile" type="Area3D" groups=["hazard"]]
+collision_layer = 64
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_hazard")
+mode = 3
+hurts_while_sliding = true
+cycle_on = 0.5
+cycle_off = 3.5
+warn_time = 0.7
+drop_height = 3.1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 0.8, 0.0)
+shape = SubResource("Shape_hit")
+
+[node name="Off" type="Node3D" parent="."]
+
+[node name="CeilingTile" type="MeshInstance3D" parent="Off"]
+position = Vector3(0.0, 3.2, 0.0)
+mesh = SubResource("Mesh_tile")
+
+[node name="Warn" type="Node3D" parent="."]
+visible = false
+
+[node name="Shadow" type="MeshInstance3D" parent="Warn"]
+position = Vector3(0.0, 0.02, 0.0)
+mesh = SubResource("Mesh_shadow")
+
+[node name="Dropper" type="Node3D" parent="."]
+visible = false
+position = Vector3(0.0, 3.1, 0.0)
+
+[node name="Tile" type="MeshInstance3D" parent="Dropper"]
+position = Vector3(0.0, 0.1, 0.0)
+mesh = SubResource("Mesh_tile")
+
+[node name="Trigger" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+position = Vector3(0.0, 1.4, 0.0)
+shape = SubResource("Shape_trigger")

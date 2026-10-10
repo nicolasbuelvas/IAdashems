@@ -1,0 +1,80 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://level/hazard.gd" id="1_hazard"]
+
+[sub_resource type="BoxShape3D" id="Shape_hit"]
+size = Vector3(1.1, 2.6, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_printer"]
+albedo_color = Color(0.82, 0.82, 0.8, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_dark"]
+albedo_color = Color(0.15, 0.15, 0.17, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_puff"]
+albedo_color = Color(1.0, 1.0, 1.0, 0.35)
+transparency = 1
+shading_mode = 0
+
+[sub_resource type="StandardMaterial3D" id="Mat_steam"]
+albedo_color = Color(0.95, 0.97, 1.0, 0.55)
+transparency = 1
+emission_enabled = true
+emission = Color(0.8, 0.85, 0.9, 1.0)
+emission_energy_multiplier = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_printer"]
+material = SubResource("Mat_printer")
+size = Vector3(1.2, 0.5, 0.9)
+
+[sub_resource type="BoxMesh" id="Mesh_slot"]
+material = SubResource("Mat_dark")
+size = Vector3(0.8, 0.04, 0.5)
+
+[sub_resource type="SphereMesh" id="Mesh_puff"]
+material = SubResource("Mat_puff")
+radius = 0.35
+height = 0.5
+
+[sub_resource type="CylinderMesh" id="Mesh_column"]
+material = SubResource("Mat_steam")
+top_radius = 0.6
+bottom_radius = 0.35
+height = 2.1
+
+[node name="SteamVent" type="Area3D" groups=["hazard"]]
+collision_layer = 64
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_hazard")
+mode = 1
+hurts_while_sliding = true
+cycle_on = 1.0
+cycle_off = 2.4
+warn_time = 0.7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 1.3, 0.0)
+shape = SubResource("Shape_hit")
+
+[node name="Printer" type="MeshInstance3D" parent="."]
+position = Vector3(0.0, 0.25, -0.1)
+mesh = SubResource("Mesh_printer")
+
+[node name="Slot" type="MeshInstance3D" parent="."]
+position = Vector3(0.0, 0.51, -0.1)
+mesh = SubResource("Mesh_slot")
+
+[node name="Warn" type="Node3D" parent="."]
+visible = false
+
+[node name="Puff" type="MeshInstance3D" parent="Warn"]
+position = Vector3(0.0, 0.75, 0.0)
+mesh = SubResource("Mesh_puff")
+
+[node name="On" type="Node3D" parent="."]
+visible = false
+
+[node name="Column" type="MeshInstance3D" parent="On"]
+position = Vector3(0.0, 1.55, 0.0)
+mesh = SubResource("Mesh_column")

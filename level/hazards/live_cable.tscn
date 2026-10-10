@@ -1,0 +1,81 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://level/hazard.gd" id="1_hazard"]
+
+[sub_resource type="BoxShape3D" id="Shape_hit"]
+size = Vector3(2.4, 0.45, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_off"]
+albedo_color = Color(0.12, 0.12, 0.12, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_warn"]
+albedo_color = Color(0.95, 0.8, 0.1, 1.0)
+emission_enabled = true
+emission = Color(0.95, 0.75, 0.1, 1.0)
+emission_energy_multiplier = 1.2
+
+[sub_resource type="StandardMaterial3D" id="Mat_on"]
+albedo_color = Color(0.4, 0.9, 1.0, 1.0)
+emission_enabled = true
+emission = Color(0.3, 0.85, 1.0, 1.0)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="CylinderMesh" id="Mesh_cable"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 2.4
+
+[sub_resource type="BoxMesh" id="Mesh_arc"]
+material = SubResource("Mat_on")
+size = Vector3(2.4, 0.35, 0.05)
+
+[node name="LiveCable" type="Area3D" groups=["hazard"]]
+collision_layer = 64
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_hazard")
+mode = 1
+cycle_on = 1.4
+cycle_off = 2.2
+warn_time = 0.6
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0.0, 0.22, 0.0)
+shape = SubResource("Shape_hit")
+
+[node name="Off" type="Node3D" parent="."]
+
+[node name="Cable" type="MeshInstance3D" parent="Off"]
+position = Vector3(0.0, 0.05, 0.0)
+mesh = SubResource("Mesh_cable")
+rotation = Vector3(0.0, 0.0, 1.5708)
+material_override = SubResource("Mat_off")
+
+[node name="Warn" type="Node3D" parent="."]
+visible = false
+
+[node name="Cable" type="MeshInstance3D" parent="Warn"]
+position = Vector3(0.0, 0.05, 0.0)
+mesh = SubResource("Mesh_cable")
+rotation = Vector3(0.0, 0.0, 1.5708)
+material_override = SubResource("Mat_warn")
+
+[node name="On" type="Node3D" parent="."]
+visible = false
+
+[node name="Cable" type="MeshInstance3D" parent="On"]
+position = Vector3(0.0, 0.05, 0.0)
+mesh = SubResource("Mesh_cable")
+rotation = Vector3(0.0, 0.0, 1.5708)
+material_override = SubResource("Mat_on")
+
+[node name="Arc" type="MeshInstance3D" parent="On"]
+position = Vector3(0.0, 0.2, 0.0)
+mesh = SubResource("Mesh_arc")
+transparency = 0.4
+
+[node name="Light" type="OmniLight3D" parent="On"]
+position = Vector3(0.0, 0.4, 0.5)
+light_color = Color(0.4, 0.85, 1, 1)
+light_energy = 1.5
+omni_range = 3.0

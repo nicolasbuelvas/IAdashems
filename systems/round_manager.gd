@@ -34,6 +34,8 @@ var time_left: float = 0.0
 var max_floor_unlocked: int = 1
 var contained_ids: Array[StringName] = []
 var expired_emitted: bool = false
+## Reloj guardado al morir (vida o calor): el reintento lo retoma en vez de recalcularlo. -1 = no hay.
+var _resume_time: float = -1.0
 
 ## Anomalías instanciadas por esta clase y todavía sin contener: spawn_id -> nodo.
 var _live: Dictionary = {}
@@ -53,9 +55,12 @@ func _process(delta: float) -> void:
 	if time_left <= 0.0 and not expired_emitted:
 		expired_emitted = true
 		EventBus.round_timer_expired.emit()
+		# Reloj agotado = game over definitivo del turno: la ronda se reinicia completa.
+		_fail(&"time")
 
 
-## Inicia la ronda n (1 a 6) o la reintenta. Si n es la ronda actual, conserva contained_ids.
+## Inicia la ronda n (1 a 6) o la reintenta. Si n es la ronda actual, conserva contained_ids
+## (tras morir siguen ahí; tras agotar el reloj _fail ya los borró).
 func start_round(n: int) -> void:
 	if n < 1 or n > ROUNDS.size():
 		push_error("RoundManager: la ronda %d no existe" % n)
@@ -70,6 +75,7 @@ func start_round(n: int) -> void:
 	if n != current_round:
 		_free_live()
 		contained_ids.clear()
+		_resume_time = -1.0
 	current_round = n
 
 	# 2. Anomalías que faltan.
@@ -102,8 +108,12 @@ func start_round(n: int) -> void:
 			continue
 		_spawn_anomaly(entry[0], spawn_id)
 
-	# 7. Reloj. Con reintento, 90 + 15 x restantes (restantes ya descuenta lo contenido).
-	time_left = GameConfig.ROUND_BASE_TIME + GameConfig.ROUND_TIME_PER_ANOMALY * remaining
+	# 7. Reloj: 90 + 15 x restantes. Si la papa murió, sigue donde iba.
+	if _resume_time > 0.0:
+		time_left = _resume_time
+	else:
+		time_left = GameConfig.ROUND_BASE_TIME + GameConfig.ROUND_TIME_PER_ANOMALY * remaining
+	_resume_time = -1.0
 	expired_emitted = false
 	active = true
 	if remaining == 0:
@@ -205,12 +215,21 @@ func _win() -> void:
 
 
 ## Derrota: corta el reloj, libera las anomalías vivas y avisa. No reinicia la ronda:
-## GameManager o game.gd pide start_round(current_round). Conserva contained_ids.
+## game.gd pide start_round(current_round). El calor y la vida se reinician con round_started y reset_to.
+## Decisión de SV (2026-10-10):
+##   - &"health" o &"heat" (la papa muere): conserva las anomalías contenidas y el reloj sigue donde iba.
+##   - &"time" (reloj agotado): game over definitivo del turno. Borra el progreso y el reintento
+##     trae todas las anomalías con el reloj completo.
 func _fail(reason: StringName) -> void:
 	if not active:
 		return
 	active = false
 	_free_live()
+	if reason == &"time":
+		contained_ids.clear()
+		_resume_time = -1.0
+	else:
+		_resume_time = time_left
 	EventBus.round_failed.emit(reason)
 
 
