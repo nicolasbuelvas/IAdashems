@@ -1,20 +1,19 @@
-[gd_scene format=3 uid="uid://cmf2f53o82h1a"]
+[gd_scene load_steps=5 format=3 uid="uid://cmf2f53o82h1a"]
 
 [ext_resource type="Script" path="res://ui/options_menu.gd" id="1_uvwxyz"]
+[ext_resource type="PackedScene" path="res://ui/backdrop.tscn" id="2_bg"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="3_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="4_eyebrow"]
 
 [node name="OptionsMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme = ExtResource("3_theme")
 script = ExtResource("1_uvwxyz")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0, 0, 0, 1)
+[node name="Backdrop" parent="." instance=ExtResource("2_bg")]
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -22,63 +21,117 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Rows" type="VBoxContainer" parent="Center"]
+[node name="Card" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(580, 0)
 layout_mode = 2
-custom_minimum_size = Vector2(420, 0)
-theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="Center/Rows"]
+[node name="Rows" type="VBoxContainer" parent="Center/Card"]
 layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Eyebrow" type="Label" parent="Center/Card/Rows"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = ExtResource("4_eyebrow")
+text = "CONFIGURACIÓN"
+
+[node name="Title" type="Label" parent="Center/Card/Rows"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "TitleLg"
 text = "OPCIONES"
 horizontal_alignment = 1
 
-[node name="MusicRow" type="HBoxContainer" parent="Center/Rows"]
+[node name="Rule" type="ColorRect" parent="Center/Card/Rows"]
+custom_minimum_size = Vector2(72, 4)
 layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+color = Color(0.909804, 0.639216, 0.239216, 1)
 
-[node name="MusicLabel" type="Label" parent="Center/Rows/MusicRow"]
+[node name="Gap" type="Control" parent="Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 6)
 layout_mode = 2
+mouse_filter = 2
+
+[node name="MusicRow" type="HBoxContainer" parent="Center/Card/Rows"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="MusicLabel" type="Label" parent="Center/Card/Rows/MusicRow"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+mouse_filter = 2
 text = "Música"
 
-[node name="MusicSlider" type="HSlider" parent="Center/Rows/MusicRow"]
+[node name="MusicSlider" type="HSlider" parent="Center/Card/Rows/MusicRow"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+custom_minimum_size = Vector2(0, 28)
 max_value = 100.0
 value = 100.0
 
-[node name="SfxRow" type="HBoxContainer" parent="Center/Rows"]
+[node name="SfxRow" type="HBoxContainer" parent="Center/Card/Rows"]
 layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+alignment = 1
 
-[node name="SfxLabel" type="Label" parent="Center/Rows/SfxRow"]
+[node name="SfxLabel" type="Label" parent="Center/Card/Rows/SfxRow"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+mouse_filter = 2
 text = "Efectos"
 
-[node name="SfxSlider" type="HSlider" parent="Center/Rows/SfxRow"]
+[node name="SfxSlider" type="HSlider" parent="Center/Card/Rows/SfxRow"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+custom_minimum_size = Vector2(0, 28)
 max_value = 100.0
 value = 100.0
 
-[node name="FullscreenCheck" type="CheckButton" parent="Center/Rows"]
+[node name="Gap2" type="Control" parent="Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
+mouse_filter = 2
+
+[node name="FullscreenCheck" type="CheckButton" parent="Center/Card/Rows"]
+layout_mode = 2
+mouse_filter = 2
 text = "Pantalla completa"
 
-[node name="ResolutionRow" type="HBoxContainer" parent="Center/Rows"]
+[node name="ResolutionRow" type="HBoxContainer" parent="Center/Card/Rows"]
 layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+alignment = 1
 
-[node name="ResolutionLabel" type="Label" parent="Center/Rows/ResolutionRow"]
+[node name="ResolutionLabel" type="Label" parent="Center/Card/Rows/ResolutionRow"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+mouse_filter = 2
 text = "Resolución"
 
-[node name="ResolutionOption" type="OptionButton" parent="Center/Rows/ResolutionRow"]
+[node name="ResolutionOption" type="OptionButton" parent="Center/Card/Rows/ResolutionRow"]
 layout_mode = 2
 size_flags_horizontal = 3
+custom_minimum_size = Vector2(0, 44)
 
-[node name="BackButton" type="Button" parent="Center/Rows"]
+[node name="Gap3" type="Control" parent="Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="BackButton" type="Button" parent="Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "Volver"
-[connection signal="value_changed" from="Center/Rows/MusicRow/MusicSlider" to="." method="_on_MusicSlider_value_changed"]
-[connection signal="value_changed" from="Center/Rows/SfxRow/SfxSlider" to="." method="_on_SfxSlider_value_changed"]
-[connection signal="toggled" from="Center/Rows/FullscreenCheck" to="." method="_on_FullscreenCheck_toggled"]
-[connection signal="item_selected" from="Center/Rows/ResolutionRow/ResolutionOption" to="." method="_on_ResolutionOption_item_selected"]
-[connection signal="pressed" from="Center/Rows/BackButton" to="." method="_on_BackButton_pressed"]
-
+[connection signal="value_changed" from="Center/Card/Rows/MusicRow/MusicSlider" to="." method="_on_MusicSlider_value_changed"]
+[connection signal="value_changed" from="Center/Card/Rows/SfxRow/SfxSlider" to="." method="_on_SfxSlider_value_changed"]
+[connection signal="toggled" from="Center/Card/Rows/FullscreenCheck" to="." method="_on_FullscreenCheck_toggled"]
+[connection signal="item_selected" from="Center/Card/Rows/ResolutionRow/ResolutionOption" to="." method="_on_ResolutionOption_item_selected"]
+[connection signal="pressed" from="Center/Card/Rows/BackButton" to="." method="_on_BackButton_pressed"]

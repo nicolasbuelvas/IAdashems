@@ -45,7 +45,7 @@ func _on_floor_unlocked(_floor_number: int) -> void:
 
 
 func show_turn(round_number: int) -> void:
-	turn_label.text = "TURNO %d" % round_number
+	turn_label.text = "TURNO %02d" % round_number
 	floor_notice.visible = false
 	_show_card()
 

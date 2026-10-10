@@ -6,10 +6,10 @@ extends Control
 
 const DB_FLOOR := -80.0  # volumen mínimo de cada bus
 
-@onready var music_slider = $"Center/Rows/MusicRow/MusicSlider"
-@onready var sfx_slider = $"Center/Rows/SfxRow/SfxSlider"
-@onready var fullscreen_check = $"Center/Rows/FullscreenCheck"
-@onready var resolution_option = $"Center/Rows/ResolutionRow/ResolutionOption"
+@onready var music_slider = $"Center/Card/Rows/MusicRow/MusicSlider"
+@onready var sfx_slider = $"Center/Card/Rows/SfxRow/SfxSlider"
+@onready var fullscreen_check = $"Center/Card/Rows/FullscreenCheck"
+@onready var resolution_option = $"Center/Card/Rows/ResolutionRow/ResolutionOption"
 
 
 func _ready() -> void:
