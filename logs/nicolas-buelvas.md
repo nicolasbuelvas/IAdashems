@@ -309,5 +309,19 @@ Task: Rediseño visual del editor de anomalías con tema retro corporativo y con
 Type: AI_ASSISTED
 Files: anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
 Change: Eliminación de SpinBoxes y OptionButtons genéricos por defecto de Godot. Reemplazo por tarjeta corporativa PanelContainer integrada con res://ui/theme.tres, tipografías Fredoka y Nunito, filete ambar y steppers circulares minimalistas (◄ / ►) con insignias de conteo independientes para cada especie. Selector horizontal de dificultad con indicador de puntos (● / ○) y caja descriptiva con auto-ajuste de texto. Botones de segmento para selección de pisos y botón primario ambar 'COMENZAR SIMULACIÓN'. Ocultamiento automático del HUD durante la edición para evitar solapamientos visuales.
-Commit: PENDING
+Commit: 97f08e0
 Notes: Verificado con tools/ui_check.gd (41/41 PASS), systems/tests/heat_system_test.gd (32/32 PASS) y systems/tests/round_manager_test.gd (136/136 PASS). Total: 209 checks en verde.
+
+
+---
+
+## AI-IAdashems-NB-000024
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Ajuste de altura de tarjeta del editor (botón jugar visible) y 2 escaleras mínimas por piso
+Type: AI_ASSISTED
+Files: anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
+Change: Optimización de altura y márgenes verticales de la tarjeta del editor manual (de 580px a ~480px) asegurando que el botón 'COMENZAR SIMULACIÓN' se mantenga visible y holgado en cualquier resolución de ventana. Adición de 2 escaleras verticales independientes (izquierda a X=-7m y derecha a X=+7m) entre cada par de niveles (Sótano a P1, P1 a P2, y P2 a P3), garantizando siempre doble vía de escape/acceso tanto para la papa como para las anomalías.
+Commit: PENDING
+Notes: Verificado con 209/209 comprobaciones en verde y ejecución en headless.

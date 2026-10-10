@@ -2,8 +2,8 @@ class_name TestArenaController
 extends Node3D
 
 ## Controlador de la arena de pruebas y Editor Manual Pre-Partida.
-## Permite configurar cantidad de entidades con steppers limpios,
-## selector de dificultad táctica (1-6) y pisos (1 a 3 + sótano).
+## Permite configurar cantidad de entidades, dificultad de IA (1-6)
+## y número de pisos (1 a 3 + sótano base con mínimo 2 escaleras por piso).
 
 const SCENE_CUCUMBER := preload("res://anomalies/cucumber.tscn")
 const SCENE_LETTUCE := preload("res://anomalies/lettuce.tscn")
@@ -20,10 +20,11 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 @onready var setup_canvas: CanvasLayer = $SetupUI
 @onready var hud_canvas: CanvasLayer = $UI
 @onready var hud_label: Label = $UI/HUDCard/Margin/VBox/Label
+
 @onready var floor_2_node: Node3D = $Architecture/Floor2
 @onready var floor_3_node: Node3D = $Architecture/Floor3
-@onready var ladder_f1_f2: Node3D = $Architecture/Ladder_F1_F2
-@onready var ladder_f2_f3: Node3D = $Architecture/Ladder_F2_F3
+@onready var ladders_f1_f2: Node3D = $Architecture/Ladders_F1_F2
+@onready var ladders_f2_f3: Node3D = $Architecture/Ladders_F2_F3
 
 # Referencias del editor manual rediseñado
 @onready var lbl_cuc_val: Label = %LblCucVal
@@ -189,13 +190,13 @@ func _on_btn_start_pressed() -> void:
 func _apply_floor_configuration() -> void:
 	floor_2_node.visible = (active_floors >= 2)
 	floor_2_node.process_mode = Node.PROCESS_MODE_INHERIT if (active_floors >= 2) else Node.PROCESS_MODE_DISABLED
-	ladder_f1_f2.visible = (active_floors >= 2)
-	ladder_f1_f2.process_mode = Node.PROCESS_MODE_INHERIT if (active_floors >= 2) else Node.PROCESS_MODE_DISABLED
+	ladders_f1_f2.visible = (active_floors >= 2)
+	ladders_f1_f2.process_mode = Node.PROCESS_MODE_INHERIT if (active_floors >= 2) else Node.PROCESS_MODE_DISABLED
 	
 	floor_3_node.visible = (active_floors >= 3)
 	floor_3_node.process_mode = Node.PROCESS_MODE_INHERIT if (active_floors >= 3) else Node.PROCESS_MODE_DISABLED
-	ladder_f2_f3.visible = (active_floors >= 3)
-	ladder_f2_f3.process_mode = Node.PROCESS_MODE_INHERIT if (active_floors >= 3) else Node.PROCESS_MODE_DISABLED
+	ladders_f2_f3.visible = (active_floors >= 3)
+	ladders_f2_f3.process_mode = Node.PROCESS_MODE_INHERIT if (active_floors >= 3) else Node.PROCESS_MODE_DISABLED
 
 
 func _respawn_simulation() -> void:

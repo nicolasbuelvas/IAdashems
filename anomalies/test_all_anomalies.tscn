@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://anomalies/test_arena_controller.gd" id="1_controller"]
 [ext_resource type="PackedScene" uid="uid://d310r1vedl67d" path="res://player/player.tscn" id="2_player"]
@@ -50,35 +50,54 @@ height = 1.0
 height = 1.0
 radius = 0.5
 
+[sub_resource type="StyleBoxFlat" id="Style_Card"]
+content_margin_left = 28.0
+content_margin_top = 20.0
+content_margin_right = 28.0
+content_margin_bottom = 20.0
+bg_color = Color(0.10, 0.07, 0.05, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.68, 0.22, 0.85)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0.96, 0.68, 0.22, 0.18)
+shadow_size = 20
+shadow_offset = Vector2(0, 4)
+
 [sub_resource type="StyleBoxFlat" id="Style_StepperVal"]
-content_margin_left = 12.0
-content_margin_right = 12.0
+content_margin_left = 10.0
+content_margin_right = 10.0
 bg_color = Color(0.14, 0.1, 0.08, 0.8)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.35, 0.26, 0.18, 0.8)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="Style_DescBox"]
-content_margin_left = 16.0
-content_margin_top = 10.0
-content_margin_right = 16.0
-content_margin_bottom = 10.0
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
 bg_color = Color(0.12, 0.09, 0.07, 0.9)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.32, 0.23, 0.16, 0.7)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="Style_HUDCard"]
 content_margin_left = 18.0
@@ -132,12 +151,19 @@ mesh = SubResource("Mesh_Container")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Basement/Container_Sotano"]
 shape = SubResource("Shape_Container")
 
-[node name="Ladder_Sotano_F1" parent="Architecture/Basement" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -4, 0)
+[node name="Ladder_Sotano_Left" parent="Architecture/Basement" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, -4, 0)
 bottom_y = -3.5
 top_y = 0.5
 bottom_exit_offset_x = -1.2
 top_exit_offset_x = 1.2
+
+[node name="Ladder_Sotano_Right" parent="Architecture/Basement" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -4, 0)
+bottom_y = -3.5
+top_y = 0.5
+bottom_exit_offset_x = 1.2
+top_exit_offset_x = -1.2
 
 [node name="Floor1" type="Node3D" parent="Architecture"]
 
@@ -170,12 +196,21 @@ mesh = SubResource("Mesh_Container")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor1/Container_F1"]
 shape = SubResource("Shape_Container")
 
-[node name="Ladder_F1_F2" parent="Architecture" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0)
+[node name="Ladders_F1_F2" type="Node3D" parent="Architecture"]
+
+[node name="Ladder_F1_F2_Left" parent="Architecture/Ladders_F1_F2" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0)
 bottom_y = 0.5
 top_y = 4.5
 bottom_exit_offset_x = -1.2
 top_exit_offset_x = 1.2
+
+[node name="Ladder_F1_F2_Right" parent="Architecture/Ladders_F1_F2" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+bottom_y = 0.5
+top_y = 4.5
+bottom_exit_offset_x = 1.2
+top_exit_offset_x = -1.2
 
 [node name="Floor2" type="Node3D" parent="Architecture"]
 
@@ -208,12 +243,21 @@ mesh = SubResource("Mesh_Container")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor2/Container_F2"]
 shape = SubResource("Shape_Container")
 
-[node name="Ladder_F2_F3" parent="Architecture" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 4, 0)
+[node name="Ladders_F2_F3" type="Node3D" parent="Architecture"]
+
+[node name="Ladder_F2_F3_Left" parent="Architecture/Ladders_F2_F3" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 4, 0)
 bottom_y = 4.5
 top_y = 8.5
 bottom_exit_offset_x = -1.2
 top_exit_offset_x = 1.2
+
+[node name="Ladder_F2_F3_Right" parent="Architecture/Ladders_F2_F3" instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 4, 0)
+bottom_y = 4.5
+top_y = 8.5
+bottom_exit_offset_x = 1.2
+top_exit_offset_x = -1.2
 
 [node name="Floor3" type="Node3D" parent="Architecture"]
 
@@ -322,13 +366,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Card" type="PanelContainer" parent="SetupUI/Center"]
-custom_minimum_size = Vector2(660, 0)
+custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
 theme = ExtResource("6_theme")
+theme_override_styles/panel = SubResource("Style_Card")
 
 [node name="Rows" type="VBoxContainer" parent="SetupUI/Center/Card"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="Eyebrow" type="Label" parent="SetupUI/Center/Card/Rows"]
 layout_mode = 2
@@ -338,19 +383,15 @@ horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="SetupUI/Center/Card/Rows"]
 layout_mode = 2
-theme_type_variation = &"TitleLg"
+theme_type_variation = &"TitleMd"
 text = "EDITOR DE ANOMALÍAS"
 horizontal_alignment = 1
 
 [node name="Rule" type="ColorRect" parent="SetupUI/Center/Card/Rows"]
-custom_minimum_size = Vector2(72, 4)
+custom_minimum_size = Vector2(60, 3)
 layout_mode = 2
 size_flags_horizontal = 4
 color = Color(0.96, 0.68, 0.22, 1)
-
-[node name="Gap1" type="Control" parent="SetupUI/Center/Card/Rows"]
-custom_minimum_size = Vector2(0, 4)
-layout_mode = 2
 
 [node name="RowCuc" type="HBoxContainer" parent="SetupUI/Center/Card/Rows"]
 layout_mode = 2
@@ -359,16 +400,17 @@ alignment = 1
 [node name="LblCucTag" type="Label" parent="SetupUI/Center/Card/Rows/RowCuc"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Pepino (Cucumis sativus • Evasor)"
+theme_override_font_sizes/font_size = 14
+text = "Pepino (Cucumis • Evasor)"
 
 [node name="BtnCucMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowCuc"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 36)
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "◄"
 
 [node name="ValBoxCuc" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowCuc"]
-custom_minimum_size = Vector2(46, 36)
+custom_minimum_size = Vector2(40, 32)
 layout_mode = 2
 theme_override_styles/panel = SubResource("Style_StepperVal")
 
@@ -376,13 +418,13 @@ theme_override_styles/panel = SubResource("Style_StepperVal")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 16
 text = "1"
 horizontal_alignment = 1
 
 [node name="BtnCucPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowCuc"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 36)
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "►"
 
@@ -393,16 +435,17 @@ alignment = 1
 [node name="LblLetTag" type="Label" parent="SetupUI/Center/Card/Rows/RowLet"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Lechuga (Lactuca sativa • Rebote 2D)"
+theme_override_font_sizes/font_size = 14
+text = "Lechuga (Lactuca • Rebote 2D)"
 
 [node name="BtnLetMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowLet"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 36)
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "◄"
 
 [node name="ValBoxLet" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowLet"]
-custom_minimum_size = Vector2(46, 36)
+custom_minimum_size = Vector2(40, 32)
 layout_mode = 2
 theme_override_styles/panel = SubResource("Style_StepperVal")
 
@@ -410,13 +453,13 @@ theme_override_styles/panel = SubResource("Style_StepperVal")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 16
 text = "1"
 horizontal_alignment = 1
 
 [node name="BtnLetPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowLet"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 36)
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "►"
 
@@ -427,16 +470,17 @@ alignment = 1
 [node name="LblPeaTag" type="Label" parent="SetupUI/Center/Card/Rows/RowPea"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Lanzaguisantes (Pisum sativum • Artillero)"
+theme_override_font_sizes/font_size = 14
+text = "Lanzaguisantes (Pisum • Artillero)"
 
 [node name="BtnPeaMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowPea"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 36)
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "◄"
 
 [node name="ValBoxPea" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowPea"]
-custom_minimum_size = Vector2(46, 36)
+custom_minimum_size = Vector2(40, 32)
 layout_mode = 2
 theme_override_styles/panel = SubResource("Style_StepperVal")
 
@@ -444,13 +488,13 @@ theme_override_styles/panel = SubResource("Style_StepperVal")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 16
 text = "1"
 horizontal_alignment = 1
 
 [node name="BtnPeaPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowPea"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 36)
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "►"
 
@@ -459,7 +503,7 @@ layout_mode = 2
 
 [node name="DiffSection" type="VBoxContainer" parent="SetupUI/Center/Card/Rows"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="DiffNav" type="HBoxContainer" parent="SetupUI/Center/Card/Rows/DiffSection"]
 layout_mode = 2
@@ -467,7 +511,7 @@ alignment = 1
 
 [node name="BtnDiffPrev" type="Button" parent="SetupUI/Center/Card/Rows/DiffSection/DiffNav"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(44, 36)
+custom_minimum_size = Vector2(38, 30)
 layout_mode = 2
 text = "◄"
 
@@ -476,13 +520,13 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 15
 text = "NIVEL 4: PROMEDIO+"
 horizontal_alignment = 1
 
 [node name="BtnDiffNext" type="Button" parent="SetupUI/Center/Card/Rows/DiffSection/DiffNav"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(44, 36)
+custom_minimum_size = Vector2(38, 30)
 layout_mode = 2
 text = "►"
 
@@ -490,7 +534,7 @@ text = "►"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 0.8)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 11
 text = "● ● ● ● ○ ○"
 horizontal_alignment = 1
 
@@ -502,7 +546,7 @@ theme_override_styles/panel = SubResource("Style_DescBox")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 text = "Descripción táctica de la IA..."
 autowrap_mode = 3
 
@@ -511,28 +555,30 @@ layout_mode = 2
 
 [node name="FloorsSection" type="VBoxContainer" parent="SetupUI/Center/Card/Rows"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="LblFloorsHeader" type="Label" parent="SetupUI/Center/Card/Rows/FloorsSection"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.78, 0.7, 1)
-theme_override_font_sizes/font_size = 13
-text = "Pisos Habilitados (+ Sótano Base):"
+theme_override_font_sizes/font_size = 12
+text = "Pisos Habilitados (2 escaleras por piso + sótano base):"
 horizontal_alignment = 1
 
 [node name="FloorButtons" type="HBoxContainer" parent="SetupUI/Center/Card/Rows/FloorsSection"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="BtnFloor1" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "1 PISO"
 
 [node name="BtnFloor2" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"PrimaryButton"
@@ -540,17 +586,14 @@ text = "2 PISOS"
 
 [node name="BtnFloor3" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "3 PISOS"
 
-[node name="Gap2" type="Control" parent="SetupUI/Center/Card/Rows"]
-custom_minimum_size = Vector2(0, 6)
-layout_mode = 2
-
 [node name="BtnStart" type="Button" parent="SetupUI/Center/Card/Rows"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
 text = "COMENZAR SIMULACIÓN"
