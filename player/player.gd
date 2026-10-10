@@ -125,6 +125,7 @@ func _physics_process(delta: float) -> void:
 
 	if _wants_jump() and is_on_floor():
 		velocity.y = jump_velocity
+		_emit_bus("player_jumped", [])
 		_jump_started_this_frame = true
 		_animate_motion_feedback(Vector3(0.92, 1.14, 1.0))
 

@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="2_camera"]
 [ext_resource type="Script" uid="uid://dosuv8httkdiv" path="res://player/test_anomaly.gd" id="3_anomaly_script"]
 [ext_resource type="Script" uid="uid://dben0qkk2338f" path="res://player/test_heat_bus.gd" id="4_heat_bus"]
+[ext_resource type="PackedScene" path="res://ui/pause_menu.tscn" id="5_pause"]
 
 [sub_resource type="BoxShape3D" id="FloorShape"]
 size = Vector3(20, 1, 4)
@@ -89,4 +90,10 @@ offset_bottom = 102.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "A / D or arrows: move
 Space: jump    Shift: slide
-E: herbicide    H: heat test"
+E: herbicide    H: heat test
+Esc: pause"
+
+[node name="PauseLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="PauseMenu" parent="PauseLayer" instance=ExtResource("5_pause")]

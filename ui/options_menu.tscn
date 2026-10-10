@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://ui/backdrop.tscn" id="2_bg"]
 [ext_resource type="Theme" path="res://ui/theme.tres" id="3_theme"]
 [ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="4_eyebrow"]
+[ext_resource type="Texture2D" uid="uid://dqlbtutjv7lwm" path="res://art/d-ui/options_background.png" id="5_art"]
 
 [node name="OptionsMenu" type="Control"]
 layout_mode = 3
@@ -15,6 +16,18 @@ script = ExtResource("1_uvwxyz")
 
 [node name="Backdrop" parent="." instance=ExtResource("2_bg")]
 
+[node name="OptionsArt" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_art")
+expand_mode = 1
+stretch_mode = 6
+
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -22,7 +35,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Card" type="PanelContainer" parent="Center"]
-custom_minimum_size = Vector2(580, 0)
+custom_minimum_size = Vector2(620, 0)
 layout_mode = 2
 
 [node name="Rows" type="VBoxContainer" parent="Center/Card"]
@@ -30,6 +43,7 @@ layout_mode = 2
 theme_override_constants/separation = 14
 
 [node name="Eyebrow" type="Label" parent="Center/Card/Rows"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 label_settings = ExtResource("4_eyebrow")
@@ -47,7 +61,7 @@ custom_minimum_size = Vector2(72, 4)
 layout_mode = 2
 size_flags_horizontal = 4
 mouse_filter = 2
-color = Color(0.909804, 0.639216, 0.239216, 1)
+color = Color(0.96, 0.68, 0.22, 1)
 
 [node name="Gap" type="Control" parent="Center/Card/Rows"]
 custom_minimum_size = Vector2(0, 6)
@@ -61,10 +75,10 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="MusicLabel" type="Label" parent="Center/Card/Rows/MusicRow"]
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 mouse_filter = 2
-text = "Música"
+text = "♫   Música"
 
 [node name="MusicSlider" type="HSlider" parent="Center/Card/Rows/MusicRow"]
 layout_mode = 2
@@ -81,10 +95,10 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="SfxLabel" type="Label" parent="Center/Card/Rows/SfxRow"]
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 mouse_filter = 2
-text = "Efectos"
+text = "🔊   Efectos"
 
 [node name="SfxSlider" type="HSlider" parent="Center/Card/Rows/SfxRow"]
 layout_mode = 2
@@ -102,7 +116,7 @@ mouse_filter = 2
 [node name="FullscreenCheck" type="CheckButton" parent="Center/Card/Rows"]
 layout_mode = 2
 mouse_filter = 2
-text = "Pantalla completa"
+text = "🖥   Pantalla completa"
 
 [node name="ResolutionRow" type="HBoxContainer" parent="Center/Card/Rows"]
 layout_mode = 2
@@ -111,10 +125,10 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="ResolutionLabel" type="Label" parent="Center/Card/Rows/ResolutionRow"]
-custom_minimum_size = Vector2(150, 0)
+custom_minimum_size = Vector2(170, 0)
 layout_mode = 2
 mouse_filter = 2
-text = "Resolución"
+text = "🖥   Resolución"
 
 [node name="ResolutionOption" type="OptionButton" parent="Center/Card/Rows/ResolutionRow"]
 layout_mode = 2

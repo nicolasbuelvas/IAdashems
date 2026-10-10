@@ -4,6 +4,8 @@ extends Control
 ## Los buses de audio Music y SFX los crea D en tiempo de ejecución si faltan:
 ## el layout de audio vive en project.godot, que solo lo edita C.
 
+signal back_requested()
+
 const DB_FLOOR := -80.0  # volumen mínimo de cada bus
 
 @onready var music_slider = $"Center/Card/Rows/MusicRow/MusicSlider"
@@ -90,12 +92,32 @@ func _on_FullscreenCheck_toggled(button_pressed: bool) -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		_select_current_resolution()
 
 
 func _on_ResolutionOption_item_selected(index: int) -> void:
-	DisplayServer.window_set_size(resolution_option.get_item_metadata(index))
+	var target_size: Vector2i = resolution_option.get_item_metadata(index)
+	if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN or DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		fullscreen_check.set_pressed_no_signal(false)
+	DisplayServer.window_set_size(target_size)
+	var screen_size := DisplayServer.screen_get_size()
+	DisplayServer.window_set_position((screen_size - target_size) / 2)
+
+
+func _input(event: InputEvent) -> void:
+	if not is_visible_in_tree():
+		return
+	if event.is_action_pressed("ui_cancel") and not event.is_echo():
+		_on_BackButton_pressed()
+		get_viewport().set_input_as_handled()
 
 
 func _on_BackButton_pressed() -> void:
-	# Pendiente: GameManager.goto(&"menu") — GameManager es de C y está vacío.
-	print("Volver al menú principal")
+	back_requested.emit()
+	if get_tree().current_scene == self:
+		var gm := get_node_or_null("/root/GameManager")
+		if gm and gm.has_method("goto"):
+			gm.goto(&"menu")
+		else:
+			get_tree().change_scene_to_file("res://scenes/main_menu.tscn")

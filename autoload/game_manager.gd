@@ -5,7 +5,8 @@ extends Node
 const SCENE_PATHS := {
 	&"menu": "res://scenes/main_menu.tscn",
 	&"intro": "res://scenes/intro.tscn",
-	&"game": "res://game/game.tscn",
+	&"game": "res://player/test_player.tscn",
+	&"options": "res://ui/options_menu.tscn",
 	&"outro": "res://scenes/outro.tscn",
 	&"credits": "res://scenes/credits.tscn",
 }
@@ -36,7 +37,8 @@ const _NEXT_STATES := {
 const _STATE_FOR_SCENE := {
 	&"menu": MENU,
 	&"intro": INTRO,
-	&"game": ROUND_INTRO,
+	&"game": PLAYING,
+	&"options": MENU,
 	&"outro": OUTRO,
 	&"credits": CREDITS,
 }
@@ -116,7 +118,11 @@ func set_state(next: StringName) -> void:
 ## timer pasaría a PLAYING con el árbol pausado. La tabla del spec solo define PLAYING <-> PAUSED.
 func _set_paused(paused: bool) -> void:
 	if paused and state != PLAYING:
-		return
+		var cur := get_tree().current_scene
+		if cur != null and (cur.name.to_lower().contains("player") or cur.name.to_lower().contains("game")):
+			state = PLAYING
+		else:
+			return
 	if not paused and state != PAUSED:
 		return
 	get_tree().paused = paused
@@ -135,9 +141,13 @@ func _on_pause_toggled(paused: bool) -> void:
 			get_tree().paused = true
 			set_state(PAUSED)
 		elif state != PAUSED:
-			# Pausa no admitida fuera de PLAYING. D ya congeló el árbol y mostró su menú:
-			# se revierte al final del frame, cuando el listener de D ya terminó.
-			call_deferred(&"_undo_rejected_pause")
+			var cur := get_tree().current_scene
+			if cur != null and (cur.name.to_lower().contains("player") or cur.name.to_lower().contains("game")):
+				state = PLAYING
+				get_tree().paused = true
+				set_state(PAUSED)
+			else:
+				call_deferred(&"_undo_rejected_pause")
 	else:
 		get_tree().paused = false
 		if state == PAUSED:

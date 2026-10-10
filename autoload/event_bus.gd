@@ -10,6 +10,7 @@ signal player_slide_ended()
 signal herbicide_fired()
 signal herbicide_cooldown_changed(progress: float)  # 0.0 = recién lanzado, 1.0 = listo
 signal herbicide_ready()
+signal player_jumped()
 
 # Anomalías (emite B)
 signal anomaly_spawned(anomaly: Node)
