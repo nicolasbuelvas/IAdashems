@@ -1,53 +1,83 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=3 uid="uid://dmfwj26yfy4fe"]
 
-[ext_resource type="Script" path="res://anomalies/cucumber.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cv1lkcigbhyfd" path="res://anomalies/cucumber.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bmu7vn2lfbj1e" path="res://Sprites/HONGUITO/HonguitoMamadisimo_0000.png" id="2_w7usd"]
+[ext_resource type="Texture2D" uid="uid://c0a3tt0etjmb8" path="res://Sprites/HONGUITO/HonguitoMamadisimo_0001.png" id="3_tuuse"]
+[ext_resource type="Texture2D" uid="uid://b5d8pvv8e1xc1" path="res://Sprites/HONGUITO/HonguitoMamadisimo_0002.png" id="4_1ewqa"]
+[ext_resource type="Texture2D" uid="uid://cftm1a5wya163" path="res://Sprites/HONGUITO/HonguitoMamadisimo_0003.png" id="5_303qv"]
+[ext_resource type="Texture2D" uid="uid://bj4xmhvh15r1x" path="res://Sprites/HONGUITO/HonguitoMamadisimo_0004.png" id="6_yb3mt"]
+[ext_resource type="Texture2D" uid="uid://dyl0jocthxcg5" path="res://Sprites/HONGUITO/HonguitoMamadisimo_0005.png" id="7_y2ich"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cuc"]
 radius = 0.35
 height = 1.3
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cuc"]
-albedo_color = Color(0.18, 0.76, 0.35, 1)
-roughness = 0.4
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_cuc"]
-material = SubResource("StandardMaterial3D_cuc")
-radius = 0.35
-height = 1.3
+[sub_resource type="SpriteFrames" id="SpriteFrames_dmuor"]
+resource_name = "Champinon"
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_w7usd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_tuuse")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_1ewqa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_303qv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_yb3mt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_y2ich")
+}],
+"loop": 1,
+"name": &"run",
+"speed": 5.0
+}]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_det"]
 height = 1.4
-radius = 0.5
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hit"]
 radius = 0.42
 height = 1.4
 
-[node name="Cucumber" type="CharacterBody3D" groups=["anomaly"]]
+[node name="Cucumber" type="CharacterBody3D" unique_id=1377781112 groups=["anomaly"]]
 collision_layer = 4
-collision_mask = 1
 script = ExtResource("1_script")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=383393183]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("CapsuleShape3D_cuc")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
-mesh = SubResource("CapsuleMesh_cuc")
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=659288894]
+transform = Transform3D(0.48082587, 0, 0, 0, 0.48082587, 0, 0, 0, 4.469083, 0, 1.0391917, 0)
+sprite_frames = SubResource("SpriteFrames_dmuor")
+animation = &"run"
+frame_progress = 0.3348255
+speed_scale = 2.0
 
-[node name="StairsDetector" type="Area3D" parent="."]
+[node name="StairsDetector" type="Area3D" parent="." unique_id=1183397434]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StairsDetector"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StairsDetector" unique_id=494459890]
 shape = SubResource("CylinderShape3D_det")
 
-[node name="ContactArea" type="Area3D" parent="." groups=["anomaly"]]
+[node name="ContactArea" type="Area3D" parent="." unique_id=1157450755 groups=["anomaly"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ContactArea"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ContactArea" unique_id=932341845]
 shape = SubResource("CapsuleShape3D_hit")

@@ -166,3 +166,14 @@ Files: player/player.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
 Change: La recuperación de 1 s reduce la velocidad horizontal al 55 % y permite saltar y disparar; se elimina la inmovilización y el descarte de entradas. Se integraron los cambios disponibles de origin/main mediante merge.
 Limitaciones: El porcentaje de velocidad es un valor inicial para probar. La compilación y el gameplay deben verificarse en Godot después de resolver la integración.
 Commit: PENDING
+
+## AI-IAdashems-SM-000015
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Dar más sensación de profundidad a la cámara lateral con inclinación dinámica
+Type: AI_ASSISTED
+Files: player/follow_camera.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: La cámara conserva su ángulo lateral actual y añade un balanceo de hasta 2 grados según la velocidad horizontal, suavizado con interpolación exponencial y centrado al reducir la velocidad.
+Limitaciones: El ángulo máximo y la respuesta son valores iniciales; falta playtest visual para confirmar que aporta profundidad sin distraer. No se pudo ejecutar Godot en este entorno.
+Commit: PENDING
