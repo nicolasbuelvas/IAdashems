@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://enemy/enemy.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Sprite1.png" id="2_tex"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.3
+height = 1.0
+
+[node name="Enemy" type="CharacterBody3D"]
+collision_layer = 2
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+pixel_size = 0.0035
+shaded = false
+alpha_cut = 2
+texture_filter = 2
+texture = ExtResource("2_tex")

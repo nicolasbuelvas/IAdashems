@@ -1,0 +1,86 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cw0t2vpec5e4w" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-flat.fbx" id="1_wall"]
+[ext_resource type="PackedScene" uid="uid://byvkno0k0dr4d" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-flat-window.fbx" id="2_window"]
+[ext_resource type="PackedScene" uid="uid://c2hw4v1ka0kmp" path="res://level/kenney_retro-urban-kit/Models/FBX format/scaffolding-floor.fbx" id="3_floor"]
+[ext_resource type="PackedScene" path="res://player/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="5_cam"]
+
+[sub_resource type="BoxShape3D" id="Box_floor"]
+size = Vector3(15, 0.5, 3)
+
+[sub_resource type="BoxShape3D" id="Box_side"]
+size = Vector3(0.2, 4, 3)
+
+[sub_resource type="Environment" id="Env_room"]
+background_mode = 1
+background_color = Color(0.12, 0.12, 0.16, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.85, 0.9, 1)
+ambient_light_energy = 0.8
+
+[node name="Habitacion" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_room")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9, 0.43, 0, -0.43, 0.9, 0, 4, 3)
+
+[node name="Edificio" type="Node3D" parent="."]
+
+[node name="Piso0" parent="Edificio" instance=ExtResource("3_floor")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -6, -0.21, 0)
+
+[node name="Piso1" parent="Edificio" instance=ExtResource("3_floor")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -3, -0.21, 0)
+
+[node name="Piso2" parent="Edificio" instance=ExtResource("3_floor")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, -0.21, 0)
+
+[node name="Piso3" parent="Edificio" instance=ExtResource("3_floor")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 3, -0.21, 0)
+
+[node name="Piso4" parent="Edificio" instance=ExtResource("3_floor")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 6, -0.21, 0)
+
+[node name="Pared0" parent="Edificio" instance=ExtResource("1_wall")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -6, 0, -1.5)
+
+[node name="Pared1" parent="Edificio" instance=ExtResource("2_window")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, -3, 0, -1.5)
+
+[node name="Pared2" parent="Edificio" instance=ExtResource("1_wall")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, -1.5)
+
+[node name="Pared3" parent="Edificio" instance=ExtResource("2_window")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 3, 0, -1.5)
+
+[node name="Pared4" parent="Edificio" instance=ExtResource("1_wall")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 6, 0, -1.5)
+
+[node name="ParedIzq" parent="Edificio" instance=ExtResource("1_wall")]
+transform = Transform3D(0, 0, 3, 0, 3, 0, -3, 0, 0, -7.5, 0, 0)
+
+[node name="ParedDer" parent="Edificio" instance=ExtResource("1_wall")]
+transform = Transform3D(0, 0, -3, 0, 3, 0, 3, 0, 0, 7.5, 0, 0)
+
+[node name="Colisiones" type="StaticBody3D" parent="."]
+
+[node name="Piso" type="CollisionShape3D" parent="Colisiones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("Box_floor")
+
+[node name="LimiteIzq" type="CollisionShape3D" parent="Colisiones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2, 0)
+shape = SubResource("Box_side")
+
+[node name="LimiteDer" type="CollisionShape3D" parent="Colisiones"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.6, 2, 0)
+shape = SubResource("Box_side")
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+
+[node name="FollowCamera" parent="." instance=ExtResource("5_cam")]
+transform = Transform3D(1, 0, 0, 0, 0.94, 0.342, 0, -0.342, 0.94, 0, 2, 12)
+target_path = NodePath("../Player")

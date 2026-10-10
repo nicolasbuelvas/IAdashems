@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bit7c7ngc8dhs"
+path="res://.godot/imported/wall-b-flat-garage.obj-ec055ad51783ecdef7d1a81fad547c40.mesh"
+
+[deps]
+
+files=["res://.godot/imported/wall-b-flat-garage.obj-ec055ad51783ecdef7d1a81fad547c40.mesh"]
+
+source_file="res://level/kenney_retro-urban-kit/Models/OBJ format/wall-b-flat-garage.obj"
+dest_files=["res://.godot/imported/wall-b-flat-garage.obj-ec055ad51783ecdef7d1a81fad547c40.mesh", "res://.godot/imported/wall-b-flat-garage.obj-ec055ad51783ecdef7d1a81fad547c40.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
