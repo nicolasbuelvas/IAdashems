@@ -365,5 +365,19 @@ Task: IA evasiva con conciencia de escaleras no cancelables y corrección de vol
 Type: AI_ASSISTED
 Files: level/ladder.tscn, level/ladder.gd, anomalies/cucumber.gd
 Change: Corrección del volumen de colisión de la escalera (Shape_LadderArea ampliado de 4.2m a 5.4m de altura) para detectar confiablemente entidades en la plataforma superior. Ajuste en ladder.gd para evaluar mitad de altura y permitir descensos seguros verificando que el jugador no esté acampando abajo. En cucumber.gd: detección táctica de que el movimiento en escalera es una acción bloqueada y no cancelable (si el jugador escala, queda vulnerable y el pepino aprovecha para reubicarse; el pepino busca escaleras de descenso libres de jugador y escapa a pisos inferiores con cooldown de salida para evitar oscilaciones de reentrada).
-Commit: PENDING
+Commit: 221dd4d
 Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless.
+
+
+---
+
+## AI-IAdashems-NB-000028
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Eliminación de modo entrenamiento, restauración de editor pre-partida e IA evasiva de corredor con 3 reglas maestras
+Type: AI_ASSISTED
+Files: anomalies/cucumber.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/ladder.gd
+Change: Eliminación completa de artefactos de entrenamiento (SessionCard, estilos, temporizador de supervivencia y textos asociados). Restauración del modal de configuración interactiva pre-partida al iniciar la escena test_all_anomalies.tscn, permitiendo seleccionar cantidades independientes de cada categoría (Pepino, Lechuga, Guisante) y número de pisos antes de iniciar la simulación. En ladder.gd: eliminación del bloque invasivo que forzaba descensos en anomalías interfiriendo con su IA. En cucumber.gd: implementación estricta de las 3 reglas maestras: 1) Estar y desplazarse siempre a un piso diferente del jugador mediante escaleras libres, 2) Al escalar el jugador, correr hacia la escalera contraria en el piso actual para escapar y mantener niveles disjuntos, 3) Acotación horizontal estricta [min_ladder_x, max_ladder_x] calculando salidas seguras hacia el interior del piso para evitar acorralarse contra muros exteriores.
+Commit: 7533dbd
+Notes: Verificado con 209/209 comprobaciones en verde (tools/ui_check.gd 41/41, systems/tests/heat_system_test.gd 32/32, systems/tests/round_manager_test.gd 136/136) y ejecución headless limpia de test_all_anomalies.tscn y test_cucumber.tscn.

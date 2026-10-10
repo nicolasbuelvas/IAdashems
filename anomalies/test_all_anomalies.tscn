@@ -84,22 +84,6 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="Style_SessionCard"]
-content_margin_left = 16.0
-content_margin_top = 8.0
-content_margin_right = 16.0
-content_margin_bottom = 8.0
-bg_color = Color(0.10, 0.07, 0.05, 0.85)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.96, 0.68, 0.22, 0.7)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
 [node name="TestAllAnomalies" type="Node3D"]
 script = ExtResource("1_controller")
 
@@ -306,20 +290,6 @@ layer = 5
 
 [node name="HUD" parent="HUDLayer" instance=ExtResource("8_hud")]
 
-[node name="SessionCard" type="PanelContainer" parent="HUDLayer"]
-offset_left = 24.0
-offset_top = 82.0
-offset_right = 520.0
-offset_bottom = 120.0
-theme = ExtResource("6_theme")
-theme_override_styles/panel = SubResource("Style_SessionCard")
-
-[node name="Label" type="Label" parent="HUDLayer/SessionCard"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.88, 0.72, 1)
-theme_override_font_sizes/font_size = 13
-text = "ENTRENAMIENTO • SUPERVIVENCIA: 0.0 s • CORREDORES: 3 / 3"
-
 [node name="BtnReopenSetup" type="Button" parent="HUDLayer"]
 anchors_preset = 1
 anchor_left = 1.0
@@ -400,7 +370,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
 theme_override_font_sizes/font_size = 17
-text = "3"
+text = "1"
 horizontal_alignment = 1
 
 [node name="BtnCucPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowCuc"]
@@ -435,7 +405,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
 theme_override_font_sizes/font_size = 17
-text = "0"
+text = "1"
 horizontal_alignment = 1
 
 [node name="BtnLetPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowLet"]
@@ -470,7 +440,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
 theme_override_font_sizes/font_size = 17
-text = "0"
+text = "1"
 horizontal_alignment = 1
 
 [node name="BtnPeaPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowPea"]
@@ -510,6 +480,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"PrimaryButton"
 text = "2 PISOS"
 
 [node name="BtnFloor3" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
@@ -517,7 +488,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"PrimaryButton"
 text = "3 PISOS"
 
 [node name="Gap" type="Control" parent="SetupUI/Center/Card/Rows"]
@@ -529,7 +499,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
-text = "INICIAR ENTRENAMIENTO"
+text = "COMENZAR SIMULACIÓN"
 
 [node name="GameOverUI" type="CanvasLayer" parent="."]
 process_mode = 3

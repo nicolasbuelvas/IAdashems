@@ -42,26 +42,3 @@ func _physics_process(_delta: float) -> void:
 				body.call("start_climb", top_y, ladder_x + top_exit_offset_x, ladder_x)
 			elif is_near_top and wants_down:
 				body.call("start_climb", bottom_y, ladder_x + bottom_exit_offset_x, ladder_x)
-		
-		# Comportamiento táctico para anomalías (Pepinos):
-		elif body.is_in_group("anomaly") and body.has_method("start_climb"):
-			if not body.get("is_contained"):
-				var player := get_tree().get_first_node_in_group("player") as Node3D
-				if is_near_top:
-					# Bajar escaleras activamente para escapar
-					var safe_to_descend := true
-					if player != null and is_instance_valid(player):
-						var player_at_bottom := absf(player.global_position.y - bottom_y) < 1.5
-						var player_at_ladder_x := absf(player.global_position.x - (ladder_x + bottom_exit_offset_x)) < 2.0
-						if player_at_bottom and player_at_ladder_x:
-							safe_to_descend = false
-					
-					if safe_to_descend:
-						body.call("start_climb", bottom_y, ladder_x + bottom_exit_offset_x, ladder_x)
-				elif is_near_bottom:
-					# Subir si el jugador se acerca agresivamente por abajo
-					if player != null and is_instance_valid(player):
-						var player_on_floor := absf(player.global_position.y - bottom_y) < 1.5
-						var player_dist := absf(player.global_position.x - body.global_position.x)
-						if player_on_floor and player_dist < 6.0:
-							body.call("start_climb", top_y, ladder_x + top_exit_offset_x, ladder_x)
