@@ -241,3 +241,17 @@ Files: scenes/main_menu.tscn, ui/options_menu.tscn, scenes/credits.tscn, ui/them
 Change: Integración de artes de fondo de alta definición (campo de papas para menú principal y opciones, espacio orbital dorado para créditos). Rework de tarjetas con borde dorado brillante (glow amber) de 2px, esquinas redondeadas de 22px y sombra ámbar. Botones principales estilo píldora dorada con iconos táctiles (▶ Nueva partida, ⚙ Opciones, ➔ Salir, ↶ Volver al menú) y slots oscuros para configuración de volumen y pantalla. Créditos estructurados según Opción 2 con avatares de integrantes y separador de diamante.
 Commit: PENDING
 Notes: Verificado con tools/ui_check.gd (41/41 PASS) y systems/tests/heat_system_test.gd (32/32 PASS).
+
+
+---
+
+## AI-IAdashems-NB-000019
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Limpieza de UI horneada en texturas y retorno contextual de opciones a pausa
+Type: AI_ASSISTED
+Files: art/d-ui/menu_background.png, art/d-ui/options_background.png, art/d-ui/credits_opt2_bg.png, ui/options_menu.gd, ui/pause_menu.gd, scenes/main_menu.gd
+Change: Eliminación de las tarjetas y textos estáticos antiguos horneados en las imágenes de fondo mediante difuminado y composición limpia, dejando únicamente la UI interactiva de Godot. Actualización del menú de opciones con señal back_requested para integrarse como submenú tanto en el menú principal como en el menú de pausa durante el juego: al abrir opciones desde la pausa, el botón Volver regresa a la pausa sin reiniciar ni destruir la partida.
+Commit: PENDING
+Notes: Verificado con tools/ui_check.gd (41/41 PASS) y systems/tests/heat_system_test.gd (32/32 PASS).

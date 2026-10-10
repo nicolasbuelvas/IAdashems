@@ -4,6 +4,8 @@ extends Control
 ## Los buses de audio Music y SFX los crea D en tiempo de ejecución si faltan:
 ## el layout de audio vive en project.godot, que solo lo edita C.
 
+signal back_requested()
+
 const DB_FLOOR := -80.0  # volumen mínimo de cada bus
 
 @onready var music_slider = $"Center/Card/Rows/MusicRow/MusicSlider"
@@ -103,9 +105,17 @@ func _on_ResolutionOption_item_selected(index: int) -> void:
 	DisplayServer.window_set_position((screen_size - target_size) / 2)
 
 
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_on_BackButton_pressed()
+		get_viewport().set_input_as_handled()
+
+
 func _on_BackButton_pressed() -> void:
-	var gm := get_node_or_null("/root/GameManager")
-	if gm and gm.has_method("goto"):
-		gm.goto(&"menu")
-	else:
-		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	back_requested.emit()
+	if get_tree().current_scene == self:
+		var gm := get_node_or_null("/root/GameManager")
+		if gm and gm.has_method("goto"):
+			gm.goto(&"menu")
+		else:
+			get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
