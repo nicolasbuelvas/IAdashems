@@ -210,3 +210,14 @@ Files: player/player.gd, player/player.tscn, player/herbicide.tscn, anomalies/le
 Change: Se añadieron idle de dos fotogramas y disparo de tres fotogramas a AnimatedSprite3D. El movimiento queda bloqueado solo durante los ~0.38 s de la animación de disparo; el cooldown conserva su duración independiente. El proyectil usa papaXLL y la lechuga usa su sprite estático.
 Limitaciones: Falta ejecutar las escenas en Godot para revisar importación, escala visual y transición de estados; el motor no está disponible en este entorno.
 Commit: PENDING
+
+## AI-IAdashems-SM-000019
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Agregar efectos visuales de temperatura alta sin modificar el HUD
+Type: AI_ASSISTED
+Files: effects/heat_screen_effect.gd, effects/heat_screen_effect.gdshader, effects/heat_screen_effect.tscn, player/follow_camera.gd, game/game.tscn, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: La escena principal escucha heat_changed y aumenta gradualmente una distorsión térmica, una viñeta roja en los bordes y vibración suave de cámara desde HEAT_HIGH_THRESHOLD. La capa de efectos se dibuja debajo del HUD; no se modificó su contenido ni el escenario.
+Commit: PENDING
+Notes: git diff --check pasó. Godot no está disponible en PATH, por lo que no se pudo validar la importación del shader ni probar visualmente los efectos en runtime; valores de distorsión y vibración quedan sujetos a ajuste visual.
