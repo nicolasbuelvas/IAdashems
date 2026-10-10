@@ -85,6 +85,7 @@ var _climb_ladder_x: float = 0.0
 var _prev_speed_threshold: bool = false
 var _prev_cooldown_progress: float = -1.0
 var _respawn_position: Vector3 = Vector3(-16.0, -3.5, 0.0)
+var _death_token: int = 0
 
 
 func _ready() -> void:
@@ -100,6 +101,9 @@ func _ready() -> void:
 		var finished_callback := Callable(self, "_on_sprite_animation_finished")
 		if not _animated_sprite.animation_finished.is_connected(finished_callback):
 			_animated_sprite.animation_finished.connect(finished_callback)
+	var bus_node := get_node_or_null("/root/EventBus")
+	if bus_node and bus_node.has_signal("round_won"):
+		bus_node.connect("round_won", _on_round_won)
 	if _visual == null:
 		_visual = get_node_or_null("MeshInstance3D") as GeometryInstance3D
 	if _visual != null:
@@ -287,6 +291,8 @@ func _die_and_explode(is_lethal_defeat: bool = false) -> void:
 	if _dead:
 		return
 	_dead = true
+	_death_token += 1
+	var token := _death_token
 	_hp = 0
 	_iframe_left = 0.0
 	_blink_on = false
@@ -303,16 +309,37 @@ func _die_and_explode(is_lethal_defeat: bool = false) -> void:
 		ant_tween.tween_property(_visual, "position:x", 0.0, 0.05)
 		await ant_tween.finished
 
+	# Si se reinició la ronda o se ganó durante la anticipación, cancelar
+	if token != _death_token or not is_inside_tree() or not _dead:
+		return
+
 	_explode_into_fries()
 	_emit_bus("player_died", [])
 
 	# Al morir por daño normal, revive en el spawn manteniendo tiempo y calor activos
 	if not is_lethal_defeat:
 		await get_tree().create_timer(1.2).timeout
-		if is_inside_tree() and _dead:
-			reset_to(_respawn_position)
-			_iframe_left = 2.5
-			_blink_on = true
+		if token != _death_token or not is_inside_tree() or not _dead:
+			return
+		reset_to(_respawn_position)
+		_iframe_left = 2.5
+		_blink_on = true
+
+
+func _on_round_won(_round_number: int) -> void:
+	_death_token += 1
+	_dead = false
+	if _visual != null:
+		_visual.visible = true
+		_visual.scale = _visual_base_scale
+		_visual.position.x = 0.0
+		if _animated_sprite != null:
+			_visual.position.y = _sprite_base_y
+		if "modulate" in _visual:
+			_visual.modulate = Color.WHITE
+	var spr := get_node_or_null("AnimatedSprite3D") as Node3D
+	if spr:
+		spr.visible = true
 
 
 func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
@@ -334,12 +361,13 @@ func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
 
 
 func reset_to(spawn: Vector3) -> void:
+	_death_token += 1
+	_dead = false
 	_respawn_position = spawn
 	is_climbing = false
 	global_position = spawn
 	velocity = Vector3.ZERO
 	_hp = max_hp
-	_dead = false
 	_jump_queued = false
 	_jump_started_this_frame = false
 	_slide_queued = false

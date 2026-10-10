@@ -533,5 +533,19 @@ Task: Corrección de error de modulate en MeshInstance3D y tintado seguro con ma
 Type: AI_ASSISTED
 Files: level/office_heat_visuals.gd, player/player.gd
 Change: Se corrigió el error en tiempo de ejecución 'Invalid assignment of property or key modulate with value of type Color on a base object of type MeshInstance3D': en OfficeHeatVisuals se sustituyó el acceso a modulate por la asignación de material_override (StandardMaterial3D.albedo_color) para los MeshInstance3D del mobiliario. En Player se añadieron salvaguardas condicionales ("modulate" in _visual) para garantizar que nunca se invoque modulate si la representación gráfica llega a ser un MeshInstance3D.
-Commit: 385609d
+Commit: 0170380
 Notes: 332 comprobaciones automatizadas pasando sin errores y ejecución de escenas sin excepciones.
+
+
+---
+
+## AI-IAdashems-NB-000040
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de invisibilidad tras captura en muerte y activación de derrota por tiempo en arena
+Type: AI_ASSISTED
+Files: player/player.gd, systems/round_manager.gd, anomalies/test_arena_controller.gd
+Change: 1) Se resolvió la condición de carrera donde capturar la última anomalía durante la animación de muerte dejaba la papa invisible y penalizaba la ronda siguiente: se implementó token de generación de muerte (_death_token) en Player para invalidar corrutinas pendientes al invocar reset_to o emitirse round_won, restableciendo visibilidad del sprite inmediatamente y cancelando cualquier ciclo de penalización en RoundManager. 2) Se corrigió la expiración del reloj en test_arena_controller: se conectó la llamada directa a _on_timer_expired() cuando time_left llega a 0 en _process(), desplegando el Game Over y pausando la arena adecuadamente.
+Commit: 0e490c3
+Notes: 332 comprobaciones automatizadas pasando sin errores.

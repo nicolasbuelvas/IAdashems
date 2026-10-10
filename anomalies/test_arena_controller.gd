@@ -80,9 +80,7 @@ func _process(delta: float) -> void:
 		if bus and bus.has_signal("round_timer_changed"):
 			bus.emit_signal("round_timer_changed", time_left)
 		if time_left <= 0.0 and not timer_expired:
-			timer_expired = true
-			if bus and bus.has_signal("round_timer_expired"):
-				bus.emit_signal("round_timer_expired")
+			_on_timer_expired()
 
 
 func _connect_event_bus() -> void:

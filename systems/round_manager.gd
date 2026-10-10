@@ -62,6 +62,7 @@ func _process(delta: float) -> void:
 ## Inicia la ronda n (1 a 6) o la reintenta. Si n es la ronda actual, conserva contained_ids
 ## (tras morir siguen ahí; tras agotar el reloj _fail ya los borró).
 func start_round(n: int) -> void:
+	_penalty_in_progress = false
 	if n < 1 or n > ROUNDS.size():
 		push_error("RoundManager: la ronda %d no existe" % n)
 		return
@@ -208,6 +209,7 @@ func _on_anomaly_contained(anomaly: Node) -> void:
 
 
 func _win() -> void:
+	_penalty_in_progress = false
 	active = false
 	EventBus.round_won.emit(current_round)
 	if current_round == ROUNDS.size():
