@@ -1,1 +1,32 @@
+# autoload/event_bus.gd
 extends Node
+
+# Jugador (emite A)
+signal player_health_changed(current: int, max_hp: int)
+signal player_damaged(amount: int)
+signal player_died()
+signal player_slide_started()
+signal player_slide_ended()
+signal herbicide_fired()
+signal herbicide_cooldown_changed(progress: float)  # 0.0 = recién lanzado, 1.0 = listo
+signal herbicide_ready()
+signal player_jumped()
+
+# Anomalías (emite B)
+signal anomaly_spawned(anomaly: Node)
+signal anomaly_contained(anomaly: Node)
+
+# Sistemas (emite C)
+signal heat_changed(value: float, max_value: float)
+signal heat_maxed()
+signal round_started(round_number: int, remaining: int)
+signal round_timer_changed(seconds_left: float)
+signal round_timer_expired()
+signal anomalies_remaining_changed(remaining: int)
+signal round_won(round_number: int)
+signal round_failed(reason: StringName)   # &"heat" o &"health"
+signal floor_unlocked(floor_number: int)
+signal game_won()
+
+# Flujo (emite D o GameManager)
+signal pause_toggled(paused: bool)

@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://systems/tests/rm_dummy_anomaly.gd" id="1_rmdummy"]
+
+[node name="RmDummyAnomaly" type="Node3D"]
+script = ExtResource("1_rmdummy")

@@ -11,9 +11,16 @@ config_version=5
 [application]
 
 config/name="ai-dashems"
-run/main_scene="res://player/test_player.tscn"
+run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+EventBus="*res://autoload/event_bus.gd"
+GameConfig="*res://autoload/game_config.gd"
+GameManager="*res://autoload/game_manager.gd"
+AudioManager="*res://ui/audio_manager.gd"
 
 [display]
 
@@ -23,6 +30,16 @@ window/stretch/aspect="expand"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="player"
+3d_physics/layer_3="anomaly"
+3d_physics/layer_4="player_projectile"
+3d_physics/layer_5="enemy_projectile"
+3d_physics/layer_6="stairs_zone"
+3d_physics/layer_7="hazard"
 
 [physics]
 

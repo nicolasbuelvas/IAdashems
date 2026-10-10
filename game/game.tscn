@@ -1,0 +1,45 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://game/game.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://level/building.tscn" id="2_building"]
+[ext_resource type="Script" path="res://systems/heat_system.gd" id="3_heat"]
+[ext_resource type="Script" path="res://systems/round_manager.gd" id="4_round"]
+[ext_resource type="PackedScene" uid="uid://d310r1vedl67d" path="res://player/player.tscn" id="5_player"]
+[ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="6_camera"]
+[ext_resource type="PackedScene" uid="uid://cmf2f53o82h1y" path="res://ui/hud.tscn" id="7_hud"]
+[ext_resource type="PackedScene" uid="uid://cmf2f53o82h1z" path="res://ui/pause_menu.tscn" id="8_pause"]
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_game")
+
+[node name="Building" parent="." instance=ExtResource("2_building")]
+
+[node name="HeatSystem" type="Node" parent="."]
+script = ExtResource("3_heat")
+
+[node name="RoundManager" type="Node" parent="." node_paths=PackedStringArray("building", "anomalies_root", "player")]
+script = ExtResource("4_round")
+building = NodePath("../Building")
+anomalies_root = NodePath("../Anomalies")
+player = NodePath("../Player")
+
+[node name="Anomalies" type="Node3D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("5_player")]
+position = Vector3(-11, 1, 0)
+
+[node name="FollowCamera" parent="." instance=ExtResource("6_camera")]
+position = Vector3(-11, 1, 12)
+target_path = NodePath("../Player")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.9, 0.4, 0)
+
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="HUDLayer" instance=ExtResource("7_hud")]
+
+[node name="PauseLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="PauseMenu" parent="PauseLayer" instance=ExtResource("8_pause")]

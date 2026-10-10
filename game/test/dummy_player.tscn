@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/test/dummy_player.gd" id="1_dp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.7, 0.5, 0.25, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(0.8, 2, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+size = Vector3(0.8, 2, 1)
+material = SubResource("StandardMaterial3D_body")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_contact"]
+size = Vector3(1.6, 2, 2)
+
+[node name="DummyPlayer" type="CharacterBody3D" groups=["player"]]
+collision_layer = 2
+collision_mask = 1
+axis_lock_linear_z = true
+script = ExtResource("1_dp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_body")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_body")
+
+[node name="ContactArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ContactArea"]
+shape = SubResource("BoxShape3D_contact")
