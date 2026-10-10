@@ -284,3 +284,15 @@ Change: (1) Menú: game_over_modal.gd emitía main_menu_pressed, el HUD ya cambi
 Commit: PENDING
 Model: Luna 6 (Codex Free)
 Notes: Rama: se creó la rama local feat/anomalies-core desde origin. El cambio local de project.godot en main (import/blender desactivado, hecho por el editor) quedó en git stash ("main: project.godot ... antes de ir a feat/anomalies-core"). Tras el checkout, el editor tenía la caché de class_name desactualizada (PeaProjectile, FrenchFriesExplosion) y se reescaneó. Probado en el editor (MCP) en game/game.tscn: calor al 100 % -> modal sin tarjeta; game over durante la tarjeta -> la tarjeta se oculta al instante, la ronda sigue congelada y el estado se queda en ROUND_FAILED; REINTENTAR -> ROUND_INTRO, papa congelada con 3 vidas y la tarjeta se muestra; REINICIAR DESDE CERO -> recarga game.tscn en la ronda 1; MENÚ -> main_menu.tscn con estado MENU, sin pausa y sin error. Headless: round_manager_test 139 OK y heat_system_test 32 OK, sin fallos. No se reprodujo el caso exacto que vio SV con juego manual; el arreglo cubre el único camino encontrado (game over durante la tarjeta).
+
+## AI-IAdashems-SV-000024
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Traer origin/main a feat/anomalies-core y corregir los errores del merge
+Type: DEBUGGING
+Files: level/building.tscn, logs/INDICE_LOGS.md, ui/pause_menu.tscn, game/game.tscn, anomalies/test_all_anomalies.tscn, anomalies/test_cucumber.tscn, anomalies/test_lettuce.tscn, anomalies/test_pea.tscn
+Change: Merge --no-commit de origin/main (PR #14 feat/visuals: sombras, efecto de pantalla por calor, materiales office_concrete y Forward+). Conflictos: (1) level/building.tscn: las dos ramas texturizaban las mismas superficies; por decisión de SV se conserva todo anomalies-core (alfombra, ladrillo, drywall y concreto procedural) con git checkout --ours. main solo cambiaba materiales en ese archivo, así que no se pierde nada más. (2) logs/INDICE_LOGS.md: regenerado con tools/indice_logs.py. Error previo arreglado: pause_menu.tscn tenía uid://cmf2f53o82h1z, inválido porque los UID de Godot no usan la "z", y game.tscn avisaba "invalid UID" al cargar; test_pea.tscn apuntaba a un UID que no existía (…h10). Se quita el uid de la cabecera y de las referencias, que pasan a resolverse por ruta. Las fusiones automáticas (game.tscn con HeatScreenEffect y sombras, player.tscn con sprite sombreado, project.godot con forward_plus) se revisaron y son coherentes.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Verificado en el editor (MCP): Menú -> Nueva partida -> game.tscn, ronda 1 y PLAYING sin ERROR (solo avisos de estilo previos: UNUSED_SIGNAL, INTEGER_DIVISION y CONFUSABLE_LOCAL_DECLARATION en hud.gd). Captura: fondo de ladrillo, sombras, HUD con corazones y efecto de calor presente. Headless: round_manager_test 139 OK, heat_system_test 32 OK y level_layout_test 120 PASS, sin fallos. level/materials/office_concrete*.tres de main quedan sin usar en building.tscn. Al guardar pause_menu.tscn, Godot le asignará un UID válido nuevo. El merge queda sin commitear.
