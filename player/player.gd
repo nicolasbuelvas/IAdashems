@@ -138,8 +138,7 @@ func _physics_process(delta: float) -> void:
 		global_position.y = move_toward(global_position.y, climb_target_y, climb_speed * delta)
 		global_position.z = 0.0
 		velocity = Vector3.ZERO
-		if _animated_sprite != null:
-			_animated_sprite.position.y = _sprite_base_y + sin(Time.get_ticks_msec() * 0.015) * 0.06
+		_update_climb_animation()
 		if is_equal_approx(global_position.y, climb_target_y):
 			is_climbing = false
 			global_position.x = climb_exit_x
@@ -260,6 +259,9 @@ func _update_dash_indicators() -> void:
 func take_damage(amount: int, pierce_slide: bool = false) -> void:
 	if amount <= 0 or _dead:
 		return
+	# Subiendo o bajando una escalera la papa no recibe daño (anomalías, proyectiles ni trampas).
+	if is_climbing:
+		return
 	if _iframe_left > 0.0 or (is_sliding() and not pierce_slide):
 		return
 	_hp = maxi(_hp - amount, 0)
@@ -278,7 +280,7 @@ func is_sliding() -> bool:
 
 
 func is_invulnerable() -> bool:
-	return _iframe_left > 0.0 or is_sliding()
+	return _iframe_left > 0.0 or is_sliding() or is_climbing
 
 
 func kill() -> void:
@@ -346,8 +348,21 @@ func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
 	if is_climbing or _dead:
 		return
 	is_climbing = true
+	# Engancharse a la escalera corta el dash, el disparo y el arrastre del dash: ninguna de esas
+	# animaciones sigue durante la subida (_update_climb_animation fija la pose).
+	var was_sliding := _dash_active
 	_slide_time_left = 0.0
 	_dash_active = false
+	_dash_recovery_left = 0.0
+	_dash_carry_time_left = 0.0
+	if was_sliding:
+		_slide_cooldown_left = slide_cooldown
+		_emit_bus("player_slide_ended", [])
+	if _visual_tween != null and _visual_tween.is_running():
+		_visual_tween.kill()
+	if _visual != null:
+		_visual.scale = _visual_base_scale
+	_apply_visual()
 	_jump_queued = false
 	_slide_queued = false
 	_herbicide_queued = false
@@ -723,6 +738,17 @@ func _update_animation() -> void:
 			_animated_sprite.stop()
 			_animated_sprite.frame = 5
 			_animated_sprite.frame_progress = 0.0
+
+
+## Pose de escalera: idle con un leve balanceo, sin offset de dash. Se llama cada frame de subida
+## porque el resto de _physics_process (y _update_animation) no corre mientras is_climbing.
+func _update_climb_animation() -> void:
+	if _animated_sprite == null:
+		return
+	var climb_anim := &"idle" if _animated_sprite.sprite_frames.has_animation(&"idle") else &"correr"
+	if _animated_sprite.animation != climb_anim or not _animated_sprite.is_playing():
+		_animated_sprite.play(climb_anim)
+	_animated_sprite.position.y = _sprite_base_y + sin(Time.get_ticks_msec() * 0.015) * 0.06
 
 
 func _on_sprite_animation_finished() -> void:
