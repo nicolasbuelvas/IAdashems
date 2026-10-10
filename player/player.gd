@@ -27,6 +27,7 @@ const _DASH_CARRY_DURATION := 0.55
 const _DASH_BRAKING := 9.0
 const _DASH_STOP_SPEED := 0.2
 const _DASH_RECOVERY_DURATION := 1.0
+const _DASH_RECOVERY_SPEED_RATIO := 0.55
 const _DASH_CARRY_DECELERATION := 10.0
 const _DASH_EXIT_SPEED_RATIO := 0.9
 const _FALLBACK_HERBICIDE_SPEED := 14.0
@@ -112,10 +113,6 @@ func _physics_process(delta: float) -> void:
 	_jump_started_this_frame = false
 	if _dash_recovery_left > 0.0:
 		_dash_recovery_left = maxf(_dash_recovery_left - delta, 0.0)
-		if _dash_recovery_left > 0.0:
-			_jump_queued = false
-			_slide_queued = false
-			_herbicide_queued = false
 	if not is_on_floor():
 		var gravity_multiplier := 1.0
 		if velocity.y < 0.0:
@@ -143,9 +140,7 @@ func _physics_process(delta: float) -> void:
 	if not is_sliding() and input_x != 0.0 and (is_zero_approx(velocity.x) or signf(velocity.x) == signf(input_x)):
 		_facing = signf(input_x)
 
-	if _dash_recovery_left > 0.0:
-		velocity.x = 0.0
-	elif is_sliding():
+	if is_sliding():
 		if _slide_time_left > 0.0:
 			var slide_progress := 1.0 - _slide_time_left / slide_duration
 			var deceleration := smoothstep(0.7, 1.0, slide_progress)
@@ -154,6 +149,14 @@ func _physics_process(delta: float) -> void:
 			velocity.x = _slide_dir * current_slide_speed
 		else:
 			velocity.x = move_toward(velocity.x, 0.0, _DASH_BRAKING * delta)
+	elif _dash_recovery_left > 0.0:
+		var recovery_speed := move_speed * _DASH_RECOVERY_SPEED_RATIO
+		if input_x != 0.0:
+			var acceleration := _GROUND_ACCELERATION if is_on_floor() else _AIR_ACCELERATION
+			velocity.x = move_toward(velocity.x, input_x * recovery_speed, acceleration * delta)
+		else:
+			var deceleration := _GROUND_DECELERATION if is_on_floor() else _AIR_DECELERATION
+			velocity.x = move_toward(velocity.x, 0.0, deceleration * delta)
 	elif _dash_carry_time_left > 0.0:
 		var carry_ratio := _dash_carry_time_left / _DASH_CARRY_DURATION
 		if input_x == _dash_carry_direction:
@@ -379,7 +382,7 @@ func _update_aim_direction() -> void:
 
 
 func _fire_herbicide() -> void:
-	if _dead or _herbicide_cooldown_left > 0.0 or _dash_recovery_left > 0.0:
+	if _dead or _herbicide_cooldown_left > 0.0:
 		return
 	if is_sliding() or not is_on_floor() or _jump_started_this_frame:
 		return

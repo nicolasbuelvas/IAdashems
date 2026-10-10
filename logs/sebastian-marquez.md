@@ -155,3 +155,14 @@ Files: player/player.gd
 Change: El dash conserva dirección fija durante el impulso y la fase de frenado hasta velocidad casi cero. Saltar durante el dash lo cancela y pasa el momentum al control aéreo; dejar que termine aplica 1 s de recuperación sin movimiento ni acciones.
 Limitaciones: La duración real depende de la velocidad de entrada, el frenado y las colisiones; requiere playtest para balancear longitud, recuperación e invulnerabilidad.
 Commit: PENDING
+
+## AI-IAdashems-SM-000014
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Suavizar el castigo al completar el dash e integrar los cambios de main
+Type: AI_ASSISTED
+Files: player/player.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: La recuperación de 1 s reduce la velocidad horizontal al 55 % y permite saltar y disparar; se elimina la inmovilización y el descarte de entradas. Se integraron los cambios disponibles de origin/main mediante merge.
+Limitaciones: El porcentaje de velocidad es un valor inicial para probar. La compilación y el gameplay deben verificarse en Godot después de resolver la integración.
+Commit: PENDING
