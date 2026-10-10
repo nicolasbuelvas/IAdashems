@@ -27,5 +27,17 @@ Task: Vaciar autoloads, quitar referencias de project.godot y agregar .gdkeep pa
 Type: HUMAN_REFINEMENT
 Files: autoload/event_bus.gd, autoload/game_config.gd, autoload/game_manager.gd, project.godot, anomalies/.gdkeep, art/a-player/.gdkeep, art/b-anomalies/.gdkeep, art/c-systems/.gdkeep, art/d-ui/.gdkeep, audio/.gdkeep, autoload/.gdkeep, game/.gdkeep, level/.gdkeep, player/.gdkeep, scenes/.gdkeep, systems/.gdkeep, ui/.gdkeep
 Change: Se vaciaron los scripts de autoload, se eliminaron sus referencias de project.godot y se añadieron archivos .gdkeep en los directorios para establecer una estructura de proyecto Godot completamente vacía, solo con directorios y archivos de escena mínimos.
-Commit: e8e2ac2
-Notes: Hecho a solicitud del usuario para dejar la estructura del proyecto en su estado más básico, priorizando la instrucción sobre la definición de stubs en el spec-mvp-reparto.md.
+
+
+---
+
+## AI-IAdashems-NB-000003
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Desarrollar la escena del menú principal (main_menu.tscn)
+Type: AI_ASSISTED
+Files: scenes/main_menu.tscn, scenes/main_menu.gd
+Change: Se creó el script main_menu.gd y se implementó el diseño visual del menú principal con título, subtítulo y botones para Nueva partida, Opciones y Salir. El botón Salir ya tiene funcionalidad.
+Commit: 0a4f415
+Notes: Se asume que el GameManager.goto() se implementará más tarde para los otros botones.
