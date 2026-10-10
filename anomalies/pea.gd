@@ -194,7 +194,7 @@ func _shoot_projectile(target_player: Node3D = null) -> void:
 	if scene_root == null:
 		scene_root = get_parent()
 	scene_root.add_child(proj)
-	proj.global_position = global_position + Vector3(_facing * 1, 1.1, 0.0)
+	proj.global_position = global_position + Vector3(_facing * 0.65, 1.1, 0.0)
 
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_sfx"):

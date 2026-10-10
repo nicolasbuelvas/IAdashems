@@ -1,17 +1,44 @@
 extends Control
-## Tarjeta de ronda (persona D): muestra "Turno N" durante 2 segundos y el
-## aviso "Nuevo piso habilitado" cuando C habilita un piso.
+## Tarjeta de ronda (persona D): pantalla blanca fija, sin animaciones, al empezar cada ronda.
+## Rondas 1-3 presentan una anomalía (imagen + verbo + tecla); 4-6 solo un texto corto centrado.
+## game.gd congela la ronda durante duration_for(n), así que la tarjeta y la espera coinciden.
 ##
 ## Escucha EventBus si C ya lo creó; si no, queda mudo hasta que alguien lo
 ## llame con show_turn() / show_floor_unlocked() o attach_source().
 
-const VISIBLE_SECONDS := 2.0
+const LONG_SECONDS := 2.5
+const SHORT_SECONDS := 1.5
 
-@onready var turn_label = $"Center/Rows/TurnLabel"
-@onready var floor_notice = $"Center/Rows/FloorNotice"
+## Una entrada por ronda: icon (ruta o ""), title y subtitle ("" = oculto).
+const CARDS := [
+	{"icon": "res://Sprites/HONGUITO/HonguitoMamadisimo_0000.png", "title": "ATRÁPALO", "subtitle": ""},
+	{"icon": "res://Sprites/Lechuga/LechugonXLL.png", "title": "PATÉALO", "subtitle": "con SHIFT"},
+	{"icon": "res://Sprites/GUISANTE_TATATATAA/verde_0000.png", "title": "DISPÁRALE", "subtitle": "con \"E\""},
+	{"icon": "", "title": "MÁS PLAGA", "subtitle": ""},
+	{"icon": "", "title": "SIN PIEDAD", "subtitle": ""},
+	{"icon": "", "title": "PISO FINAL", "subtitle": ""},
+]
+
+@onready var icon_rect: TextureRect = $"Center/Rows/Icon"
+@onready var turn_label: Label = $"Center/Rows/TurnLabel"
+@onready var subtitle_label: Label = $"Center/Rows/Subtitle"
+@onready var floor_notice: Label = $"Center/Rows/FloorNotice"
 
 var _event_bus: Node = null
 var _token := 0
+var _seconds := LONG_SECONDS
+
+
+## Segundos que se muestra la tarjeta de la ronda n (más corta cuando no hay imagen).
+static func duration_for(round_number: int) -> float:
+	var data := _card_for(round_number)
+	return LONG_SECONDS if data["icon"] != "" else SHORT_SECONDS
+
+
+static func _card_for(round_number: int) -> Dictionary:
+	if round_number >= 1 and round_number <= CARDS.size():
+		return CARDS[round_number - 1]
+	return {"icon": "", "title": "RONDA %d" % round_number, "subtitle": ""}
 
 
 func _ready() -> void:
@@ -45,21 +72,30 @@ func _on_floor_unlocked(_floor_number: int) -> void:
 
 
 func show_turn(round_number: int) -> void:
-	turn_label.text = "TURNO %02d" % round_number
+	var data := _card_for(round_number)
+	var icon_path: String = data["icon"]
+	icon_rect.texture = load(icon_path) if icon_path != "" else null
+	icon_rect.visible = icon_path != ""
+	turn_label.text = data["title"]
+	subtitle_label.text = data["subtitle"]
+	subtitle_label.visible = data["subtitle"] != ""
 	floor_notice.visible = false
+	_seconds = duration_for(round_number)
 	_show_card()
 
 
+## Se emite en el mismo start_round que round_started: solo añade la línea, sin reiniciar el tiempo.
 func show_floor_unlocked() -> void:
 	floor_notice.visible = true
-	_show_card()
+	if not visible:
+		_show_card()
 
 
 func _show_card() -> void:
 	show()
 	_token += 1
 	# process_always = true por defecto: sigue corriendo con el juego pausado.
-	get_tree().create_timer(VISIBLE_SECONDS).timeout.connect(_on_timer.bind(_token), CONNECT_ONE_SHOT)
+	get_tree().create_timer(_seconds).timeout.connect(_on_timer.bind(_token), CONNECT_ONE_SHOT)
 
 
 func _on_timer(token: int) -> void:

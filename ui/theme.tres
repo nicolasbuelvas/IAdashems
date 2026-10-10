@@ -1,8 +1,7 @@
 [gd_resource type="Theme" format=3 uid="uid://dh4tbyc8hwh82"]
 
-[ext_resource type="FontFile" uid="uid://bil2ni7af20mf" path="res://art/d-ui/fonts/nunito.ttf" id="1_nunito"]
 [ext_resource type="FontFile" uid="uid://cx38c3xsq2hd" path="res://art/d-ui/fonts/fredoka.ttf" id="2_fredoka"]
-[ext_resource type="FontFile" path="res://art/d-ui/fonts/Potato_sans-Bold.otf" id="3_potato"]
+[ext_resource type="FontFile" uid="uid://dhrgt33rvbur6" path="res://art/d-ui/fonts/Potato_sans-Bold.otf" id="3_potato"]
 
 [sub_resource type="StyleBoxFlat" id="sb_btn_disabled"]
 content_margin_left = 22.0

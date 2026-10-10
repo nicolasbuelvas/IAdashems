@@ -1,8 +1,16 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://ui/round_card.gd" id="1_card"]
 [ext_resource type="Theme" path="res://ui/theme.tres" id="2_theme"]
-[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="3_eyebrow"]
+
+[sub_resource type="SystemFont" id="SystemFont_black"]
+font_names = PackedStringArray("Arial Black", "Arial")
+font_weight = 900
+
+[sub_resource type="LabelSettings" id="LabelSettings_title"]
+font = SubResource("SystemFont_black")
+font_size = 96
+font_color = Color(0, 0, 0, 1)
 
 [node name="RoundCard" type="Control"]
 layout_mode = 3
@@ -14,13 +22,13 @@ mouse_filter = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_card")
 
-[node name="Dim" type="ColorRect" parent="."]
+[node name="White" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-color = Color(0, 0, 0, 0.55)
+color = Color(1, 1, 1, 1)
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -30,36 +38,40 @@ anchor_bottom = 1.0
 mouse_filter = 2
 
 [node name="Rows" type="VBoxContainer" parent="Center"]
-custom_minimum_size = Vector2(520, 0)
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 12
 
-[node name="TopRule" type="ColorRect" parent="Center/Rows"]
-custom_minimum_size = Vector2(160, 4)
+[node name="Icon" type="TextureRect" parent="Center/Rows"]
+custom_minimum_size = Vector2(0, 260)
 layout_mode = 2
-size_flags_horizontal = 4
 mouse_filter = 2
-color = Color(0.909804, 0.639216, 0.239216, 1)
+expand_mode = 1
+stretch_mode = 5
 
 [node name="TurnLabel" type="Label" parent="Center/Rows"]
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = "TitleXl"
-text = "TURNO 01"
+text = "ATRÁPALO"
+label_settings = SubResource("LabelSettings_title")
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/Rows"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = SubResource("SystemFont_black")
+theme_override_font_sizes/font_size = 40
+text = "con SHIFT"
 horizontal_alignment = 1
 
 [node name="FloorNotice" type="Label" parent="Center/Rows"]
 visible = false
 layout_mode = 2
 mouse_filter = 2
-label_settings = ExtResource("3_eyebrow")
+theme_override_colors/font_color = Color(0.35, 0.35, 0.35, 1)
+theme_override_fonts/font = SubResource("SystemFont_black")
+theme_override_font_sizes/font_size = 24
 text = "¡NUEVO PISO HABILITADO!"
 horizontal_alignment = 1
-
-[node name="BottomRule" type="ColorRect" parent="Center/Rows"]
-custom_minimum_size = Vector2(160, 4)
-layout_mode = 2
-size_flags_horizontal = 4
-mouse_filter = 2
-color = Color(0.909804, 0.639216, 0.239216, 1)

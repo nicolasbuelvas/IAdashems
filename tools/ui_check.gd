@@ -142,14 +142,19 @@ func _verify_round_card() -> void:
 	check("arranca oculto", not card.visible)
 	card.show_turn(2)
 	var label: Label = card.get_node("Center/Rows/TurnLabel")
-	check("muestra TURNO 02 (%s)" % label.text, card.visible and label.text == "TURNO 02")
+	check("ronda 2: PATÉALO con imagen (%s)" % label.text, card.visible and label.text == "PATÉALO" and card.get_node("Center/Rows/Icon").visible)
+	check("ronda 2: subtítulo con SHIFT", card.get_node("Center/Rows/Subtitle").visible)
 	check("aviso de piso oculto", not card.get_node("Center/Rows/FloorNotice").visible)
 	card.show_floor_unlocked()
 	check("aviso de piso visible", card.get_node("Center/Rows/FloorNotice").visible)
 	await create_timer(0.6).timeout
 	check("sigue visible a los 0.6 s", card.visible)
+	await create_timer(2.1).timeout
+	check("se oculta a los 2.5 s", not card.visible)
+	card.show_turn(5)
+	check("ronda 5: solo texto, sin imagen", not card.get_node("Center/Rows/Icon").visible and not card.get_node("Center/Rows/Subtitle").visible)
 	await create_timer(1.7).timeout
-	check("se oculta a los 2 s", not card.visible)
+	check("ronda 5: se oculta a los 1.5 s", not card.visible)
 	card.queue_free()
 	await wait_frames(2)
 
