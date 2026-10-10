@@ -40,4 +40,17 @@ Type: AI_ASSISTED
 Files: scenes/main_menu.tscn, scenes/main_menu.gd
 Change: Se creó el script main_menu.gd y se implementó el diseño visual del menú principal con título, subtítulo y botones para Nueva partida, Opciones y Salir. El botón Salir ya tiene funcionalidad.
 Commit: 0a4f415
-Notes: Se asume que el GameManager.goto() se implementará más tarde para los otros botones.
+
+
+---
+
+## AI-IAdashems-NB-000004
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Desarrollar la escena de introducción (intro.tscn)
+Type: AI_ASSISTED
+Files: scenes/intro.tscn, scenes/intro.gd
+Change: Se creó el script intro.gd con funcionalidad de avance por input y se implementó el diseño visual de la escena de introducción con un título y un mensaje para continuar.
+Commit: be203cd
+Notes: La navegación real al juego se integrará cuando GameManager.goto() esté disponible.
