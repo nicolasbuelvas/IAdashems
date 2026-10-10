@@ -361,7 +361,7 @@ func _explode_into_fries() -> void:
 		
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_sfx"):
-		audio.call("play_sfx", "res://audio/sfx_potato_explode.wav", 3.0)
+		audio.call("play_sfx", "res://audio/sfx_comic_explosion.wav", 4.0)
 		
 	var parent_node := get_parent()
 	if parent_node == null:

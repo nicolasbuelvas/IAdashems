@@ -29,6 +29,7 @@ const PATH_SFX_LETTUCE_BOUNCE := "res://audio/sfx_lettuce_bounce.wav"
 const PATH_SFX_ANOMALY_BITE := "res://audio/sfx_anomaly_bite.wav"
 const PATH_SFX_CUCUMBER_SCURRY := "res://audio/sfx_cucumber_scurry.wav"
 const PATH_SFX_POTATO_EXPLODE := "res://audio/sfx_potato_explode.wav"
+const PATH_SFX_COMIC_EXPLOSION := "res://audio/sfx_comic_explosion.wav"
 
 var _cache: Dictionary = {}
 
@@ -177,7 +178,7 @@ func _connect_event_bus() -> void:
 		bus.connect("player_died", func():
 			if _steam_player != null and _steam_player.playing:
 				_steam_player.stop()
-			play_sfx(PATH_SFX_POTATO_EXPLODE, 2.0)
+			play_sfx(PATH_SFX_COMIC_EXPLOSION, 3.0)
 			play_bgm(PATH_BGM_GAME_OVER, true)
 		)
 	if bus.has_signal("herbicide_fired"):

@@ -491,5 +491,19 @@ Task: Anticipación al rojo vivo de la papa antes de estallar y caída balístic
 Type: AI_ASSISTED
 Files: player/player.gd, player/french_fries_explosion.gd
 Change: Se implementó fase de anticipación dramática al morir la papa (_die_and_explode): se tiñe de rojo incandescente (Color(2.0, 0.15, 0.15)), se infla un 30% y tiembla rápidamente durante 0.4s antes de estallar. Se creó la clase FrenchFriesExplosion (french_fries_explosion.gd) que simula gravedad dinámica (26.0 m/s²) y velocidades angulares 3D continuas sobre cada una de las 24 papitas fritas, logrando que salgan despedidas en abanico y se precipiten acelerando hacia el vacío en lugar de quedar suspendidas en el aire.
-Commit: 53f7931
+Commit: 59c29e6
+Notes: 209/209 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000037
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Auditoría legal de assets externos e integración de estallido cómico retro original
+Type: AI_ASSISTED
+Files: Sprites/EXPLOSION/explosion_0000.png..0005.png, audio/sfx_comic_explosion.wav, player/french_fries_explosion.gd, player/player.gd, ui/audio_manager.gd
+Change: Auditoría legal exhaustiva sobre los enlaces de Deltarune: se determinó que los rips comerciales de Toby Fox están protegidos por copyright estricto y su inclusión directa acarrearía descalificación automática en Game Jams. Como solución 100% legal y libre de infracciones, se creó un asset procedural original inspirado en la estética retro cómica de Deltarune: 6 frames de animación de estallido cartoon (Sprites/EXPLOSION/) reproducidos mediante AnimatedSprite3D en billboard, y un efecto de audio de impacto crujiente bitcrushed (audio/sfx_comic_explosion.wav) a 44.1 kHz, reemplazando el humo anterior e integrándose con la caída balística de las papitas fritas.
+Commit: 1fb461a
 Notes: 209/209 comprobaciones automatizadas pasando sin errores.
