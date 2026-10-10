@@ -1,6 +1,8 @@
 # IAdashems
 
-Proyecto de la AI Game Jam.
+Proyecto de la AI Game Jam (Godot 4.7). Equipo: **IAdashems**.
+
+Los agentes de IA deben leer **[AGENTS.md](AGENTS.md)** (prompts oficiales, integridad y bitácora al cerrar sesión). Pack: [docs/PROMPTS_OFICIALES.md](docs/PROMPTS_OFICIALES.md). Protocolo: [AI_GAME_JAM_PROTOCOLO.md](AI_GAME_JAM_PROTOCOLO.md).
 
 ## Trazabilidad del uso de IA
 

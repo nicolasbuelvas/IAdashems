@@ -2,6 +2,8 @@
 
 Registro de trazabilidad del uso de IA (AI Game Jam).
 
+Los agentes operan con [AGENTS.md](AGENTS.md): al terminar una sesión deben appender una entrada en el log del integrante y regenerar el índice.
+
 ## Índice de logs
 
 **👉 [logs/INDICE_LOGS.md](logs/INDICE_LOGS.md)**
