@@ -196,9 +196,8 @@ func _on_scene_changed(scene: Node) -> void:
 
 
 func _on_node_added(node: Node) -> void:
-	if node is Button:
-		_hook_button(node)
-	elif node == get_tree().current_scene:
+	_hook_existing_buttons(node)
+	if node == get_tree().current_scene:
 		_on_scene_changed(node)
 
 
@@ -210,16 +209,15 @@ func _hook_existing_buttons(node: Node) -> void:
 
 
 func _hook_button(button: Button) -> void:
-	var hover_cb := Callable(self, "_on_button_hover")
-	var click_cb := Callable(self, "_on_button_click")
-	if not button.mouse_entered.is_connected(hover_cb):
-		button.mouse_entered.connect(hover_cb)
-	if not button.pressed.is_connected(click_cb):
-		button.pressed.connect(click_cb)
+	if button.has_meta(&"audio_hooked"):
+		return
+	button.set_meta(&"audio_hooked", true)
+	button.mouse_entered.connect(_on_button_hover)
+	button.pressed.connect(_on_button_click)
 
 
 func _on_button_hover() -> void:
-	play_sfx(PATH_SFX_UI_HOVER, -4.0)
+	play_sfx(PATH_SFX_UI_HOVER, 0.0)
 
 
 func _on_button_click() -> void:
