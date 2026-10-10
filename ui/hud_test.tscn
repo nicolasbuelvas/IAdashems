@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://ui/hud.tscn" id="1_hud"]
+[ext_resource type="Script" path="res://ui/hud_test.gd" id="2_test"]
+[ext_resource type="Script" path="res://ui/test_signal_emitter.gd" id="3_em"]
+
+[node name="HUDTest" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("2_test")
+
+[node name="HUD" parent="." instance=ExtResource("1_hud")]
+layout_mode = 1
+
+[node name="TestSignalEmitter" type="Node" parent="."]
+script = ExtResource("3_em")
