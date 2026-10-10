@@ -13,6 +13,11 @@
 [ext_resource type="Texture2D" uid="uid://c75f8v4sn1pjj" path="res://Sprites/PAPA_DASH/PAPA_DASH_0003.png" id="11_32hag"]
 [ext_resource type="Texture2D" uid="uid://bkdpfb1a03bg6" path="res://Sprites/PAPA_DASH/PAPA_DASH_0004.png" id="12_tqiix"]
 [ext_resource type="Texture2D" uid="uid://t1btist84vg7" path="res://Sprites/PAPA_DASH/PAPA_DASH_0005.png" id="13_e7oew"]
+[ext_resource type="Texture2D" path="res://Sprites/PAPA IDLE/Quieto_0000.png" id="14_idle0"]
+[ext_resource type="Texture2D" path="res://Sprites/PAPA IDLE/Quieto_0001.png" id="15_idle1"]
+[ext_resource type="Texture2D" path="res://Sprites/SE_ESTA_RESISTIENDO/potato_0000.png" id="16_shoot0"]
+[ext_resource type="Texture2D" path="res://Sprites/SE_ESTA_RESISTIENDO/potato_0001.png" id="17_shoot1"]
+[ext_resource type="Texture2D" path="res://Sprites/SE_ESTA_RESISTIENDO/potato_0002.png" id="18_shoot2"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.42
@@ -67,6 +72,31 @@ animations = [{
 "name": &"dash",
 "speed": 5.0
 }, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_idle0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_idle1")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_shoot0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_shoot1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_shoot2")
+}],
+"loop": 0,
+"name": &"disparar",
+"speed": 8.0
+}, {
 "frames": [],
 "loop": 1,
 "name": &"default",
@@ -95,8 +125,8 @@ debug_color = Color(0.99514896, 0, 0.21801919, 0.41960785)
 transform = Transform3D(0.6169872, 0, 0, 0, 0.6169872, 0, 0, 0, 1, -0.0233441, 0.8986554, -0.017205834)
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_seqjs")
-animation = &"correr"
-frame = 5
+animation = &"idle"
+frame = 0
 
 [node name="ContactArea" type="Area3D" parent="." unique_id=602657720]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)

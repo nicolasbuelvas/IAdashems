@@ -1,18 +1,10 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://anomalies/lettuce.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Sprites/Lechuga/LechugonXLL.png" id="2_sprite"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_let"]
 radius = 0.45
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_let"]
-albedo_color = Color(0.55, 0.95, 0.22, 1)
-roughness = 0.35
-
-[sub_resource type="SphereMesh" id="SphereMesh_let"]
-material = SubResource("StandardMaterial3D_let")
-radius = 0.45
-height = 0.9
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_hit"]
 radius = 0.52
@@ -26,9 +18,12 @@ script = ExtResource("1_script")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
 shape = SubResource("SphereShape3D_let")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
-mesh = SubResource("SphereMesh_let")
+[node name="Sprite3D" type="Sprite3D" parent="."]
+position = Vector3(0, 0.45, 0)
+scale = Vector3(0.22, 0.22, 0.22)
+texture_filter = 1
+billboard = 1
+texture = ExtResource("2_sprite")
 
 [node name="ContactArea" type="Area3D" parent="." groups=["anomaly"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)

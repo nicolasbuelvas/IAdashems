@@ -53,6 +53,7 @@ var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _jump_queued: bool = false
 var _jump_started_this_frame: bool = false
 var _herbicide_queued: bool = false
+var _is_shooting: bool = false
 var _slide_queued: bool = false
 var _facing: float = 1.0
 var _slide_dir: float = 1.0
@@ -96,6 +97,9 @@ func _ready() -> void:
 	_visual = _animated_sprite
 	if _animated_sprite != null:
 		_sprite_base_y = _animated_sprite.position.y
+		var finished_callback := Callable(self, "_on_sprite_animation_finished")
+		if not _animated_sprite.animation_finished.is_connected(finished_callback):
+			_animated_sprite.animation_finished.connect(finished_callback)
 	if _visual == null:
 		_visual = get_node_or_null("MeshInstance3D") as GeometryInstance3D
 	if _visual != null:
@@ -109,7 +113,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if is_climbing:
+	if is_climbing or _is_shooting:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_SPACE:
@@ -121,6 +125,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _is_shooting:
+		_jump_queued = false
+		_slide_queued = false
+		_herbicide_queued = false
 	if is_climbing:
 		global_position.x = move_toward(global_position.x, _climb_ladder_x, 10.0 * delta)
 		global_position.y = move_toward(global_position.y, climb_target_y, climb_speed * delta)
@@ -158,7 +166,8 @@ func _physics_process(delta: float) -> void:
 	_update_slide(delta)
 	_update_iframes(delta)
 	_update_herbicide_cooldown(delta)
-	_update_aim_direction()
+	if not _is_shooting:
+		_update_aim_direction()
 	if _herbicide_queued:
 		_herbicide_queued = false
 		_fire_herbicide()
@@ -167,7 +176,9 @@ func _physics_process(delta: float) -> void:
 	if not is_sliding() and input_x != 0.0 and (is_zero_approx(velocity.x) or signf(velocity.x) == signf(input_x)):
 		_facing = signf(input_x)
 
-	if is_sliding():
+	if _is_shooting:
+		velocity.x = 0.0
+	elif is_sliding():
 		if _slide_time_left > 0.0:
 			var slide_progress := 1.0 - _slide_time_left / slide_duration
 			var deceleration := smoothstep(0.7, 1.0, slide_progress)
@@ -313,6 +324,7 @@ func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
 	_jump_queued = false
 	_slide_queued = false
 	_herbicide_queued = false
+	_is_shooting = false
 	velocity = Vector3.ZERO
 	_climb_ladder_x = ladder_x
 	climb_target_y = target_y
@@ -332,6 +344,7 @@ func reset_to(spawn: Vector3) -> void:
 	_jump_started_this_frame = false
 	_slide_queued = false
 	_herbicide_queued = false
+	_is_shooting = false
 	_slide_time_left = 0.0
 	_slide_cooldown_left = 0.0
 	_dash_active = false
@@ -583,7 +596,7 @@ func _update_aim_direction() -> void:
 
 
 func _fire_herbicide() -> void:
-	if _dead or _herbicide_cooldown_left > 0.0:
+	if _dead or _is_shooting or _herbicide_cooldown_left > 0.0:
 		return
 	if is_sliding() or not is_on_floor() or _jump_started_this_frame:
 		return
@@ -598,6 +611,10 @@ func _fire_herbicide() -> void:
 	scene_root.add_child(projectile)
 	projectile.global_position = global_position + Vector3(0.0, 0.9, 0.0) + projectile.direction * 0.55
 	_herbicide_cooldown_left = herbicide_cooldown
+	_facing = signf(_last_aim_direction.x)
+	_is_shooting = _animated_sprite != null and _animated_sprite.sprite_frames.has_animation(&"disparar")
+	if _is_shooting:
+		_animated_sprite.play(&"disparar")
 	_emit_bus("herbicide_fired", [])
 	_emit_bus("herbicide_cooldown_changed", [0.0])
 
@@ -655,7 +672,11 @@ func _update_animation() -> void:
 	if _animated_sprite == null:
 		return
 	_animated_sprite.flip_h = _facing < 0.0
-	if is_sliding():
+	if _is_shooting:
+		_animated_sprite.position.y = _sprite_base_y
+		if _animated_sprite.animation != &"disparar":
+			_animated_sprite.play(&"disparar")
+	elif is_sliding():
 		_animated_sprite.position.y = _sprite_base_y - _DASH_VISUAL_OFFSET_Y
 		if _animated_sprite.animation != &"dash" or not _animated_sprite.is_playing():
 			_animated_sprite.play(&"dash")
@@ -663,6 +684,10 @@ func _update_animation() -> void:
 		_animated_sprite.position.y = _sprite_base_y
 		if _animated_sprite.animation != &"correr" or not _animated_sprite.is_playing():
 			_animated_sprite.play(&"correr")
+	elif _animated_sprite.sprite_frames.has_animation(&"idle"):
+		_animated_sprite.position.y = _sprite_base_y
+		if _animated_sprite.animation != &"idle" or not _animated_sprite.is_playing():
+			_animated_sprite.play(&"idle")
 	else:
 		_animated_sprite.position.y = _sprite_base_y
 		if _animated_sprite.animation != &"correr" or _animated_sprite.is_playing() or _animated_sprite.frame != 5:
@@ -670,3 +695,8 @@ func _update_animation() -> void:
 			_animated_sprite.stop()
 			_animated_sprite.frame = 5
 			_animated_sprite.frame_progress = 0.0
+
+
+func _on_sprite_animation_finished() -> void:
+	if _animated_sprite != null and _animated_sprite.animation == &"disparar":
+		_is_shooting = false
