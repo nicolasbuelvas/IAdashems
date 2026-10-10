@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" path="res://Textures/office_drywall_panel.png" id="10_tex_drywall"]
 [ext_resource type="Texture2D" path="res://Textures/office_concrete_floor.png" id="11_tex_concrete"]
 [ext_resource type="Texture2D" path="res://Textures/office_carpet_tiles.png" id="12_tex_carpet"]
+[ext_resource type="Texture2D" path="res://Textures/office_concrete_wall.png" id="13_tex_conc_wall"]
 
 [sub_resource type="BoxShape3D" id="Shape_slab"]
 size = Vector3(50.0, 0.6, 4.0)
@@ -74,8 +75,8 @@ albedo_texture = ExtResource("12_tex_carpet")
 uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_back_2"]
-albedo_color = Color(0.88, 0.9, 0.88, 1.0)
-albedo_texture = ExtResource("10_tex_drywall")
+albedo_color = Color(0.88, 0.88, 0.88, 1.0)
+albedo_texture = ExtResource("13_tex_conc_wall")
 uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="BoxMesh" id="Mesh_floor_2"]
@@ -87,10 +88,14 @@ material = SubResource("Mat_back_2")
 size = Vector3(49.0, 3.4, 0.2)
 
 [sub_resource type="StandardMaterial3D" id="Mat_floor_3"]
-albedo_color = Color(0.4, 0.22, 0.2, 1.0)
+albedo_color = Color(0.85, 0.82, 0.8, 1.0)
+albedo_texture = ExtResource("11_tex_concrete")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_back_3"]
-albedo_color = Color(0.62, 0.45, 0.42, 1.0)
+albedo_color = Color(0.88, 0.88, 0.86, 1.0)
+albedo_texture = ExtResource("9_tex_brick")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="BoxMesh" id="Mesh_floor_3"]
 material = SubResource("Mat_floor_3")

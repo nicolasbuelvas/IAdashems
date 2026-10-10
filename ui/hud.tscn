@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://ui/round_card.tscn" id="3_card"]
 [ext_resource type="Theme" path="res://ui/theme.tres" id="4_theme"]
 [ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="5_eyebrow"]
-[ext_resource type="Texture2D" path="res://Sprites/SE_ESTA_RESISTIENDO/papaXLL.png" id="6_potato_heart"]
+[ext_resource type="Texture2D" path="res://art/d-ui/heart_potato.png" id="6_potato_heart"]
 [ext_resource type="Texture2D" path="res://art/d-ui/holder_cracked.png" id="7_holder_cracked"]
 
 [sub_resource type="StyleBoxFlat" id="sb_slot_holder"]
@@ -18,6 +18,25 @@ corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="sb_game_over_card"]
+content_margin_left = 32.0
+content_margin_top = 24.0
+content_margin_right = 32.0
+content_margin_bottom = 24.0
+bg_color = Color(0.1, 0.07, 0.05, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.35, 0.25, 0.85)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.95, 0.35, 0.25, 0.18)
+shadow_size = 20
+shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="sb_herb"]
 bg_color = Color(0.42, 0.72, 0.38, 1)
@@ -66,7 +85,7 @@ alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.45, 0.15, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 24
 text = "♨"
 horizontal_alignment = 1
 
@@ -77,7 +96,7 @@ label_settings = ExtResource("5_eyebrow")
 text = "CALOR"
 
 [node name="HeatBar" type="ProgressBar" parent="TopBar/HeatPanel/HeatRow"]
-custom_minimum_size = Vector2(280, 20)
+custom_minimum_size = Vector2(360, 24)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
@@ -99,6 +118,7 @@ size_flags_horizontal = 3
 mouse_filter = 2
 
 [node name="ClockPanel" type="PanelContainer" parent="TopBar"]
+visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"Pill"
@@ -173,7 +193,7 @@ theme_type_variation = &"Pill"
 layout_mode = 2
 theme_type_variation = &"TitleMd"
 theme_override_colors/font_color = Color(1, 0.45, 0.15, 1)
-text = "♨  +30% CALOR (VIDAS RECUPERADAS)"
+text = "♨  +30%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -205,12 +225,12 @@ alignment = 1
 layout_mode = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
-theme_override_font_sizes/font_size = 15
+theme_override_font_sizes/font_size = 18
 text = "♥"
 horizontal_alignment = 1
 
 [node name="Slot1" type="Panel" parent="BottomBar/LivesPanel/LivesRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("sb_slot_holder")
@@ -245,7 +265,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Slot2" type="Panel" parent="BottomBar/LivesPanel/LivesRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("sb_slot_holder")
@@ -280,7 +300,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Slot3" type="Panel" parent="BottomBar/LivesPanel/LivesRow"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("sb_slot_holder")
@@ -381,3 +401,72 @@ theme_override_styles/panel = SubResource("sb_herb")
 
 [node name="RoundCard" parent="." instance=ExtResource("3_card")]
 layout_mode = 1
+
+[node name="GameOverUI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 25
+visible = false
+
+[node name="Backdrop" type="ColorRect" parent="GameOverUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.12, 0.02, 0.02, 0.88)
+
+[node name="Center" type="CenterContainer" parent="GameOverUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Card" type="PanelContainer" parent="GameOverUI/Center"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme = ExtResource("4_theme")
+theme_override_styles/panel = SubResource("sb_game_over_card")
+
+[node name="Rows" type="VBoxContainer" parent="GameOverUI/Center/Card"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+theme_type_variation = &"TitleLg"
+theme_override_colors/font_color = Color(0.95, 0.35, 0.25, 1)
+text = "♨  GAME OVER"
+horizontal_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="GameOverUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(64, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.95, 0.35, 0.25, 1)
+
+[node name="SubIcon" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.82, 0.76, 0.9)
+theme_override_font_sizes/font_size = 20
+text = "💔  ♨"
+horizontal_alignment = 1
+
+[node name="Gap" type="Control" parent="GameOverUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="BtnRetry" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "⟳   REINTENTAR"
+
+[node name="BtnRestartGame" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "⏮   REINICIAR DESDE CERO"
+
+[node name="BtnMainMenu" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "↶   MENÚ"

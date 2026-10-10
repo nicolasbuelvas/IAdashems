@@ -51,7 +51,7 @@ var _game_over_shown: bool = false
 @onready var btn_retry: Button = %BtnRetry
 @onready var btn_restart_game: Button = %BtnRestartGame
 @onready var btn_main_menu: Button = %BtnMainMenu
-@onready var btn_game_over_setup: Button = %BtnGameOverSetup
+var btn_game_over_setup: Button = null
 
 
 var time_left: float = 90.0
@@ -59,6 +59,7 @@ var timer_expired: bool = false
 
 
 func _ready() -> void:
+	btn_game_over_setup = get_node_or_null("%BtnGameOverSetup") as Button
 	var heat_fx := OfficeHeatVisualsScript.new()
 	add_child(heat_fx)
 	heat_fx.setup(self)
@@ -73,14 +74,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			show_setup_editor()
 
 
-func _process(delta: float) -> void:
-	if get_tree().paused:
-		return
-	if time_left > 0.0:
-		time_left = maxf(time_left - delta, 10.0)
-		var bus := get_node_or_null("/root/EventBus")
-		if bus and bus.has_signal("round_timer_changed"):
-			bus.emit_signal("round_timer_changed", time_left)
+func _process(_delta: float) -> void:
+	pass
 
 
 func _connect_event_bus() -> void:
@@ -139,7 +134,8 @@ func _init_setup_ui() -> void:
 		btn_restart_game.pressed.connect(_on_btn_restart_game_pressed)
 	if btn_main_menu != null:
 		btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
-	btn_game_over_setup.pressed.connect(show_setup_editor)
+	if btn_game_over_setup != null:
+		btn_game_over_setup.pressed.connect(show_setup_editor)
 	
 	var btn_reopen := get_node_or_null("HUDLayer/BtnReopenSetup") as Button
 	if btn_reopen != null:
@@ -237,25 +233,14 @@ func _apply_death_penalty() -> void:
 	pass
 
 
-func _on_timer_expired() -> void:
-	timer_expired = true
-	var bus := get_node_or_null("/root/EventBus")
-	if bus and bus.has_signal("round_timer_expired"):
-		bus.emit_signal("round_timer_expired")
-	_show_game_over("Tiempo agotado. La oficina se perdió.")
-
-
-func _show_game_over(reason_text: String) -> void:
+func _show_game_over(_reason_text: String = "") -> void:
 	if _game_over_shown:
 		return
 	_game_over_shown = true
-	var lbl := game_over_canvas.find_child("LabelReason", true, false) as Label
-	if lbl:
-		lbl.text = reason_text
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):
 		audio.call("play_music", "res://audio/bgm_game_over.ogg")
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.2).timeout
 	game_over_canvas.visible = true
 	get_tree().paused = true
 

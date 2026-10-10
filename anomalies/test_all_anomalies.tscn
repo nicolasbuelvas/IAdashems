@@ -12,9 +12,12 @@
 [ext_resource type="Texture2D" path="res://Textures/office_brick_wall.png" id="10_tex_brick"]
 [ext_resource type="Texture2D" path="res://Textures/office_concrete_floor.png" id="11_tex_concrete"]
 [ext_resource type="Texture2D" path="res://Textures/office_drywall_panel.png" id="12_tex_drywall"]
+[ext_resource type="Texture2D" path="res://Textures/office_concrete_wall.png" id="13_tex_conc_wall"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_Basement"]
-albedo_color = Color(0.18, 0.16, 0.15, 1)
+albedo_color = Color(0.35, 0.33, 0.32, 1)
+albedo_texture = ExtResource("13_tex_conc_wall")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_Floor"]
 albedo_color = Color(0.88, 0.85, 0.82, 1)
@@ -556,16 +559,17 @@ layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="Eyebrow" type="Label" parent="GameOverUI/Center/Card/Rows"]
+visible = false
 layout_mode = 2
 label_settings = ExtResource("7_eyebrow")
-text = "PAPA COCINADA • SIN VIDAS"
+text = "PAPA COCINADA"
 horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="GameOverUI/Center/Card/Rows"]
 layout_mode = 2
 theme_type_variation = &"TitleLg"
 theme_override_colors/font_color = Color(0.95, 0.35, 0.25, 1)
-text = "GAME OVER"
+text = "♨  GAME OVER"
 horizontal_alignment = 1
 
 [node name="Rule" type="ColorRect" parent="GameOverUI/Center/Card/Rows"]
@@ -576,14 +580,13 @@ color = Color(0.95, 0.35, 0.25, 1)
 
 [node name="Sub" type="Label" parent="GameOverUI/Center/Card/Rows"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.85, 0.8, 1)
-theme_override_font_sizes/font_size = 14
-text = "Sobrecalentamiento crítico: los contenedores de vida colapsaron."
+theme_override_colors/font_color = Color(0.9, 0.82, 0.76, 0.9)
+theme_override_font_sizes/font_size = 20
+text = "💔  ♨"
 horizontal_alignment = 1
-autowrap_mode = 3
 
 [node name="Gap" type="Control" parent="GameOverUI/Center/Card/Rows"]
-custom_minimum_size = Vector2(0, 6)
+custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="BtnRetry" type="Button" parent="GameOverUI/Center/Card/Rows"]
@@ -591,7 +594,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
-text = "⟳   REINTENTAR TURNO ACTUAL"
+text = "⟳   REINTENTAR"
 
 [node name="BtnRestartGame" type="Button" parent="GameOverUI/Center/Card/Rows"]
 unique_name_in_owner = true
@@ -603,13 +606,7 @@ text = "⏮   REINICIAR DESDE CERO"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-text = "↶   MENÚ PRINCIPAL"
-
-[node name="BtnGameOverSetup" type="Button" parent="GameOverUI/Center/Card/Rows"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 36)
-layout_mode = 2
-text = "CONFIGURAR ENTIDADES (F1)"
+text = "↶   MENÚ"
 
 [node name="PauseLayer" type="CanvasLayer" parent="."]
 process_mode = 3

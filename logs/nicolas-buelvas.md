@@ -589,5 +589,19 @@ Task: Temperatura como mecánica principal, vidas de papa, sacrificio al revivir
 Type: AI_ASSISTED
 Files: autoload/event_bus.gd, autoload/game_config.gd, systems/heat_system.gd, systems/round_manager.gd, ui/hud.gd, ui/hud.tscn, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/building.tscn, Textures/office_brick_wall.png, Textures/office_concrete_floor.png, Textures/office_drywall_panel.png, Textures/office_carpet_tiles.png, art/d-ui/holder_cracked.png, audio/sfx_holder_crack.wav
 Change: Se eliminó el tiempo como condición de derrota o presión, consolidando la temperatura como la mecánica principal. Se integraron las cabezas de papa (Sprites/SE_ESTA_RESISTIENDO/papaXLL.png) como corazones de vida en el HUD. Al agotarse las vidas, el jugador revive a cambio de un aumento de +30% de calor (HEAT_PENALTY_ON_DEATH) con banner visual y audio de vapor. Al llegar al 100% de calor, las vidas restantes se drenan suavemente una a una y los holders de los corazones se fracturan con sfx_holder_crack.wav dando paso al Game Over. Se adaptó la pantalla de Game Over con las 3 opciones requeridas: Reintentar turno actual, Reiniciar desde cero y Menú principal. Se crearon y aplicaron 4 texturas procedurales originales para paredes y suelos de oficina (ladrillo, drywall, concreto pulido y alfombra) eliminando los colores planos.
-Commit: 2058f09
+Commit: f71a34c
 Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000044
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Eliminación del reloj de tiempo, temperatura y corazones de papa prominentes, orden de sacrificio al revivir, rotura de holders y texturas de pared
+Type: AI_ASSISTED
+Files: ui/hud.tscn, ui/hud.gd, systems/round_manager.gd, game/game.tscn, game/game.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/building.tscn, Textures/office_concrete_wall.png, art/d-ui/heart_potato.png
+Change: Se eliminó el reloj y la mecánica de tiempo de la interfaz y del flujo de juego, priorizando exclusivamente la temperatura como condición central y los corazones de papa sin extremidades en holders ampliados de 48x48. Al morir, la secuencia visual y sonora refleja claramente que las vidas se regeneran primero y a cambio la temperatura sube +30% con sonido de vapor e iconografía pura (♨ +30%) sin texto AI-slop. Al llegar al 100% de calor, las vidas restantes se drenan suavemente una a una, se fracturan los holders físicos con sonido de rotura y vibración, y se abre el Game Over adaptado a 3 únicas opciones: Reintentar, Reiniciar desde cero y Menú. Se aplicaron texturas originales de cemento, ladrillo, drywall y alfombra a todas las paredes y pisos de la oficina eliminando superficies planas.
+Commit: PENDING
+Notes: 139 comprobaciones en round_manager_test, 32 en heat_system_test y 120 en level_layout_test pasando sin errores.

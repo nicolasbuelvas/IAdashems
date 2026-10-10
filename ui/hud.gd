@@ -1,6 +1,10 @@
 extends Control
 ## HUD renovado (anti-AI-slop, profesional y con iconografía técnica).
 
+signal retry_requested
+signal restart_game_requested
+signal main_menu_requested
+
 const HEAT_HIGH_THRESHOLD := 70.0
 
 @onready var heat_bar = $"TopBar/HeatPanel/HeatRow/HeatBar"
@@ -11,6 +15,7 @@ const HEAT_HIGH_THRESHOLD := 70.0
 
 @onready var dash_icon = get_node_or_null("BottomBar/DashSlot/DashRow/DashIcon") as Label
 @onready var dash_badge = get_node_or_null("BottomBar/DashSlot/DashRow/DashStateBadge") as Label
+@onready var game_over_modal = get_node_or_null("GameOverUI") as CanvasLayer
 
 var _dash_ready: bool = true
 var _dash_speed_reached: bool = false
@@ -32,6 +37,17 @@ func _ready() -> void:
 		attach_source(bus)
 	if btn_pause:
 		btn_pause.pressed.connect(_on_pause_button_pressed)
+	
+	var btn_ret = get_node_or_null("GameOverUI/Center/Card/Rows/BtnRetry") as Button
+	if btn_ret:
+		btn_ret.pressed.connect(_on_btn_retry_pressed)
+	var btn_res = get_node_or_null("GameOverUI/Center/Card/Rows/BtnRestartGame") as Button
+	if btn_res:
+		btn_res.pressed.connect(_on_btn_restart_game_pressed)
+	var btn_menu = get_node_or_null("GameOverUI/Center/Card/Rows/BtnMainMenu") as Button
+	if btn_menu:
+		btn_menu.pressed.connect(_on_btn_main_menu_pressed)
+
 	_update_dash_ui()
 
 
@@ -94,60 +110,67 @@ func _on_player_health_changed(current: int, max_hp: int) -> void:
 		_reset_holders()
 
 
-func _on_lives_sacrificed_for_heat(heat_added: float) -> void:
+func _on_lives_sacrificed_for_heat(_heat_added: float) -> void:
 	_reset_holders()
+	
+	# 1. Recuperar los 3 corazones de papa uno a uno con rebote elástico
+	for i in range(life_icons.size()):
+		life_icons[i].visible = true
+		life_icons[i].modulate = Color.WHITE
+		life_icons[i].scale = Vector2(0.1, 0.1)
+		var pt = create_tween()
+		pt.tween_interval(i * 0.12)
+		pt.tween_property(life_icons[i], "scale", Vector2(1.25, 1.25), 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		pt.tween_property(life_icons[i], "scale", Vector2.ONE, 0.08)
+	
+	# 2. Orden lógico: una vez aterrizan las vidas, suena el vapor y sube el calor
+	await get_tree().create_timer(0.42).timeout
 	
 	var audio = get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_sfx"):
 		audio.call("play_sfx", "res://audio/sfx_heat_steam.ogg")
 	
+	# Icono flotante minimalista: ♨ +30%
 	var banner = get_node_or_null("SacrificeBanner")
 	var lbl = get_node_or_null("SacrificeBanner/BannerLabel") as Label
 	if banner and lbl:
-		lbl.text = "♨  +%d%% CALOR (VIDAS RECUPERADAS)" % int(heat_added)
+		lbl.text = "♨  +30%"
 		if _banner_tween and _banner_tween.is_valid():
 			_banner_tween.kill()
 		_banner_tween = create_tween()
 		banner.modulate.a = 0.0
-		banner.position.y = 84.0
+		banner.position.y = 86.0
 		_banner_tween.tween_property(banner, "modulate:a", 1.0, 0.2)
-		_banner_tween.parallel().tween_property(banner, "position:y", 72.0, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		_banner_tween.tween_interval(1.4)
+		_banner_tween.parallel().tween_property(banner, "position:y", 68.0, 0.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		_banner_tween.tween_interval(1.2)
 		_banner_tween.tween_property(banner, "modulate:a", 0.0, 0.3)
 	
+	# Pulso y destello intenso en el medidor de temperatura
 	var hp = get_node_or_null("TopBar/HeatPanel")
 	if hp:
 		var ht = create_tween()
-		ht.tween_property(hp, "modulate", Color(2.0, 0.75, 0.3, 1.0), 0.15)
+		ht.tween_property(hp, "modulate", Color(2.5, 0.6, 0.2, 1.0), 0.14)
 		ht.tween_property(hp, "modulate", Color.WHITE, 0.35)
-	
-	for i in range(life_icons.size()):
-		life_icons[i].visible = true
-		life_icons[i].modulate = Color.WHITE
-		life_icons[i].scale = Vector2(0.2, 0.2)
-		var pt = create_tween()
-		pt.tween_interval(i * 0.09)
-		pt.tween_property(life_icons[i], "scale", Vector2(1.2, 1.2), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-		pt.tween_property(life_icons[i], "scale", Vector2.ONE, 0.08)
 
 
 func _on_heat_maxed() -> void:
 	if _draining_hearts:
 		return
 	_draining_hearts = true
-	# Pérdida suave una por una si aún tiene vidas
+	# Pérdida suave una por una de derecha a izquierda si aún tiene vidas
 	for i in range(life_icons.size() - 1, -1, -1):
 		if life_icons[i].visible:
 			var dt = create_tween()
-			dt.tween_property(life_icons[i], "modulate", Color(2.2, 0.2, 0.1, 1.0), 0.15)
+			dt.tween_property(life_icons[i], "modulate", Color(2.5, 0.2, 0.1, 1.0), 0.14)
 			dt.tween_property(life_icons[i], "scale", Vector2(0.1, 0.1), 0.16)
 			var audio = get_node_or_null("/root/AudioManager")
 			if audio and audio.has_method("play_sfx"):
 				audio.call("play_sfx", "res://audio/sfx_potato_explode.wav")
-			await get_tree().create_timer(0.3).timeout
+			await get_tree().create_timer(0.28).timeout
 			life_icons[i].visible = false
 			life_icons[i].scale = Vector2.ONE
 	
+	# Rotura física de los holders
 	_shatter_holders()
 	_draining_hearts = false
 
@@ -172,6 +195,21 @@ func _shatter_holders() -> void:
 	var bus = get_node_or_null("/root/EventBus")
 	if bus and bus.has_signal("holders_shattered"):
 		bus.emit_signal("holders_shattered")
+	
+	# Forzar muerte de la papa para detonar la explosión en papas fritas
+	var players = get_tree().get_nodes_in_group("player")
+	for p in players:
+		if p.has_method("kill"):
+			p.call("kill")
+	
+	# Sonar tema de Game Over y desplegar el modal tras delay
+	if audio and audio.has_method("play_music"):
+		audio.call("play_music", "res://audio/bgm_game_over.ogg")
+	
+	await get_tree().create_timer(1.2).timeout
+	if game_over_modal:
+		game_over_modal.visible = true
+		get_tree().paused = true
 
 
 func _on_holders_shattered() -> void:
@@ -189,6 +227,41 @@ func _reset_holders() -> void:
 	for icon in life_icons:
 		icon.modulate = Color.WHITE
 		icon.scale = Vector2.ONE
+
+
+func _on_btn_retry_pressed() -> void:
+	if game_over_modal:
+		game_over_modal.visible = false
+	get_tree().paused = false
+	_reset_holders()
+	var gm := get_node_or_null("/root/GameManager")
+	if gm and gm.state == GameManager.PAUSED:
+		gm.state = GameManager.PLAYING
+	retry_requested.emit()
+
+
+func _on_btn_restart_game_pressed() -> void:
+	if game_over_modal:
+		game_over_modal.visible = false
+	get_tree().paused = false
+	_reset_holders()
+	var gm := get_node_or_null("/root/GameManager")
+	if gm:
+		gm.current_round = 1
+		gm.state = GameManager.PLAYING
+	restart_game_requested.emit()
+
+
+func _on_btn_main_menu_pressed() -> void:
+	if game_over_modal:
+		game_over_modal.visible = false
+	get_tree().paused = false
+	var gm := get_node_or_null("/root/GameManager")
+	if gm and gm.has_method("goto"):
+		gm.goto(&"menu")
+	else:
+		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	main_menu_requested.emit()
 
 
 func _on_round_timer_changed(seconds_left: float) -> void:

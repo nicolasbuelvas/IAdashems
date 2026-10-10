@@ -22,6 +22,7 @@ script = ExtResource("4_round")
 building = NodePath("../Building")
 anomalies_root = NodePath("../Anomalies")
 player = NodePath("../Player")
+enable_timer_limit = false
 
 [node name="Anomalies" type="Node3D" parent="."]
 

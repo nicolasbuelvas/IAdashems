@@ -26,6 +26,7 @@ const ROUNDS := [
 @export var player: Node3D
 ## Rutas por tipo. game/test/test_game.tscn las cambia por los dummies. Siempre se usa esta variable, nunca SCENES.
 @export var anomaly_scenes: Dictionary = SCENES
+@export var enable_timer_limit: bool = true
 
 var current_round: int = 0
 var active: bool = false
@@ -50,13 +51,14 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not active:
 		return
-	time_left -= delta
-	EventBus.round_timer_changed.emit(maxf(time_left, 0.0))
-	if time_left <= 0.0 and not expired_emitted:
-		expired_emitted = true
-		EventBus.round_timer_expired.emit()
-		# Reloj agotado = game over definitivo del turno: la ronda se reinicia completa.
-		_fail(&"time")
+	if enable_timer_limit:
+		time_left -= delta
+		EventBus.round_timer_changed.emit(maxf(time_left, 0.0))
+		if time_left <= 0.0 and not expired_emitted:
+			expired_emitted = true
+			EventBus.round_timer_expired.emit()
+			# Reloj agotado = game over definitivo del turno: la ronda se reinicia completa.
+			_fail(&"time")
 
 
 ## Inicia la ronda n (1 a 6) o la reintenta. Si n es la ronda actual, conserva contained_ids
