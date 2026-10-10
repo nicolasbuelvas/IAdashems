@@ -6,42 +6,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-
-[node name="Rows" type="VBoxContainer" parent="Center"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="Title" type="Label" parent="Center/Rows"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 56
-text = "PHYTOPHTHORA INFESTANS"
-horizontal_alignment = 1
-
-[node name="Subtitle" type="Label" parent="Center/Rows"]
-layout_mode = 2
-text = "Grupo Tubérculo S.A.S."
-horizontal_alignment = 1
-
-[node name="Spacer" type="Control" parent="Center/Rows"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 24)
-
-[node name="NewGameButton" type="Button" parent="Center/Rows"]
-layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
-text = "Nueva partida"
-
-[node name="OptionsButton" type="Button" parent="Center/Rows"]
-layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
-text = "Opciones"
-
-[node name="QuitButton" type="Button" parent="Center/Rows"]
-layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
-text = "Salir"
+color = Color(0, 0, 0, 1)
