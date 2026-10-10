@@ -99,7 +99,7 @@ El calor es el núcleo de la presión. Sube y baja con los siguientes factores:
 | Paso del tiempo | Sube | Media. Unos 90 s hasta el máximo sin otros factores |
 | Anomalía activa | Sube en toda la ronda | Media por anomalía |
 | Golpe recibido | Sube | Media |
-| Reloj agotado | Sube | Triple de velocidad |
+| Reloj agotado | Game over del turno | La ronda se reinicia completa |
 | Anomalía contenida | Baja de forma gradual | Media |
 
 - **Calor máximo:** game over.
@@ -151,7 +151,7 @@ El calor es el núcleo de la presión. Sube y baja con los siguientes factores:
 | 5 | 2 | 5 | Mezcla equilibrada | |
 | 6 | 3 (final) | 6 | Mezcla equilibrada | Ronda final. Al contener la última anomalía, el edificio explota |
 
-**Reloj de la ronda:** 90 s base + 15 s por cada anomalía restante. Al contener anomalías, el reloj se acorta. Si se agota, el calor sube al triple de velocidad, pero no pierdes de inmediato.
+**Reloj de la ronda:** 90 s base + 15 s por cada anomalía restante. Al contener anomalías, el reloj se acorta. Si se agota, es el game over definitivo del turno: la ronda se reinicia completa (todas sus anomalías, reloj, calor y vida).
 
 - Reloj inicial por ronda: 105 s, 120 s, 135 s, 150 s, 165 s y 180 s. El tiempo real será menor, porque el reloj se acorta al contener.
 - **Total de anomalías en el juego:** 21.
@@ -168,7 +168,8 @@ El calor es el núcleo de la presión. Sube y baja con los siguientes factores:
 6. Menú principal.
 
 - **Sin guardado** entre sesiones. Cada sesión empieza desde el inicio.
-- **Game over** (calor máximo o vida en 0): se reinicia la ronda, pero se conservan las anomalías ya contenidas en ella.
+- **Muerte** (calor máximo o vida en 0): la papa reaparece con calor 0 y vida llena; se conservan las anomalías ya contenidas y el reloj sigue donde iba.
+- **Game over del turno** (reloj agotado): se reinicia la ronda completa: reloj, calor, vida y todas sus anomalías.
 
 ---
 

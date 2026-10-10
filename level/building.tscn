@@ -1,230 +1,635 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://level/building.gd" id="1_building"]
-[ext_resource type="PackedScene" path="res://level/spikes.tscn" id="2_spikes"]
+[ext_resource type="PackedScene" path="res://level/ladder.tscn" id="2_ladder"]
+[ext_resource type="PackedScene" path="res://level/hazards/staples.tscn" id="3_staples"]
+[ext_resource type="PackedScene" path="res://level/hazards/steam_vent.tscn" id="4_steam_vent"]
+[ext_resource type="PackedScene" path="res://level/hazards/live_cable.tscn" id="5_live_cable"]
+[ext_resource type="PackedScene" path="res://level/hazards/rolling_chair.tscn" id="6_rolling_chair"]
+[ext_resource type="PackedScene" path="res://level/hazards/falling_tile.tscn" id="7_falling_tile"]
+[ext_resource type="PackedScene" path="res://level/props/filing_cabinet.tscn" id="8_filing_cabinet"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_floor"]
-albedo_color = Color(0.55, 0.5, 0.45, 1)
+[sub_resource type="BoxShape3D" id="Shape_slab"]
+size = Vector3(50.0, 0.6, 4.0)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ramp"]
-albedo_color = Color(0.78, 0.62, 0.42, 1)
+[sub_resource type="BoxShape3D" id="Shape_wall"]
+size = Vector3(1.0, 13.0, 4.0)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_block"]
-albedo_color = Color(0.8, 0.2, 0.2, 1)
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+albedo_color = Color(0.3, 0.32, 0.36, 1.0)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wall"]
-albedo_color = Color(0.3, 0.32, 0.36, 1)
+[sub_resource type="StandardMaterial3D" id="Mat_roof"]
+albedo_color = Color(0.22, 0.2, 0.19, 1.0)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_floor_big"]
-size = Vector3(14, 1, 4)
+[sub_resource type="StandardMaterial3D" id="Mat_desk"]
+albedo_color = Color(0.62, 0.48, 0.32, 1.0)
 
-[sub_resource type="BoxMesh" id="BoxMesh_floor_big"]
-size = Vector3(14, 1, 4)
-material = SubResource("StandardMaterial3D_floor")
+[sub_resource type="StandardMaterial3D" id="Mat_screen"]
+albedo_color = Color(0.1, 0.12, 0.16, 1.0)
+emission_enabled = true
+emission = Color(0.25, 0.55, 0.9, 1.0)
+emission_energy_multiplier = 0.6
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_floor_small"]
-size = Vector3(8, 1, 4)
+[sub_resource type="StandardMaterial3D" id="Mat_container"]
+albedo_color = Color(0.96, 0.68, 0.22, 1.0)
+emission_enabled = true
+emission = Color(0.96, 0.68, 0.22, 1.0)
+emission_energy_multiplier = 0.8
 
-[sub_resource type="BoxMesh" id="BoxMesh_floor_small"]
-size = Vector3(8, 1, 4)
-material = SubResource("StandardMaterial3D_floor")
+[sub_resource type="StandardMaterial3D" id="Mat_stripe_a"]
+albedo_color = Color(0.95, 0.78, 0.1, 1.0)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_ramp"]
-size = Vector3(8.944272, 0.5, 4)
+[sub_resource type="StandardMaterial3D" id="Mat_stripe_b"]
+albedo_color = Color(0.08, 0.08, 0.08, 1.0)
 
-[sub_resource type="BoxMesh" id="BoxMesh_ramp"]
-size = Vector3(8.944272, 0.5, 4)
-material = SubResource("StandardMaterial3D_ramp")
+[sub_resource type="StandardMaterial3D" id="Mat_floor_1"]
+albedo_color = Color(0.55, 0.5, 0.44, 1.0)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_stairs"]
-size = Vector3(8.944272, 3, 4)
+[sub_resource type="StandardMaterial3D" id="Mat_back_1"]
+albedo_color = Color(0.86, 0.8, 0.68, 1.0)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_block"]
-size = Vector3(1, 4.5, 4)
+[sub_resource type="BoxMesh" id="Mesh_floor_1"]
+material = SubResource("Mat_floor_1")
+size = Vector3(50.0, 0.6, 4.0)
 
-[sub_resource type="BoxMesh" id="BoxMesh_block"]
-size = Vector3(1, 4.5, 4)
-material = SubResource("StandardMaterial3D_block")
+[sub_resource type="BoxMesh" id="Mesh_back_1"]
+material = SubResource("Mat_back_1")
+size = Vector3(49.0, 3.4, 0.2)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_wall"]
-size = Vector3(1, 8, 4)
+[sub_resource type="StandardMaterial3D" id="Mat_floor_2"]
+albedo_color = Color(0.42, 0.46, 0.44, 1.0)
 
-[sub_resource type="BoxMesh" id="BoxMesh_wall"]
-size = Vector3(1, 8, 4)
-material = SubResource("StandardMaterial3D_wall")
+[sub_resource type="StandardMaterial3D" id="Mat_back_2"]
+albedo_color = Color(0.66, 0.74, 0.7, 1.0)
+
+[sub_resource type="BoxMesh" id="Mesh_floor_2"]
+material = SubResource("Mat_floor_2")
+size = Vector3(50.0, 0.6, 4.0)
+
+[sub_resource type="BoxMesh" id="Mesh_back_2"]
+material = SubResource("Mat_back_2")
+size = Vector3(49.0, 3.4, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="Mat_floor_3"]
+albedo_color = Color(0.4, 0.22, 0.2, 1.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_back_3"]
+albedo_color = Color(0.62, 0.45, 0.42, 1.0)
+
+[sub_resource type="BoxMesh" id="Mesh_floor_3"]
+material = SubResource("Mat_floor_3")
+size = Vector3(50.0, 0.6, 4.0)
+
+[sub_resource type="BoxMesh" id="Mesh_back_3"]
+material = SubResource("Mat_back_3")
+size = Vector3(49.0, 3.4, 0.2)
+
+[sub_resource type="BoxMesh" id="Mesh_roof"]
+material = SubResource("Mat_roof")
+size = Vector3(50.0, 0.6, 4.0)
+
+[sub_resource type="BoxMesh" id="Mesh_wall"]
+material = SubResource("Mat_wall")
+size = Vector3(1.0, 13.0, 4.0)
+
+[sub_resource type="BoxMesh" id="Mesh_desk"]
+material = SubResource("Mat_desk")
+size = Vector3(1.8, 0.8, 0.8)
+
+[sub_resource type="BoxMesh" id="Mesh_screen"]
+material = SubResource("Mat_screen")
+size = Vector3(0.7, 0.45, 0.05)
+
+[sub_resource type="BoxMesh" id="Mesh_plank_a"]
+material = SubResource("Mat_stripe_a")
+size = Vector3(1.6, 0.22, 0.1)
+
+[sub_resource type="BoxMesh" id="Mesh_plank_b"]
+material = SubResource("Mat_stripe_b")
+size = Vector3(1.6, 0.22, 0.1)
+
+[sub_resource type="CylinderMesh" id="Mesh_container"]
+material = SubResource("Mat_container")
+top_radius = 0.45
+bottom_radius = 0.5
+height = 1.0
 
 [node name="Building" type="Node3D"]
 script = ExtResource("1_building")
 
-[node name="Floor_F1" type="StaticBody3D" parent="."]
-position = Vector3(-7, -0.5, 0)
+[node name="Architecture" type="Node3D" parent="."]
+
+[node name="Floor_F1" type="StaticBody3D" parent="Architecture"]
+position = Vector3(0.0, -0.3, 0.0)
 collision_layer = 1
+collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor_F1"]
-shape = SubResource("BoxShape3D_floor_big")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor_F1"]
+shape = SubResource("Shape_slab")
 
-[node name="Mesh" type="MeshInstance3D" parent="Floor_F1"]
-mesh = SubResource("BoxMesh_floor_big")
+[node name="Mesh" type="MeshInstance3D" parent="Architecture/Floor_F1"]
+mesh = SubResource("Mesh_floor_1")
 
-[node name="Ramp_F2" type="StaticBody3D" parent="."]
-position = Vector3(4.1118034, 1.7763932, 0)
-rotation = Vector3(0, 0, 0.4636476)
+[node name="BackWall_F1" type="MeshInstance3D" parent="Architecture"]
+position = Vector3(0.0, 1.7, -2.1)
+mesh = SubResource("Mesh_back_1")
+
+[node name="Floor_F2" type="StaticBody3D" parent="Architecture"]
+position = Vector3(0.0, 3.7, 0.0)
 collision_layer = 1
+collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ramp_F2"]
-shape = SubResource("BoxShape3D_ramp")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor_F2"]
+shape = SubResource("Shape_slab")
 
-[node name="Mesh" type="MeshInstance3D" parent="Ramp_F2"]
-mesh = SubResource("BoxMesh_ramp")
+[node name="Mesh" type="MeshInstance3D" parent="Architecture/Floor_F2"]
+mesh = SubResource("Mesh_floor_2")
 
-[node name="Stairs_F2" type="Area3D" parent="." groups=["stairs"]]
-position = Vector3(4.1118034, 1.7763932, 0)
-rotation = Vector3(0, 0, 0.4636476)
-collision_layer = 32
-collision_mask = 6
+[node name="BackWall_F2" type="MeshInstance3D" parent="Architecture"]
+position = Vector3(0.0, 5.7, -2.1)
+mesh = SubResource("Mesh_back_2")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Stairs_F2"]
-shape = SubResource("BoxShape3D_stairs")
-
-[node name="Floor_F2" type="StaticBody3D" parent="."]
-position = Vector3(12, 3.5, 0)
+[node name="Floor_F3" type="StaticBody3D" parent="Architecture"]
+position = Vector3(0.0, 7.7, 0.0)
 collision_layer = 1
+collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor_F2"]
-shape = SubResource("BoxShape3D_floor_small")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Floor_F3"]
+shape = SubResource("Shape_slab")
 
-[node name="Mesh" type="MeshInstance3D" parent="Floor_F2"]
-mesh = SubResource("BoxMesh_floor_small")
+[node name="Mesh" type="MeshInstance3D" parent="Architecture/Floor_F3"]
+mesh = SubResource("Mesh_floor_3")
 
-[node name="Ramp_F3" type="StaticBody3D" parent="."]
-position = Vector3(20.1118034, 5.7763932, 0)
-rotation = Vector3(0, 0, 0.4636476)
+[node name="BackWall_F3" type="MeshInstance3D" parent="Architecture"]
+position = Vector3(0.0, 9.7, -2.1)
+mesh = SubResource("Mesh_back_3")
+
+[node name="Roof" type="StaticBody3D" parent="Architecture"]
+position = Vector3(0.0, 11.7, 0.0)
 collision_layer = 1
+collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ramp_F3"]
-shape = SubResource("BoxShape3D_ramp")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Roof"]
+shape = SubResource("Shape_slab")
 
-[node name="Mesh" type="MeshInstance3D" parent="Ramp_F3"]
-mesh = SubResource("BoxMesh_ramp")
+[node name="Mesh" type="MeshInstance3D" parent="Architecture/Roof"]
+mesh = SubResource("Mesh_roof")
 
-[node name="Stairs_F3" type="Area3D" parent="." groups=["stairs"]]
-position = Vector3(20.1118034, 5.7763932, 0)
-rotation = Vector3(0, 0, 0.4636476)
-collision_layer = 32
-collision_mask = 6
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Stairs_F3"]
-shape = SubResource("BoxShape3D_stairs")
-
-[node name="Floor_F3" type="StaticBody3D" parent="."]
-position = Vector3(28, 7.5, 0)
+[node name="Wall_Left" type="StaticBody3D" parent="Architecture"]
+position = Vector3(-25.0, 5.5, 0.0)
 collision_layer = 1
+collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor_F3"]
-shape = SubResource("BoxShape3D_floor_small")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Wall_Left"]
+shape = SubResource("Shape_wall")
 
-[node name="Mesh" type="MeshInstance3D" parent="Floor_F3"]
-mesh = SubResource("BoxMesh_floor_small")
+[node name="Mesh" type="MeshInstance3D" parent="Architecture/Wall_Left"]
+mesh = SubResource("Mesh_wall")
 
-[node name="BlockF2" type="StaticBody3D" parent="."]
-position = Vector3(-1, 2.25, 0)
+[node name="Wall_Right" type="StaticBody3D" parent="Architecture"]
+position = Vector3(25.0, 5.5, 0.0)
 collision_layer = 1
+collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BlockF2"]
-shape = SubResource("BoxShape3D_block")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/Wall_Right"]
+shape = SubResource("Shape_wall")
 
-[node name="Mesh" type="MeshInstance3D" parent="BlockF2"]
-mesh = SubResource("BoxMesh_block")
+[node name="Mesh" type="MeshInstance3D" parent="Architecture/Wall_Right"]
+mesh = SubResource("Mesh_wall")
 
-[node name="BlockF3" type="StaticBody3D" parent="."]
-position = Vector3(15, 6.25, 0)
-collision_layer = 1
+[node name="Decor" type="Node3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BlockF3"]
-shape = SubResource("BoxShape3D_block")
+[node name="Desk_F1_1" type="MeshInstance3D" parent="Decor"]
+position = Vector3(-15.5, 0.4, -1.5)
+mesh = SubResource("Mesh_desk")
 
-[node name="Mesh" type="MeshInstance3D" parent="BlockF3"]
-mesh = SubResource("BoxMesh_block")
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F1_1"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
 
-[node name="Wall_Left" type="StaticBody3D" parent="."]
-position = Vector3(-14.5, 4, 0)
-collision_layer = 1
+[node name="Desk_F1_2" type="MeshInstance3D" parent="Decor"]
+position = Vector3(-0.5, 0.4, -1.5)
+mesh = SubResource("Mesh_desk")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Left"]
-shape = SubResource("BoxShape3D_wall")
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F1_2"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
 
-[node name="Mesh" type="MeshInstance3D" parent="Wall_Left"]
-mesh = SubResource("BoxMesh_wall")
+[node name="Desk_F1_3" type="MeshInstance3D" parent="Decor"]
+position = Vector3(10.0, 0.4, -1.5)
+mesh = SubResource("Mesh_desk")
 
-[node name="Wall_Right" type="StaticBody3D" parent="."]
-position = Vector3(32.5, 8, 0)
-collision_layer = 1
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F1_3"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Right"]
-shape = SubResource("BoxShape3D_wall")
+[node name="Desk_F1_4" type="MeshInstance3D" parent="Decor"]
+position = Vector3(20.5, 0.4, -1.5)
+mesh = SubResource("Mesh_desk")
 
-[node name="Mesh" type="MeshInstance3D" parent="Wall_Right"]
-mesh = SubResource("BoxMesh_wall")
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F1_4"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Desk_F2_1" type="MeshInstance3D" parent="Decor"]
+position = Vector3(-21.5, 4.4, -1.5)
+mesh = SubResource("Mesh_desk")
+
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F2_1"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Desk_F2_2" type="MeshInstance3D" parent="Decor"]
+position = Vector3(1.0, 4.4, -1.5)
+mesh = SubResource("Mesh_desk")
+
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F2_2"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Desk_F2_3" type="MeshInstance3D" parent="Decor"]
+position = Vector3(15.5, 4.4, -1.5)
+mesh = SubResource("Mesh_desk")
+
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F2_3"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Desk_F2_4" type="MeshInstance3D" parent="Decor"]
+position = Vector3(21.0, 4.4, -1.5)
+mesh = SubResource("Mesh_desk")
+
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F2_4"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Desk_F3_1" type="MeshInstance3D" parent="Decor"]
+position = Vector3(-10.0, 8.4, -1.5)
+mesh = SubResource("Mesh_desk")
+
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F3_1"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Desk_F3_2" type="MeshInstance3D" parent="Decor"]
+position = Vector3(0.5, 8.4, -1.5)
+mesh = SubResource("Mesh_desk")
+
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F3_2"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Desk_F3_3" type="MeshInstance3D" parent="Decor"]
+position = Vector3(10.5, 8.4, -1.5)
+mesh = SubResource("Mesh_desk")
+
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F3_3"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Desk_F3_4" type="MeshInstance3D" parent="Decor"]
+position = Vector3(21.0, 8.4, -1.5)
+mesh = SubResource("Mesh_desk")
+
+[node name="Screen" type="MeshInstance3D" parent="Decor/Desk_F3_4"]
+position = Vector3(0.0, 0.5, -0.1)
+mesh = SubResource("Mesh_screen")
+
+[node name="Sign_F1" type="Label3D" parent="Decor"]
+position = Vector3(-3.0, 2.6, -1.95)
+pixel_size = 0.006
+text = "PISO 1 · RECEPCIÓN
+Grupo Tubérculo S.A.S."
+font_size = 48
+outline_size = 10
+modulate = Color(0.18, 0.12, 0.08, 1.0)
+outline_modulate = Color(1.0, 0.95, 0.85, 1.0)
+
+[node name="Sign_F2" type="Label3D" parent="Decor"]
+position = Vector3(3.0, 6.6, -1.95)
+pixel_size = 0.006
+text = "PISO 2 · CONTABILIDAD
+«Cada anomalía es una oportunidad de facturar»"
+font_size = 48
+outline_size = 10
+modulate = Color(0.18, 0.12, 0.08, 1.0)
+outline_modulate = Color(1.0, 0.95, 0.85, 1.0)
+
+[node name="Sign_F3" type="Label3D" parent="Decor"]
+position = Vector3(-3.0, 10.6, -1.95)
+pixel_size = 0.006
+text = "PISO 3 · GERENCIA
+Contenemos lo que provocamos"
+font_size = 48
+outline_size = 10
+modulate = Color(0.18, 0.12, 0.08, 1.0)
+outline_modulate = Color(1.0, 0.95, 0.85, 1.0)
+
+[node name="Light_F1_1" type="OmniLight3D" parent="Decor"]
+position = Vector3(-12.0, 3.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="Light_F1_2" type="OmniLight3D" parent="Decor"]
+position = Vector3(0.0, 3.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="Light_F1_3" type="OmniLight3D" parent="Decor"]
+position = Vector3(12.0, 3.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="Light_F2_1" type="OmniLight3D" parent="Decor"]
+position = Vector3(-12.0, 7.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="Light_F2_2" type="OmniLight3D" parent="Decor"]
+position = Vector3(0.0, 7.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="Light_F2_3" type="OmniLight3D" parent="Decor"]
+position = Vector3(12.0, 7.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="Light_F3_1" type="OmniLight3D" parent="Decor"]
+position = Vector3(-12.0, 11.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="Light_F3_2" type="OmniLight3D" parent="Decor"]
+position = Vector3(0.0, 11.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="Light_F3_3" type="OmniLight3D" parent="Decor"]
+position = Vector3(12.0, 11.0, 1.2)
+light_color = Color(1.0, 0.93, 0.8, 1.0)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="LaddersF2" type="Node3D" parent="."]
+
+[node name="Ladder_L" parent="LaddersF2" instance=ExtResource("2_ladder")]
+position = Vector3(-14.0, 0.0, 0.0)
+bottom_y = 0.5
+top_y = 4.5
+bottom_exit_offset_x = 1.2
+top_exit_offset_x = 1.2
+
+[node name="Ladder_R" parent="LaddersF2" instance=ExtResource("2_ladder")]
+position = Vector3(14.0, 0.0, 0.0)
+bottom_y = 0.5
+top_y = 4.5
+bottom_exit_offset_x = -1.2
+top_exit_offset_x = -1.2
+
+[node name="LaddersF3" type="Node3D" parent="."]
+
+[node name="Ladder_L" parent="LaddersF3" instance=ExtResource("2_ladder")]
+position = Vector3(-18.0, 4.0, 0.0)
+bottom_y = 4.5
+top_y = 8.5
+bottom_exit_offset_x = 1.2
+top_exit_offset_x = 1.2
+
+[node name="Ladder_R" parent="LaddersF3" instance=ExtResource("2_ladder")]
+position = Vector3(18.0, 4.0, 0.0)
+bottom_y = 4.5
+top_y = 8.5
+bottom_exit_offset_x = -1.2
+top_exit_offset_x = -1.2
+
+[node name="BlockF2" type="Node3D" parent="."]
+
+[node name="Barricade_L" type="Node3D" parent="BlockF2"]
+position = Vector3(-14.0, 0.0, 0.3)
+
+[node name="Plank1" type="MeshInstance3D" parent="BlockF2/Barricade_L"]
+position = Vector3(0.0, 0.6, 0.0)
+rotation = Vector3(0.0, 0.0, 0.18)
+mesh = SubResource("Mesh_plank_a")
+
+[node name="Plank2" type="MeshInstance3D" parent="BlockF2/Barricade_L"]
+position = Vector3(0.0, 1.2, 0.0)
+rotation = Vector3(0.0, 0.0, -0.18)
+mesh = SubResource("Mesh_plank_b")
+
+[node name="Plank3" type="MeshInstance3D" parent="BlockF2/Barricade_L"]
+position = Vector3(0.0, 1.8, 0.0)
+rotation = Vector3(0.0, 0.0, 0.18)
+mesh = SubResource("Mesh_plank_a")
+
+[node name="Label" type="Label3D" parent="BlockF2/Barricade_L"]
+position = Vector3(0.0, 2.4, 0.1)
+pixel_size = 0.005
+text = "EN MANTENIMIENTO"
+font_size = 40
+outline_size = 8
+modulate = Color(0.95, 0.78, 0.1, 1.0)
+outline_modulate = Color(0.05, 0.05, 0.05, 1.0)
+
+[node name="Barricade_R" type="Node3D" parent="BlockF2"]
+position = Vector3(14.0, 0.0, 0.3)
+
+[node name="Plank1" type="MeshInstance3D" parent="BlockF2/Barricade_R"]
+position = Vector3(0.0, 0.6, 0.0)
+rotation = Vector3(0.0, 0.0, 0.18)
+mesh = SubResource("Mesh_plank_a")
+
+[node name="Plank2" type="MeshInstance3D" parent="BlockF2/Barricade_R"]
+position = Vector3(0.0, 1.2, 0.0)
+rotation = Vector3(0.0, 0.0, -0.18)
+mesh = SubResource("Mesh_plank_b")
+
+[node name="Plank3" type="MeshInstance3D" parent="BlockF2/Barricade_R"]
+position = Vector3(0.0, 1.8, 0.0)
+rotation = Vector3(0.0, 0.0, 0.18)
+mesh = SubResource("Mesh_plank_a")
+
+[node name="Label" type="Label3D" parent="BlockF2/Barricade_R"]
+position = Vector3(0.0, 2.4, 0.1)
+pixel_size = 0.005
+text = "EN MANTENIMIENTO"
+font_size = 40
+outline_size = 8
+modulate = Color(0.95, 0.78, 0.1, 1.0)
+outline_modulate = Color(0.05, 0.05, 0.05, 1.0)
+
+[node name="BlockF3" type="Node3D" parent="."]
+
+[node name="Barricade_L" type="Node3D" parent="BlockF3"]
+position = Vector3(-18.0, 4.0, 0.3)
+
+[node name="Plank1" type="MeshInstance3D" parent="BlockF3/Barricade_L"]
+position = Vector3(0.0, 0.6, 0.0)
+rotation = Vector3(0.0, 0.0, 0.18)
+mesh = SubResource("Mesh_plank_a")
+
+[node name="Plank2" type="MeshInstance3D" parent="BlockF3/Barricade_L"]
+position = Vector3(0.0, 1.2, 0.0)
+rotation = Vector3(0.0, 0.0, -0.18)
+mesh = SubResource("Mesh_plank_b")
+
+[node name="Plank3" type="MeshInstance3D" parent="BlockF3/Barricade_L"]
+position = Vector3(0.0, 1.8, 0.0)
+rotation = Vector3(0.0, 0.0, 0.18)
+mesh = SubResource("Mesh_plank_a")
+
+[node name="Label" type="Label3D" parent="BlockF3/Barricade_L"]
+position = Vector3(0.0, 2.4, 0.1)
+pixel_size = 0.005
+text = "EN MANTENIMIENTO"
+font_size = 40
+outline_size = 8
+modulate = Color(0.95, 0.78, 0.1, 1.0)
+outline_modulate = Color(0.05, 0.05, 0.05, 1.0)
+
+[node name="Barricade_R" type="Node3D" parent="BlockF3"]
+position = Vector3(18.0, 4.0, 0.3)
+
+[node name="Plank1" type="MeshInstance3D" parent="BlockF3/Barricade_R"]
+position = Vector3(0.0, 0.6, 0.0)
+rotation = Vector3(0.0, 0.0, 0.18)
+mesh = SubResource("Mesh_plank_a")
+
+[node name="Plank2" type="MeshInstance3D" parent="BlockF3/Barricade_R"]
+position = Vector3(0.0, 1.2, 0.0)
+rotation = Vector3(0.0, 0.0, -0.18)
+mesh = SubResource("Mesh_plank_b")
+
+[node name="Plank3" type="MeshInstance3D" parent="BlockF3/Barricade_R"]
+position = Vector3(0.0, 1.8, 0.0)
+rotation = Vector3(0.0, 0.0, 0.18)
+mesh = SubResource("Mesh_plank_a")
+
+[node name="Label" type="Label3D" parent="BlockF3/Barricade_R"]
+position = Vector3(0.0, 2.4, 0.1)
+pixel_size = 0.005
+text = "EN MANTENIMIENTO"
+font_size = 40
+outline_size = 8
+modulate = Color(0.95, 0.78, 0.1, 1.0)
+outline_modulate = Color(0.05, 0.05, 0.05, 1.0)
 
 [node name="PlayerSpawn" type="Marker3D" parent="."]
-position = Vector3(-11, 1, 0)
+position = Vector3(-19.0, 1.0, 0.0)
 
 [node name="F1_A" type="Marker3D" parent="."]
-position = Vector3(-9, 1, 0)
+position = Vector3(12.0, 1.0, 0.0)
 
 [node name="F1_B" type="Marker3D" parent="."]
-position = Vector3(-7, 1, 0)
+position = Vector3(8.0, 1.0, 0.0)
 
 [node name="F1_C" type="Marker3D" parent="."]
-position = Vector3(-5, 1, 0)
+position = Vector3(2.0, 1.0, 0.0)
 
 [node name="F1_D" type="Marker3D" parent="."]
-position = Vector3(-3, 1, 0)
+position = Vector3(16.0, 1.0, 0.0)
 
 [node name="F2_A" type="Marker3D" parent="."]
-position = Vector3(10.5, 5, 0)
+position = Vector3(-9.5, 5.0, 0.0)
 
 [node name="F2_B" type="Marker3D" parent="."]
-position = Vector3(11.5, 5, 0)
+position = Vector3(3.5, 5.0, 0.0)
 
 [node name="F2_C" type="Marker3D" parent="."]
-position = Vector3(12.5, 5, 0)
+position = Vector3(10.0, 5.0, 0.0)
 
 [node name="F2_D" type="Marker3D" parent="."]
-position = Vector3(13.5, 5, 0)
+position = Vector3(-21.0, 5.0, 0.0)
 
 [node name="F3_A" type="Marker3D" parent="."]
-position = Vector3(25, 9, 0)
+position = Vector3(12.0, 9.0, 0.0)
 
 [node name="F3_B" type="Marker3D" parent="."]
-position = Vector3(26.5, 9, 0)
+position = Vector3(-8.0, 9.0, 0.0)
 
 [node name="F3_C" type="Marker3D" parent="."]
-position = Vector3(28, 9, 0)
+position = Vector3(2.0, 9.0, 0.0)
 
 [node name="F3_D" type="Marker3D" parent="."]
-position = Vector3(29.5, 9, 0)
+position = Vector3(-13.0, 9.0, 0.0)
 
 [node name="Container_F1" type="Marker3D" parent="." groups=["container"]]
-position = Vector3(-13, 1, 0)
+position = Vector3(-22.0, 0.5, 0.0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Container_F1"]
+mesh = SubResource("Mesh_container")
 
 [node name="Container_F2" type="Marker3D" parent="." groups=["container"]]
-position = Vector3(9.5, 5, 0)
+position = Vector3(22.0, 4.5, 0.0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Container_F2"]
+mesh = SubResource("Mesh_container")
 
 [node name="Container_F3" type="Marker3D" parent="." groups=["container"]]
-position = Vector3(31, 9, 0)
+position = Vector3(-22.0, 8.5, 0.0)
 
-[node name="Spikes_F1_1" parent="." instance=ExtResource("2_spikes")]
-position = Vector3(-8, 0, 0)
+[node name="Mesh" type="MeshInstance3D" parent="Container_F3"]
+mesh = SubResource("Mesh_container")
 
-[node name="Spikes_F1_2" parent="." instance=ExtResource("2_spikes")]
-position = Vector3(-4, 0, 0)
+[node name="Hazards" type="Node3D" parent="."]
 
-[node name="Spikes_F2_1" parent="." instance=ExtResource("2_spikes")]
-position = Vector3(14, 4, 0)
+[node name="Staples_F1" parent="Hazards" instance=ExtResource("3_staples")]
+position = Vector3(-4.0, 0.0, 0.0)
 
-[node name="Spikes_F3_1" parent="." instance=ExtResource("2_spikes")]
-position = Vector3(27.25, 8, 0)
+[node name="Steam_F1" parent="Hazards" instance=ExtResource("4_steam_vent")]
+position = Vector3(-9.0, 0.0, 0.0)
+active_from_round = 2
+tempo_by_round = PackedFloat32Array(1, 0.8, 0.8, 1, 1.2, 1)
 
-[node name="Spikes_F3_2" parent="." instance=ExtResource("2_spikes")]
-position = Vector3(30.25, 8, 0)
+[node name="Cable_F1" parent="Hazards" instance=ExtResource("5_live_cable")]
+position = Vector3(19.5, 0.0, 0.0)
+active_from_round = 5
+phase_offset = 1.0
+tempo_by_round = PackedFloat32Array(1, 1, 1, 1, 1, 0.9)
+
+[node name="Cable_F2" parent="Hazards" instance=ExtResource("5_live_cable")]
+position = Vector3(7.0, 4.0, 0.0)
+active_from_round = 3
+tempo_by_round = PackedFloat32Array(1, 1, 0.7, 1, 1.2, 1)
+
+[node name="Chair_F2" parent="Hazards" instance=ExtResource("6_rolling_chair")]
+position = Vector3(-6.0, 4.0, 0.0)
+active_from_round = 4
+tempo_by_round = PackedFloat32Array(1, 1, 1, 1, 1.25, 1)
+
+[node name="Steam_F3" parent="Hazards" instance=ExtResource("4_steam_vent")]
+position = Vector3(-12.0, 8.0, 0.0)
+active_from_round = 6
+phase_offset = 1.2
+
+[node name="Tile_F3_1" parent="Hazards" instance=ExtResource("7_falling_tile")]
+position = Vector3(-4.0, 8.0, 0.0)
+active_from_round = 6
+
+[node name="Tile_F3_2" parent="Hazards" instance=ExtResource("7_falling_tile")]
+position = Vector3(8.5, 8.0, 0.0)
+active_from_round = 6
+
+[node name="Staples_F3" parent="Hazards" instance=ExtResource("3_staples")]
+position = Vector3(5.0, 8.0, 0.0)
+active_from_round = 6
+
+[node name="Platforms" type="Node3D" parent="."]
+
+[node name="Cabinet_F1" parent="Platforms" instance=ExtResource("8_filing_cabinet")]
+position = Vector3(5.0, 0.0, 0.0)
+
+[node name="Cabinet_F2" parent="Platforms" instance=ExtResource("8_filing_cabinet")]
+position = Vector3(-0.5, 4.0, 0.0)
+
+[node name="Cabinet_F3" parent="Platforms" instance=ExtResource("8_filing_cabinet")]
+position = Vector3(-0.5, 8.0, 0.0)

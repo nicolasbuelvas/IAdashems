@@ -8,8 +8,10 @@ extends Anomaly
 ## 3) Evitar a toda costa ir más allá a la izquierda o derecha de la escalera (evitando acorralarse a sí misma).
 ## Captura: Tocarla directamente (inofensiva).
 
-var speed: float = 9.2
+var speed: float = 5.0
 var stairs_mult: float = 0.75
+## Segundos sin poder tomar otra escalera tras bajarse de una: es la ventana para atraparlo.
+var ladder_cooldown: float = 3.5
 
 var _patrol_dir: float = 1.0
 var _dodge_jump_cooldown: float = 0.0
@@ -25,8 +27,8 @@ func _ready() -> void:
 	if cfg:
 		speed = cfg.get("CUCUMBER_SPEED") if cfg.get("CUCUMBER_SPEED") != null else speed
 		stairs_mult = cfg.get("CUCUMBER_STAIRS_MULT") if cfg.get("CUCUMBER_STAIRS_MULT") != null else stairs_mult
-	speed = maxf(speed, 9.2)
-	climb_speed = 6.2
+		climb_speed = cfg.get("CUCUMBER_CLIMB_SPEED") if cfg.get("CUCUMBER_CLIMB_SPEED") != null else climb_speed
+		ladder_cooldown = cfg.get("CUCUMBER_LADDER_COOLDOWN") if cfg.get("CUCUMBER_LADDER_COOLDOWN") != null else ladder_cooldown
 	_patrol_dir = 1.0 if (randf() > 0.5) else -1.0
 
 
@@ -44,7 +46,7 @@ func _physics_process(delta: float) -> void:
 			is_climbing = false
 			global_position.x = climb_exit_x
 			velocity = Vector3.ZERO
-			_post_climb_cooldown = 0.6
+			_post_climb_cooldown = ladder_cooldown
 		return
 		
 	if not is_on_floor():

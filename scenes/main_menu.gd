@@ -26,7 +26,7 @@ func _on_NewGameButton_pressed() -> void:
 	if gm and gm.has_method("goto"):
 		gm.goto(&"game")
 	else:
-		get_tree().change_scene_to_file("res://player/test_player.tscn")
+		get_tree().change_scene_to_file("res://game/game.tscn")
 
 
 func _on_OptionsButton_pressed() -> void:

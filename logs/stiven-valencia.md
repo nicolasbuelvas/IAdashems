@@ -164,3 +164,63 @@ Change: Se eliminó el desplazamiento local de Ramp/MeshInstance3D; la malla y C
 Commit: PENDING
 Model: Grok 4.6 (Cursor Free)
 Notes: Godot 4.7.2 headless: tres raycasts coinciden con la superficie visible con error menor a 0.000001 unidades; el jugador aterriza en la rampa y permanece en el suelo. git diff --check sin errores. Corrección local en codex/fix-pr8-ramp-alignment sobre 6769df1; pendiente commit y publicación en el PR. Sin playtest visual interactivo. Los valores de GameConfig conservan su autoridad de balance.
+
+## AI-IAdashems-SV-000014
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Plan y construcción completa de los niveles de las 6 rondas (edificio, trampas, plataformas, balance), basado en anomalies/test_all_anomalies.tscn. Decisiones D1, D2 y D3 aprobadas por SV.
+Type: AI_GENERATED
+Files: level/building.tscn, level/building.gd, level/hazard.gd, level/hazards/staples.tscn, level/hazards/steam_vent.tscn, level/hazards/live_cable.tscn, level/hazards/rolling_chair.tscn, level/hazards/falling_tile.tscn, level/props/filing_cabinet.tscn, level/tests/level_layout_test.gd, autoload/game_config.gd, player/player.gd, player/player.tscn, project.godot, docs/spec-mvp-reparto.md
+Change: El edificio pasa de rampas a 3 pisos de 49 m con escaleras verticales (ladder.tscn), que es lo que usa la IA de las anomalías. Las escaleras de un piso cerrado se sacan del árbol hasta unlock_floor; BlockF<n> es ahora una barricada visual. Se conserva la interfaz congelada y los nombres de los marcadores; F1_A y F1_B intercambian posición para que el pepino de la ronda 1 quede acorralable sin tocar la tabla de rondas. hazard.gd suma modos STATIC, CYCLE, PATROL y TRIGGER, activación por ronda (active_from_round), tempo por ronda y hurts_while_sliding (D1). Cinco trampas nuevas y un archivador en la capa 8 player_obstacle, que solo choca con la papa (D2). GameConfig suma HAZARD_DAMAGE = 1 (D3) y baja HEAT_PER_SEC_PER_ANOMALY de 0,3 a 0,2. take_damage de la papa acepta pierce_slide, opcional y compatible.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Godot 4.7.2 headless: level_layout_test 120/0, heat_system_test y round_manager_test con exit 0, autoplay de 6 rondas hasta game_won sin errores de script. Prueba en el editor (MCP): game.tscn carga, ronda 1 en marcha y ronda 6 con 9 trampas visibles. Falta playtest humano completo de balance (tiempos por ronda, golpes de trampas). Las escenas se generaron con scripts de Python fuera del repo; desde ahora se editan en el editor. Cambios en archivos de A (player.gd/.tscn) aprobados por SV en esta sesión; avisar a A. El editor añadió los autoloads MCP a project.godot: no incluirlos en el commit.
+
+## AI-IAdashems-SV-000015
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Conectar "Nueva partida" con la ronda 1 del nivel nuevo
+Type: AI_ASSISTED
+Files: autoload/game_manager.gd, scenes/main_menu.gd, scenes/intro.gd
+Change: GameManager.SCENE_PATHS[&"game"] apunta a res://game/game.tscn en vez de player/test_player.tscn. Al entrar a la escena de juego el estado queda en ROUND_INTRO (antes PLAYING), así game.gd no provoca la advertencia de transición PLAYING -> ROUND_INTRO. Los fallbacks sin GameManager de main_menu.gd e intro.gd también apuntan a game.tscn.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Probado en el editor (MCP): menú principal -> clic en "Nueva partida" -> game.tscn, ronda 1, 1 anomalía, estado PLAYING tras la tarjeta, sin advertencias de GameManager. El menú sigue yendo directo al juego; la escena intro (GDD 11) existe y ya apunta a game, falta decidir si "Nueva partida" pasa por ella.
+
+## AI-IAdashems-SV-000016
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: La derrota es el game over del turno (la ronda se reinicia completa) y bajar la velocidad del hongo (cucumber), que acampaba en las escaleras
+Type: AI_ASSISTED
+Files: systems/round_manager.gd, systems/tests/round_manager_test.gd, game/game.gd, anomalies/cucumber.gd, autoload/game_config.gd, docs/GDD.md, docs/spec-mvp-reparto.md
+Change: RoundManager._fail borra contained_ids: al reintentar vuelven todas las anomalías de la ronda y el reloj completo (90 + 15 x total). El calor y la vida ya se reiniciaban con round_started y reset_to. Esto reemplaza la regla del GDD 11 de conservar las capturas; se actualizaron el GDD, el spec y los tests de derrota. cucumber.gd ya no fuerza la velocidad mínima de 9.2 (más rápido que la papa, que va a 6) y usa CUCUMBER_SPEED = 5. Trepa a CUCUMBER_CLIMB_SPEED = 3 (la papa a 4.5) y, tras bajarse de una escalera, no puede tomar otra durante CUCUMBER_LADDER_COOLDOWN = 3.5 s.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Godot 4.7.2 headless: round_manager_test, heat_system_test y level_layout_test con exit 0; autoplay de 6 rondas con derrota forzada en la ronda 4 hasta game_won. En el editor (MCP), tras capturar 1 y morir: contained_ids vacío, reloj y calor reiniciados y la anomalía vuelve a aparecer. anomalies/cucumber.gd es de B: avisar. Falta playtest humano de la persecución en varios pisos para afinar 5 / 3 / 3.5.
+
+## AI-IAdashems-SV-000017
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Corregir la regla de derrota: al morir no se reinician las anomalías ni el reloj; solo cuando se acaba el tiempo
+Type: AI_ASSISTED
+Files: systems/round_manager.gd, systems/tests/round_manager_test.gd, game/game.gd, autoload/event_bus.gd, docs/GDD.md, docs/spec-mvp-reparto.md
+Change: Corrige SV-000016. Al morir (round_failed health o heat), RoundManager conserva las anomalías contenidas y guarda el reloj; el reintento lo retoma en vez de recalcularlo. El calor y la vida se reinician igual que antes. Con el reloj agotado, RoundManager emite round_timer_expired y luego round_failed(&"time"): es el game over definitivo del turno, borra lo contenido y la ronda vuelve completa con 90 + 15 x total. Esto reemplaza el "calor al triple con el reloj agotado" del GDD (HeatSystem conserva esa lógica, pero la ronda ya terminó cuando aplicaría). event_bus.gd documenta el nuevo motivo &"time". GDD y spec actualizados.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Godot 4.7.2 headless: round_manager_test, heat_system_test y level_layout_test con exit 0; autoplay de 6 rondas con muerte forzada en la ronda 4 hasta game_won. En el editor (MCP), ronda 2: con 1 capturada y 47 s, al morir quedan 1 restante, F1_A contenida, reloj en 46.4 y calor reiniciado. Al agotar el reloj: 2 restantes, sin capturas y reloj en ~120. Interpretación de SV a confirmar con playtest: el calor sí se reinicia al morir (si no, una muerte por calor se repetiría al instante).
+
+## AI-IAdashems-SV-000018
+
+Timestamp: N/A
+Participant: SV (Stiven Valencia)
+Task: Corregir el error al terminar el juego y conectar ronda 6 -> outro -> créditos -> menú
+Type: DEBUGGING
+Files: scenes/outro.gd, scenes/intro.gd
+Change: Causa, reproducida en el editor: al pulsar una tecla en el outro, goto(&"credits") saca la escena del árbol y luego outro.gd:17 llama a get_tree().set_input_as_handled(). get_tree() ya es null, y además ese método es de Viewport, no de SceneTree, así que el juego se colgaba. intro.gd tenía el mismo fallo. Ahora get_viewport().set_input_as_handled() se llama antes del cambio de escena, con una guarda _leaving para no cambiar dos veces. Solo cuenta una pulsación nueva (tecla sin eco, botón de ratón o de mando), con un tiempo mínimo en pantalla: 1 s en el outro y 0,5 s en la intro. Así la tecla con la que se capturó la última anomalía, o el clic de "Nueva partida", no salta la escena.
+Commit: PENDING
+Model: Luna 6 (Codex Free)
+Notes: Probado en el editor (MCP): ronda 6 con las 6 capturadas -> Outro (estado OUTRO) -> tecla -> Credits (CREDITS) -> "Volver al menú" -> MainMenu (MENU), sin errores de outro.gd. Archivos de D (scenes/): avisar. Pendiente de D: el texto "[texto de cierre]" del outro sigue como placeholder. Avisos no bloqueantes vistos en el log: UID inválido de pause_menu en game.tscn y división entera en hud.gd:66 y options_menu.gd:105.

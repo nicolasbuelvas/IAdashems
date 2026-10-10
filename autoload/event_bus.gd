@@ -26,7 +26,7 @@ signal round_timer_changed(seconds_left: float)
 signal round_timer_expired()
 signal anomalies_remaining_changed(remaining: int)
 signal round_won(round_number: int)
-signal round_failed(reason: StringName)   # &"heat" o &"health"
+signal round_failed(reason: StringName)   # &"heat", &"health" o &"time"
 signal floor_unlocked(floor_number: int)
 signal game_won()
 

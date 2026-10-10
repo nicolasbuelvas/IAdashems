@@ -380,14 +380,14 @@ func _test_capture_clock() -> void:
 
 
 func _test_defeat_and_retry() -> void:
-	print("-- derrota, conservación de progreso y reintento")
+	print("-- derrota al morir: conserva capturas y reloj")
 	_new_rm()
 	_rm.start_round(2)  # F1_A (cucumber) y F1_B (lettuce)
 	_check(_capture(&"F1_A"), "F1_A se contiene en la ronda 2")
 	var b_old = _find_spawned(&"F1_B")
 	_check(b_old != null, "F1_B está viva antes de la derrota")
 	var b_old_id: int = b_old.get_instance_id() if b_old != null else 0
-	_rm.time_left = GameConfigScript.ROUND_TIME_PER_ANOMALY * 2.0  # distinto de 90 + 15 x 1: el reintento debe recalcularlo
+	_rm.time_left = 33.0  # distinto de 90 + 15 x 1: el reintento debe retomarlo, no recalcularlo
 
 	_event_bus.heat_maxed.emit()
 	_check(not _rm.active, "heat_maxed desactiva la ronda")
@@ -396,11 +396,10 @@ func _test_defeat_and_retry() -> void:
 	await _settle()
 	# Se compara por instance id: un objeto liberado no es "!= null" en Godot 4.
 	_check(b_old_id != 0 and not is_instance_id_valid(b_old_id), "_fail libera la anomalía viva F1_B")
-	_check(_rm.contained_ids.size() == 1 and _rm.contained_ids[0] == &"F1_A", "_fail conserva contained_ids = [F1_A]")
+	_check(_rm.contained_ids.size() == 1 and _rm.contained_ids[0] == &"F1_A", "morir conserva contained_ids = [F1_A]")
 	_event_bus.player_died.emit()
 	_check(_failed.size() == 1, "una segunda derrota en la misma ronda no hace nada")
 
-	# Reintento: start_round con el mismo número conserva el progreso.
 	_spawned.clear()
 	_log.clear()
 	_rm.start_round(2)
@@ -408,9 +407,23 @@ func _test_defeat_and_retry() -> void:
 	_check(not _log.has("spawn:F1_A"), "el reintento no reinstancia la anomalía ya contenida F1_A")
 	_check(_log.has("spawn:F1_B") and _spawned.size() == 1, "el reintento instancia solo F1_B")
 	_check(_spawned.size() == 1 and _spawned[0].get_instance_id() != b_old_id, "la F1_B del reintento es una instancia nueva")
-	_check(is_equal_approx(_rm.time_left, GameConfigScript.ROUND_BASE_TIME + GameConfigScript.ROUND_TIME_PER_ANOMALY * 1.0), "el reloj del reintento vuelve a 90 + 15 x restantes")
+	_check(is_equal_approx(_rm.time_left, 33.0), "el reloj del reintento sigue donde iba (33 s, es %.2f)" % _rm.time_left)
 	_check(_rm.active and _rm.remaining == 1 and _rm.contained_ids.size() == 1, "el reintento queda activo con 1 restante y F1_A contenida")
-	_check(_capture(&"F1_B") and _won == [2] and _game_won == 0, "capturar F1_B tras el reintento gana la ronda 2 (sin game_won)")
+
+	print("-- reloj agotado: game over del turno, todo desde cero")
+	_failed.clear()
+	_rm.time_left = 0.05
+	_rm._process(0.1)
+	_check(_failed == [&"time"], "el reloj agotado emite round_failed(time) (es %s)" % str(_failed))
+	_check(not _rm.active and _rm.contained_ids.is_empty(), "el reloj agotado borra el progreso")
+	await _settle()
+	_spawned.clear()
+	_log.clear()
+	_rm.start_round(2)
+	_check(_log.has("round_started:2:2"), "tras el reloj agotado: round_started(2, 2 restantes)")
+	_check(_log.has("spawn:F1_A") and _log.has("spawn:F1_B") and _spawned.size() == 2, "tras el reloj agotado vuelven F1_A y F1_B")
+	_check(is_equal_approx(_rm.time_left, _expected_clock(2)), "tras el reloj agotado el reloj vuelve completo (90 + 15 x 2)")
+	_check(_capture(&"F1_A") and _capture(&"F1_B") and _won == [2] and _game_won == 0, "capturar las dos gana la ronda 2 (sin game_won)")
 
 
 ## Reloj esperado para un número de restantes: 90 + 15 x restantes.
@@ -450,11 +463,12 @@ func _test_start_signals() -> void:
 	_check(last_spawn >= 0 and _log.find("remaining:4") > last_spawn, "ronda 4: anomalies_remaining_changed sale después de instanciar las anomalías")
 	_check(last_spawn >= 0 and _log.find("timer:150") > last_spawn, "ronda 4: round_timer_changed sale después de instanciar las anomalías")
 
-	# Reintento con 2 restantes: F1_A y F2_C ya están contenidas.
+	# Reintento tras morir con 2 restantes: F1_A y F2_C ya están contenidas y el reloj sigue donde iba.
 	_remaining_seen.clear()
 	_timer_seen.clear()
 	_check(_capture(&"F1_A") and _capture(&"F2_C"), "ronda 4: se contienen F1_A y F2_C antes de la derrota")
 	_check(_remaining_seen == [3, 2], "ronda 4: cada captura emite anomalies_remaining_changed con el nuevo valor (es %s)" % str(_remaining_seen))
+	var clock_at_death: float = _rm.time_left
 	_event_bus.heat_maxed.emit()
 	_check(not _rm.active and _failed.size() == 1 and _failed[0] == &"heat", "ronda 4: la derrota por calor desactiva la ronda")
 	await _settle()
@@ -467,10 +481,10 @@ func _test_start_signals() -> void:
 	_check(_log.size() > 0 and _log[0] == "round_started:4:2", "reintento de la ronda 4: round_started(4, 2) es lo primero (log: %s)" % str(_log))
 	_check(_starts_with_round_started(), "reintento de la ronda 4: round_started es el único del arranque y va primero")
 	_check(_remaining_seen == [2], "reintento de la ronda 4: anomalies_remaining_changed una vez con 2 (es %s)" % str(_remaining_seen))
-	_check(_timer_seen.size() == 1 and is_equal_approx(_timer_seen[0], _expected_clock(2)), "reintento de la ronda 4: round_timer_changed una vez con 120 (es %s)" % str(_timer_seen))
+	_check(_timer_seen.size() == 1 and is_equal_approx(_timer_seen[0], clock_at_death), "reintento de la ronda 4: round_timer_changed una vez con el reloj de la muerte (es %s)" % str(_timer_seen))
 	_check(_spawned.size() == 2 and not _log.has("spawn:F1_A") and not _log.has("spawn:F2_C"), "reintento de la ronda 4: solo instancia F1_B y F2_D")
 	var last_retry_spawn := _log.find("spawn:F2_D")
-	_check(last_retry_spawn >= 0 and _log.find("remaining:2") > last_retry_spawn and _log.find("timer:120") > last_retry_spawn, "reintento de la ronda 4: los dos avisos salen después de instanciar")
+	_check(last_retry_spawn >= 0 and _log.find("remaining:2") > last_retry_spawn and _log.find("timer:%d" % roundi(clock_at_death)) > last_retry_spawn, "reintento de la ronda 4: los dos avisos salen después de instanciar")
 	_check(_rm.active and _rm.remaining == 2, "reintento de la ronda 4: queda activa con 2 restantes")
 
 

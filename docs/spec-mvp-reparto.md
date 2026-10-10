@@ -162,7 +162,8 @@ Todo es 3D con el eje Z bloqueado (`axis_lock_linear_z = true` en los CharacterB
 | 4 | player_projectile | Herbicida |
 | 5 | enemy_projectile | Guisantes |
 | 6 | stairs_zone | Área de escaleras |
-| 7 | hazard | Pinchos |
+| 7 | hazard | Trampas del escenario (pinchos, vapor, cable, silla, plafón) |
+| 8 | player_obstacle | Plataformas y archivadores: solo chocan con la papa (máscara de la papa = 1 + 8). Las anomalías las atraviesan para no romper su IA de pasillo plano |
 
 | Grupo | Nodo | Dueño |
 |---|---|---|
@@ -219,7 +220,7 @@ Los spawn points son `Marker3D` dentro de `building.tscn`, con nombres como `F1_
 
 Total del juego: 21 anomalías.
 
-**Reintento con progreso:** RoundManager guarda los `spawn_id` contenidos en la ronda actual. Al reintentar, recarga la ronda e instancia solo las anomalías que faltan. El reloj vuelve a `90 + 15 × restantes`.
+**Reintento (decisión de SV, 2026-10-10):** al morir (`round_failed(&"health")` o `(&"heat")`), RoundManager conserva los `spawn_id` contenidos, instancia solo las que faltan y el reloj sigue donde iba. Con el reloj agotado (`round_failed(&"time")`) es el game over del turno: borra lo contenido y la ronda vuelve completa con `90 + 15 × anomalías de la ronda`. En los dos casos el calor y la vida se reinician.
 
 ---
 
@@ -229,7 +230,7 @@ Total del juego: 21 anomalías.
 MENU -> INTRO -> ROUND_INTRO -> PLAYING -> ROUND_WON -> ROUND_INTRO (siguiente)
                                    |                \
                                    |                 -> (ronda 6) OUTRO -> CREDITS -> MENU
-                                   -> ROUND_FAILED -> ROUND_INTRO (misma ronda, con progreso)
+                                   -> ROUND_FAILED -> ROUND_INTRO (misma ronda: al morir conserva capturas y reloj; con reloj agotado, desde cero)
 PLAYING <-> PAUSED
 ```
 
@@ -309,7 +310,7 @@ GameManager expone `goto(scene_key: StringName)`. D llama a `GameManager.goto(&"
 
 **Funcionalidad**
 - **HeatSystem:** cada frame suma `tiempo + anomalías activas × factor`, multiplicado por 3 si el reloj expiró. Suma `HEAT_PER_HIT` con `player_damaged`. Al recibir `anomaly_contained`, agrega 20 de enfriamiento pendiente que se descuenta a 8 por segundo. Emite `heat_changed` y, al llegar a 100, `heat_maxed`.
-- **RoundManager:** al iniciar la ronda, habilita pisos (emite `floor_unlocked` en las rondas 3 y 6 y quita la pared), instancia las anomalías faltantes y arranca el reloj. Al contener, resta 15 s (mínimo 10 s) y emite `anomalies_remaining_changed`. Al llegar a 0 restantes, emite `round_won` y, en la ronda 6, `game_won`. Con `heat_maxed` o `player_died`, emite `round_failed` y reintenta con progreso.
+- **RoundManager:** al iniciar la ronda, habilita pisos (emite `floor_unlocked` en las rondas 3 y 6 y quita la pared), instancia las anomalías faltantes y arranca el reloj. Al contener, resta 15 s (mínimo 10 s) y emite `anomalies_remaining_changed`. Al llegar a 0 restantes, emite `round_won` y, en la ronda 6, `game_won`. Con `heat_maxed` o `player_died`, emite `round_failed` y reintenta conservando capturas y reloj. Con el reloj agotado emite `round_failed(&"time")` y reintenta la ronda completa.
 - **Pinchos:** Area3D en el grupo `hazard` que llama a `take_damage(1)` a la papa.
 - **GameManager:** maneja la pausa con Esc (`get_tree().paused`) y emite `pause_toggled`. Los nodos de UI usan `process_mode = ALWAYS`.
 
@@ -381,7 +382,7 @@ GameManager expone `goto(scene_key: StringName)`. D llama a `GameManager.goto(&"
 
 - [ ] Se juega de principio a fin: menú, intro, 6 rondas, explosión, créditos y menú.
 - [ ] Las 3 anomalías funcionan con sus reglas de captura y daño.
-- [ ] Calor, vida y reloj funcionan según el GDD, con derrota y reintento con progreso.
+- [ ] Calor, vida y reloj funcionan según el GDD, con muerte (conserva capturas y reloj) y reloj agotado (ronda completa).
 - [ ] El HUD muestra los 5 elementos.
 - [ ] Pausa y opciones funcionan.
 - [ ] Hay una build de Windows que corre en otra máquina.
@@ -397,7 +398,7 @@ GameManager expone `goto(scene_key: StringName)`. D llama a `GameManager.goto(&"
 5. Pepino usando escaleras (se queda en su piso y se arrincona contra las paredes).
 6. Outro elaborado (se usa sacudida, fundido a blanco y texto).
 
-No se recorta nunca: el sistema de calor, las 3 anomalías, el reintento con progreso y la ronda 6 con su final.
+No se recorta nunca: el sistema de calor, las 3 anomalías, el reintento de ronda y la ronda 6 con su final.
 
 ---
 

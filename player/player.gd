@@ -240,10 +240,11 @@ func _update_dash_indicators() -> void:
 			_visual.modulate = Color.WHITE
 
 
-func take_damage(amount: int) -> void:
+## pierce_slide: el golpe atraviesa el slide (trampas aéreas de level/hazard.gd). Los iframes siempre protegen.
+func take_damage(amount: int, pierce_slide: bool = false) -> void:
 	if amount <= 0 or _dead:
 		return
-	if is_sliding() or is_invulnerable():
+	if _iframe_left > 0.0 or (is_sliding() and not pierce_slide):
 		return
 	_hp = maxi(_hp - amount, 0)
 	_emit_bus("player_damaged", [amount])

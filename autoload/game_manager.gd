@@ -5,7 +5,7 @@ extends Node
 const SCENE_PATHS := {
 	&"menu": "res://scenes/main_menu.tscn",
 	&"intro": "res://scenes/intro.tscn",
-	&"game": "res://player/test_player.tscn",
+	&"game": "res://game/game.tscn",
 	&"options": "res://ui/options_menu.tscn",
 	&"outro": "res://scenes/outro.tscn",
 	&"credits": "res://scenes/credits.tscn",
@@ -37,7 +37,7 @@ const _NEXT_STATES := {
 const _STATE_FOR_SCENE := {
 	&"menu": MENU,
 	&"intro": INTRO,
-	&"game": PLAYING,
+	&"game": ROUND_INTRO,  # game.gd arranca la ronda 1 con la tarjeta y pasa a PLAYING
 	&"options": MENU,
 	&"outro": OUTRO,
 	&"credits": CREDITS,
