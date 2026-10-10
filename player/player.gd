@@ -266,6 +266,18 @@ func is_invulnerable() -> bool:
 	return _iframe_left > 0.0 or is_sliding()
 
 
+func kill() -> void:
+	if _dead:
+		return
+	_hp = 0
+	_dead = true
+	_iframe_left = 0.0
+	_blink_on = false
+	_emit_bus("player_health_changed", [0, max_hp])
+	_explode_into_fries()
+	_emit_bus("player_died", [])
+
+
 func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
 	if is_climbing or _dead:
 		return
@@ -331,6 +343,7 @@ func _explode_into_fries() -> void:
 		
 	var old_fries := parent_node.get_node_or_null("FrenchFriesExplosion")
 	if old_fries:
+		old_fries.name = "FrenchFriesExplosion_Old"
 		old_fries.queue_free()
 		
 	var fries_container := Node3D.new()
@@ -369,6 +382,25 @@ func _explode_into_fries() -> void:
 		var target_pos := fry.position + vel * 0.7 + Vector3(0.0, -2.8, 0.0)
 		tween.tween_property(fry, "position", target_pos, 1.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		tween.tween_property(fry, "rotation", fry.rotation + rot_vel * 1.1, 1.1)
+
+	var steam_mesh := SphereMesh.new()
+	steam_mesh.radius = 0.35
+	steam_mesh.height = 0.7
+	for j in 6:
+		var steam_mat := StandardMaterial3D.new()
+		steam_mat.albedo_color = Color(1.0, 0.95, 0.88, 0.55)
+		steam_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		steam_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		var puff := MeshInstance3D.new()
+		puff.mesh = steam_mesh
+		puff.material_override = steam_mat
+		fries_container.add_child(puff)
+		puff.position = Vector3(randf_range(-0.35, 0.35), randf_range(-0.1, 0.5), randf_range(-0.2, 0.2))
+		var ptween := puff.create_tween()
+		ptween.set_parallel(true)
+		ptween.tween_property(puff, "scale", Vector3(2.6, 2.6, 2.6), 0.95).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		ptween.tween_property(puff, "position:y", puff.position.y + randf_range(1.2, 2.4), 0.95)
+		ptween.tween_property(steam_mat, "albedo_color:a", 0.0, 0.95)
 
 
 func _update_slide(delta: float) -> void:
@@ -566,10 +598,19 @@ func _connect_heat_changed() -> void:
 		var scene_root := get_tree().current_scene
 		if scene_root != null:
 			bus = scene_root.find_child("EventBus", true, false)
-	if bus != null and bus.has_signal("heat_changed"):
-		var callback := Callable(self, "_on_heat_changed")
-		if not bus.is_connected("heat_changed", callback):
-			bus.connect("heat_changed", callback)
+	if bus != null:
+		if bus.has_signal("heat_changed"):
+			var callback := Callable(self, "_on_heat_changed")
+			if not bus.is_connected("heat_changed", callback):
+				bus.connect("heat_changed", callback)
+		if bus.has_signal("heat_maxed"):
+			var callback_maxed := Callable(self, "_on_heat_maxed")
+			if not bus.is_connected("heat_maxed", callback_maxed):
+				bus.connect("heat_maxed", callback_maxed)
+
+
+func _on_heat_maxed() -> void:
+	kill()
 
 
 func _on_heat_changed(value: float, _max_value: float) -> void:

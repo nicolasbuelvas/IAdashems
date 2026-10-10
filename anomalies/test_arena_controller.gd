@@ -13,6 +13,7 @@ const SCENE_LADDER := preload("res://level/ladder.tscn")
 @export var lettuce_count: int = 1
 @export var pea_count: int = 1
 @export_range(1, 3) var active_floors: int = 2
+var _game_over_shown: bool = false
 
 @onready var player: Node3D = $Player
 @onready var anomalies_container: Node3D = $SpawnedAnomalies
@@ -91,8 +92,8 @@ func _connect_event_bus() -> void:
 
 
 func _on_heat_maxed() -> void:
-	if player != null and player.has_method("take_damage"):
-		player.call("take_damage", 3)
+	if player != null and player.has_method("kill"):
+		player.call("kill")
 	else:
 		_on_player_died()
 
@@ -194,6 +195,9 @@ func _on_btn_retry_pressed() -> void:
 
 
 func _on_player_died() -> void:
+	if _game_over_shown:
+		return
+	_game_over_shown = true
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):
 		audio.call("play_music", "res://audio/bgm_game_over.ogg")
@@ -260,6 +264,7 @@ func _spawn_random_ladders(container: Node3D, bot_y: float, top_y: float) -> voi
 
 
 func _respawn_simulation() -> void:
+	_game_over_shown = false
 	for child in anomalies_container.get_children():
 		child.queue_free()
 		

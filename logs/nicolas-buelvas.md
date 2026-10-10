@@ -465,3 +465,17 @@ Files: anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn, au
 Change: Se añadió delay asíncrono (1.5s) al morir el jugador en test_arena_controller para permitir que la explosión de papitas fritas francesas se disperse y termine físicamente antes de pausar y desplegar el Game Over. Se corrigió el sistema de pausa otorgando process_mode ALWAYS al PauseLayer, añadiendo captura explícita de KEY_ESCAPE en pause_menu y eliminando el rechazo de pausa en GameManager para escenas de prueba/anomalías. Se solucionó el enfriamiento del HeatSystem emitiendo round_started previo a la instanciación de anomalías para evitar que la limpieza de active_ids descartara capturas legítimas. Se implementaron indicadores visuales completos para el Dash: señales reactivas en EventBus (dash_cooldown_changed, dash_speed_threshold_changed), feedback diegético dorado sobre la papa al alcanzar la velocidad mínima (72%), y ranura DashSlot en HUD con icono de rayo ⚡, porcentaje de recarga y aviso ¡LISTO!.
 Commit: 7b53318
 Notes: 209/209 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000035
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Disparo letal y animación al alcanzar 100% de calor, y atenuación ambiental del SFX de vapor
+Type: AI_ASSISTED
+Files: player/player.gd, anomalies/test_arena_controller.gd, game/game.gd, ui/audio_manager.gd
+Change: Se conectó directamente el evento EventBus.heat_maxed en Player para ejecutar el método letal kill(), garantizando que la papa muera y explote en papitas francesas sin ser bloqueada por iframes o deslizamientos. Se enriqueció la explosión con nubes ascendentes de vapor/humo blanco translúcido en 3D. Se garantizó que _on_player_died espere 1.5s antes de desplegar el Game Over tanto en la arena como en la campaña principal, protegiendo contra llamadas reentrantes. Se ajustó el volumen del reproductor de vapor de calor en AudioManager a -22.0 dB para mantenerlo como sonido ambiente sutil de fondo, y se aseguró su detención inmediata al morir el jugador.
+Commit: c5c4489
+Notes: 209/209 comprobaciones automatizadas pasando sin errores.

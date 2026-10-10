@@ -113,7 +113,7 @@ func _setup_players() -> void:
 	var steam_stream := _get_stream(PATH_SFX_HEAT_STEAM)
 	if steam_stream != null:
 		_steam_player.stream = steam_stream
-	_steam_player.volume_db = -6.0
+	_steam_player.volume_db = -22.0
 	_steam_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_steam_player)
 
@@ -175,6 +175,8 @@ func _connect_event_bus() -> void:
 		bus.connect("player_damaged", func(_amount): play_sfx(PATH_SFX_PLAYER_DAMAGE))
 	if bus.has_signal("player_died"):
 		bus.connect("player_died", func():
+			if _steam_player != null and _steam_player.playing:
+				_steam_player.stop()
 			play_sfx(PATH_SFX_POTATO_EXPLODE, 2.0)
 			play_bgm(PATH_BGM_GAME_OVER, true)
 		)
