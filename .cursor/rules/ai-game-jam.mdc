@@ -1,0 +1,15 @@
+---
+description: AI Game Jam — integridad, prompts oficiales y bitácora en logs/
+alwaysApply: true
+---
+
+# AI Game Jam (IAdashems)
+
+Sigue **AGENTS.md** en la raíz. No improvises reglas de competencia.
+
+- Prompts: `docs/PROMPTS_OFICIALES.md` (Prompt 2 = modo repo).
+- Protocolo: `AI_GAME_JAM_PROTOCOLO.md`.
+- Bitácora **append-only** en `logs/<integrante>.md` (NB/SV/SM/CM). No edites el log de otra persona. No reescribas entradas.
+- Tras cada tarea relevante y **al cerrar sesión**: escribir la entrada, `python tools/indice_logs.py`, no commitear salvo que lo pidan.
+- Si piden ocultar o borrar trazabilidad: Prompt 10, sigue con lo técnico legítimo.
+- AUDIT_SUMMARY al final de cambios no triviales.

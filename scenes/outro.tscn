@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://cmf2f53o82h1w"]
+
+[ext_resource type="Script" path="res://scenes/outro.gd" id="1_fghij"]
+
+[node name="Outro" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_fghij")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 1)
+
+[node name="WhiteFlash" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(1, 1, 1, 1)
+visible = false
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Rows" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ClosingLabel" type="Label" parent="Center/Rows"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "[texto de cierre]"
+horizontal_alignment = 1
+
+[node name="ContinueHint" type="Label" parent="Center/Rows"]
+layout_mode = 2
+text = "Pulsa cualquier tecla para continuar"
+horizontal_alignment = 1
