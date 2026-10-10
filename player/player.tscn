@@ -125,6 +125,7 @@ debug_color = Color(0.99514896, 0, 0.21801919, 0.41960785)
 transform = Transform3D(0.6169872, 0, 0, 0, 0.6169872, 0, 0, 0, 1, -0.0233441, 0.8986554, -0.017205834)
 cast_shadow = 1
 alpha_cut = 2
+shaded = true
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_seqjs")
 animation = &"idle"
