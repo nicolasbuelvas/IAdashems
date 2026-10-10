@@ -81,6 +81,8 @@ var climb_target_y: float = 0.0
 var climb_exit_x: float = 0.0
 var climb_speed: float = 4.5
 var _climb_ladder_x: float = 0.0
+var _prev_speed_threshold: bool = false
+var _prev_cooldown_progress: float = -1.0
 
 
 func _ready() -> void:
@@ -208,6 +210,34 @@ func _physics_process(delta: float) -> void:
 		_animate_motion_feedback(Vector3(1.12, 0.86, 1.0))
 	global_position.z = 0.0
 	_update_animation()
+	_update_dash_indicators()
+
+
+func _update_dash_indicators() -> void:
+	if _dead:
+		return
+	var minimum_dash_speed := move_speed * _DASH_MIN_SPEED_RATIO
+	var speed_reached := is_on_floor() and (absf(velocity.x) >= minimum_dash_speed)
+	var cooldown_progress := 1.0
+	if _slide_cooldown_left > 0.0:
+		cooldown_progress = 1.0 - (_slide_cooldown_left / slide_cooldown)
+	elif is_sliding() or _dash_recovery_left > 0.0:
+		cooldown_progress = 0.0
+		
+	if speed_reached != _prev_speed_threshold:
+		_prev_speed_threshold = speed_reached
+		_emit_bus("dash_speed_threshold_changed", [speed_reached])
+		
+	if not is_equal_approx(cooldown_progress, _prev_cooldown_progress):
+		_prev_cooldown_progress = cooldown_progress
+		_emit_bus("dash_cooldown_changed", [cooldown_progress])
+		
+	# Feedback visual directo sobre la papa: tinte áureo al alcanzar la velocidad lista para dash
+	if _visual != null and not _blink_on:
+		if speed_reached and cooldown_progress >= 1.0:
+			_visual.modulate = Color(1.15, 1.05, 0.82, 1.0)
+		else:
+			_visual.modulate = Color.WHITE
 
 
 func take_damage(amount: int) -> void:

@@ -9,6 +9,12 @@ const HEAT_HIGH_THRESHOLD := 70.0
 @onready var herbicide_icon = $"BottomBar/HerbicideSlot/HerbicideRow/IconSlot/HerbicideIcon"
 @onready var btn_pause = $"TopBar/PausePanel/BtnPause"
 
+@onready var dash_icon = get_node_or_null("BottomBar/DashSlot/DashRow/DashIcon") as Label
+@onready var dash_badge = get_node_or_null("BottomBar/DashSlot/DashRow/DashStateBadge") as Label
+
+var _dash_ready: bool = true
+var _dash_speed_reached: bool = false
+
 @onready var life_icons = [
 	$"BottomBar/LivesPanel/LivesRow/Slot1/Life1",
 	$"BottomBar/LivesPanel/LivesRow/Slot2/Life2",
@@ -24,6 +30,7 @@ func _ready() -> void:
 		attach_source(bus)
 	if btn_pause:
 		btn_pause.pressed.connect(_on_pause_button_pressed)
+	_update_dash_ui()
 
 
 func attach_source(source: Node) -> void:
@@ -33,6 +40,8 @@ func attach_source(source: Node) -> void:
 	_connect_if_missing(source, &"anomalies_remaining_changed", _on_anomalies_remaining_changed)
 	_connect_if_missing(source, &"herbicide_cooldown_changed", _on_herbicide_cooldown_changed)
 	_connect_if_missing(source, &"herbicide_ready", _on_herbicide_ready)
+	_connect_if_missing(source, &"dash_cooldown_changed", _on_dash_cooldown_changed)
+	_connect_if_missing(source, &"dash_speed_threshold_changed", _on_dash_speed_threshold_changed)
 	var card = get_node_or_null("RoundCard")
 	if card and card.has_method("attach_source"):
 		card.attach_source(source)
@@ -45,7 +54,9 @@ func _connect_if_missing(source: Node, signal_name: StringName, handler: Callabl
 
 func _on_pause_button_pressed() -> void:
 	var gm := get_node_or_null("/root/GameManager")
-	if gm and gm.has_method("set_paused"):
+	if gm:
+		if gm.state != GameManager.PLAYING and gm.state != GameManager.PAUSED:
+			gm.state = GameManager.PLAYING
 		gm.set_paused(true)
 	else:
 		var bus := get_node_or_null("/root/EventBus")
@@ -104,3 +115,38 @@ func _shake_icon() -> void:
 		_shake_tween.tween_property(herbicide_icon, "position", base + Vector2(4.0, 0.0), 0.05)
 		_shake_tween.tween_property(herbicide_icon, "position", base + Vector2(-4.0, 0.0), 0.05)
 	_shake_tween.tween_property(herbicide_icon, "position", base, 0.05)
+
+
+func _on_dash_cooldown_changed(progress: float) -> void:
+	if progress < 1.0:
+		_dash_ready = false
+		if dash_icon:
+			dash_icon.modulate = Color(1.0, 1.0, 1.0, lerpf(0.25, 0.6, progress))
+		if dash_badge:
+			dash_badge.text = "%d%%" % int(progress * 100.0)
+			dash_badge.modulate = Color(0.65, 0.6, 0.55, 0.7)
+	else:
+		_dash_ready = true
+		_update_dash_ui()
+
+
+func _on_dash_speed_threshold_changed(speed_reached: bool) -> void:
+	_dash_speed_reached = speed_reached
+	_update_dash_ui()
+
+
+func _update_dash_ui() -> void:
+	if not _dash_ready:
+		return
+	if _dash_speed_reached:
+		if dash_icon:
+			dash_icon.modulate = Color(1.0, 0.92, 0.22, 1.0)
+		if dash_badge:
+			dash_badge.text = "¡LISTO!"
+			dash_badge.modulate = Color(0.96, 0.85, 0.22, 1.0)
+	else:
+		if dash_icon:
+			dash_icon.modulate = Color(0.85, 0.72, 0.45, 0.7)
+		if dash_badge:
+			dash_badge.text = "CORRE"
+			dash_badge.modulate = Color(0.75, 0.68, 0.55, 0.7)

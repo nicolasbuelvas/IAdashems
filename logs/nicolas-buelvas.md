@@ -451,3 +451,17 @@ Files: ui/hud.tscn, ui/hud.gd, ui/theme.tres, ui/audio_manager.gd, player/player
 Change: Rediseño completo del HUD eliminando textos innecesarios y adoptando iconografía técnica (♨ para temperatura con porcentaje, ◷ para reloj, ◎ para anomalías, ♥ para vidas y [E] para herbicida). Integración de botón de pausa ⏸ en pantalla superior derecha. Activación de lógica y visualización de temporizador de ronda con alerta en <15s, e integración del nodo HeatSystem para simulación real de temperatura vinculada a anomalías, daño y expiración de reloj con sobrecalentamiento crítico. Implementación de muerte de la papa con explosión cómica y fragmentación en 24 papitas fritas francesas doradas con física balística 3D. Creación y enlace de efectos de audio procedurales a 44.1kHz (disparo de guisante, impacto de proyectil, rebote elástico de lechuga, mordisco cuerpo a cuerpo, correteo de pepino y estallido crujiente de papitas).
 Commit: 4012def
 Notes: Verificado con 209/209 comprobaciones en verde y renderizado visual directo.
+
+
+---
+
+## AI-IAdashems-NB-000034
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de timing en Game Over tras explosión, fijación de pausa Esc/botón, enfriamiento de temperatura por captura e indicadores visuales de dash
+Type: AI_ASSISTED
+Files: anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn, autoload/event_bus.gd, autoload/game_manager.gd, player/player.gd, ui/hud.gd, ui/hud.tscn, ui/pause_menu.gd
+Change: Se añadió delay asíncrono (1.5s) al morir el jugador en test_arena_controller para permitir que la explosión de papitas fritas francesas se disperse y termine físicamente antes de pausar y desplegar el Game Over. Se corrigió el sistema de pausa otorgando process_mode ALWAYS al PauseLayer, añadiendo captura explícita de KEY_ESCAPE en pause_menu y eliminando el rechazo de pausa en GameManager para escenas de prueba/anomalías. Se solucionó el enfriamiento del HeatSystem emitiendo round_started previo a la instanciación de anomalías para evitar que la limpieza de active_ids descartara capturas legítimas. Se implementaron indicadores visuales completos para el Dash: señales reactivas en EventBus (dash_cooldown_changed, dash_speed_threshold_changed), feedback diegético dorado sobre la papa al alcanzar la velocidad mínima (72%), y ranura DashSlot en HUD con icono de rayo ⚡, porcentaje de recarga y aviso ¡LISTO!.
+Commit: 7b53318
+Notes: 209/209 comprobaciones automatizadas pasando sin errores.

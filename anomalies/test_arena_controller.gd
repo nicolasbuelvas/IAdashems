@@ -176,6 +176,9 @@ func _on_btn_start_pressed() -> void:
 	setup_canvas.visible = false
 	game_over_canvas.visible = false
 	get_tree().paused = false
+	var gm := get_node_or_null("/root/GameManager")
+	if gm:
+		gm.state = GameManager.PLAYING
 	
 	_apply_floor_configuration()
 	_respawn_simulation()
@@ -184,15 +187,19 @@ func _on_btn_start_pressed() -> void:
 func _on_btn_retry_pressed() -> void:
 	game_over_canvas.visible = false
 	get_tree().paused = false
+	var gm := get_node_or_null("/root/GameManager")
+	if gm:
+		gm.state = GameManager.PLAYING
 	_respawn_simulation()
 
 
 func _on_player_died() -> void:
-	game_over_canvas.visible = true
-	get_tree().paused = true
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):
 		audio.call("play_music", "res://audio/bgm_game_over.ogg")
+	await get_tree().create_timer(1.5).timeout
+	game_over_canvas.visible = true
+	get_tree().paused = true
 
 
 func _on_anomaly_contained(_anomaly: Node) -> void:
@@ -269,11 +276,19 @@ func _respawn_simulation() -> void:
 		player.global_position = Vector3(-16.0, -3.5, 0.0)
 		player.velocity = Vector3.ZERO
 		
+	var total_anomalies := cucumber_count + lettuce_count + pea_count
+	time_left = 90.0 + float(total_anomalies) * 15.0
+	timer_expired = false
+	
 	var bus := get_node_or_null("/root/EventBus")
 	if bus and bus.has_signal("player_health_changed"):
 		bus.emit_signal("player_health_changed", 3, 3)
-	if bus and bus.has_signal("heat_changed"):
-		bus.emit_signal("heat_changed", 0.0, 100.0)
+	if bus and bus.has_signal("round_started"):
+		bus.emit_signal("round_started", 1, total_anomalies)
+	if bus and bus.has_signal("round_timer_changed"):
+		bus.emit_signal("round_timer_changed", time_left)
+	if bus and bus.has_signal("anomalies_remaining_changed"):
+		bus.emit_signal("anomalies_remaining_changed", total_anomalies)
 		
 	var floor_heights: Array[float] = [0.5]
 	if active_floors >= 2:
@@ -301,17 +316,6 @@ func _respawn_simulation() -> void:
 		var f_y: float = floor_heights[(i + 2) % floor_heights.size()]
 		var pos_x: float = randf_range(-14.0, 14.0)
 		pea.global_position = Vector3(pos_x, f_y, 0.0)
-		
-	var total_anomalies := cucumber_count + lettuce_count + pea_count
-	time_left = 90.0 + float(total_anomalies) * 15.0
-	timer_expired = false
-	
-	if bus and bus.has_signal("round_started"):
-		bus.emit_signal("round_started", 1, total_anomalies)
-	if bus and bus.has_signal("round_timer_changed"):
-		bus.emit_signal("round_timer_changed", time_left)
-	if bus and bus.has_signal("anomalies_remaining_changed"):
-		bus.emit_signal("anomalies_remaining_changed", total_anomalies)
 		
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):

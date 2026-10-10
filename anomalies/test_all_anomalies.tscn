@@ -578,6 +578,7 @@ layout_mode = 2
 text = "CONFIGURAR ENTIDADES (F1)"
 
 [node name="PauseLayer" type="CanvasLayer" parent="."]
+process_mode = 3
 layer = 20
 
 [node name="PauseMenu" parent="PauseLayer" instance=ExtResource("4_pause")]

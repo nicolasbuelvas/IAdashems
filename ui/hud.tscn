@@ -229,6 +229,41 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("sb_life")
 
+[node name="DashSlot" type="PanelContainer" parent="BottomBar"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Pill"
+
+[node name="DashRow" type="HBoxContainer" parent="BottomBar/DashSlot"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="DashKeyHint" type="Label" parent="BottomBar/DashSlot/DashRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.85, 0.78, 0.7, 1)
+theme_override_font_sizes/font_size = 13
+text = "[ SHIFT ]"
+horizontal_alignment = 1
+
+[node name="DashIcon" type="Label" parent="BottomBar/DashSlot/DashRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.22, 1)
+theme_override_font_sizes/font_size = 17
+text = "⚡"
+horizontal_alignment = 1
+
+[node name="DashStateBadge" type="Label" parent="BottomBar/DashSlot/DashRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.96, 0.85, 0.22, 1)
+theme_override_font_sizes/font_size = 12
+text = "CORRE"
+horizontal_alignment = 1
+
 [node name="BottomSpacer" type="Control" parent="BottomBar"]
 layout_mode = 2
 size_flags_horizontal = 3
