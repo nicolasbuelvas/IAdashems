@@ -8,11 +8,13 @@ const SCENE_CUCUMBER := preload("res://anomalies/cucumber.tscn")
 const SCENE_LETTUCE := preload("res://anomalies/lettuce.tscn")
 const SCENE_PEA := preload("res://anomalies/pea.tscn")
 const SCENE_LADDER := preload("res://level/ladder.tscn")
+const OfficeHeatVisualsScript := preload("res://level/office_heat_visuals.gd")
 
 @export var cucumber_count: int = 1
 @export var lettuce_count: int = 1
 @export var pea_count: int = 1
 @export_range(1, 3) var active_floors: int = 2
+var _game_over_shown: bool = false
 
 @onready var player: Node3D = $Player
 @onready var anomalies_container: Node3D = $SpawnedAnomalies
@@ -50,7 +52,14 @@ const SCENE_LADDER := preload("res://level/ladder.tscn")
 @onready var btn_game_over_setup: Button = %BtnGameOverSetup
 
 
+var time_left: float = 90.0
+var timer_expired: bool = false
+
+
 func _ready() -> void:
+	var heat_fx := OfficeHeatVisualsScript.new()
+	add_child(heat_fx)
+	heat_fx.setup(self)
 	_init_setup_ui()
 	_connect_event_bus()
 	show_setup_editor()
@@ -62,12 +71,32 @@ func _unhandled_input(event: InputEvent) -> void:
 			show_setup_editor()
 
 
+func _process(delta: float) -> void:
+	if get_tree().paused:
+		return
+	if time_left > 0.0:
+		time_left = maxf(time_left - delta, 0.0)
+		var bus := get_node_or_null("/root/EventBus")
+		if bus and bus.has_signal("round_timer_changed"):
+			bus.emit_signal("round_timer_changed", time_left)
+		if time_left <= 0.0 and not timer_expired:
+			_on_timer_expired()
+
+
 func _connect_event_bus() -> void:
 	var bus := get_node_or_null("/root/EventBus")
 	if bus and bus.has_signal("player_died"):
 		bus.connect("player_died", _on_player_died)
+	if bus and bus.has_signal("heat_maxed"):
+		bus.connect("heat_maxed", _on_heat_maxed)
 	if bus and bus.has_signal("anomaly_contained"):
 		bus.connect("anomaly_contained", _on_anomaly_contained)
+
+
+func _on_heat_maxed() -> void:
+	if player != null and player.has_method("kill"):
+		player.call("kill")
+	_show_game_over("Sobrecalentamiento crítico. La papa explotó.")
 
 
 func _init_setup_ui() -> void:
@@ -149,6 +178,9 @@ func _on_btn_start_pressed() -> void:
 	setup_canvas.visible = false
 	game_over_canvas.visible = false
 	get_tree().paused = false
+	var gm := get_node_or_null("/root/GameManager")
+	if gm:
+		gm.state = GameManager.PLAYING
 	
 	_apply_floor_configuration()
 	_respawn_simulation()
@@ -157,15 +189,58 @@ func _on_btn_start_pressed() -> void:
 func _on_btn_retry_pressed() -> void:
 	game_over_canvas.visible = false
 	get_tree().paused = false
+	var gm := get_node_or_null("/root/GameManager")
+	if gm:
+		gm.state = GameManager.PLAYING
 	_respawn_simulation()
 
 
+var _penalty_in_progress: bool = false
+
 func _on_player_died() -> void:
-	game_over_canvas.visible = true
-	get_tree().paused = true
+	_apply_death_penalty()
+
+
+func _apply_death_penalty() -> void:
+	if _penalty_in_progress or timer_expired or _game_over_shown:
+		return
+	_penalty_in_progress = true
+	var penalty := 15
+	while penalty > 0 and time_left > 0.0 and not timer_expired:
+		time_left = maxf(time_left - 1.0, 0.0)
+		var bus := get_node_or_null("/root/EventBus")
+		if bus and bus.has_signal("round_timer_changed"):
+			bus.emit_signal("round_timer_changed", time_left)
+		penalty -= 1
+		if time_left <= 0.0:
+			_penalty_in_progress = false
+			_on_timer_expired()
+			return
+		await get_tree().create_timer(0.035).timeout
+	_penalty_in_progress = false
+
+
+func _on_timer_expired() -> void:
+	timer_expired = true
+	var bus := get_node_or_null("/root/EventBus")
+	if bus and bus.has_signal("round_timer_expired"):
+		bus.emit_signal("round_timer_expired")
+	_show_game_over("Tiempo agotado. La oficina se perdió.")
+
+
+func _show_game_over(reason_text: String) -> void:
+	if _game_over_shown:
+		return
+	_game_over_shown = true
+	var lbl := game_over_canvas.find_child("LabelReason", true, false) as Label
+	if lbl:
+		lbl.text = reason_text
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):
 		audio.call("play_music", "res://audio/bgm_game_over.ogg")
+	await get_tree().create_timer(1.5).timeout
+	game_over_canvas.visible = true
+	get_tree().paused = true
 
 
 func _on_anomaly_contained(_anomaly: Node) -> void:
@@ -226,6 +301,7 @@ func _spawn_random_ladders(container: Node3D, bot_y: float, top_y: float) -> voi
 
 
 func _respawn_simulation() -> void:
+	_game_over_shown = false
 	for child in anomalies_container.get_children():
 		child.queue_free()
 		
@@ -242,11 +318,19 @@ func _respawn_simulation() -> void:
 		player.global_position = Vector3(-16.0, -3.5, 0.0)
 		player.velocity = Vector3.ZERO
 		
+	var total_anomalies := cucumber_count + lettuce_count + pea_count
+	time_left = 90.0 + float(total_anomalies) * 15.0
+	timer_expired = false
+	
 	var bus := get_node_or_null("/root/EventBus")
 	if bus and bus.has_signal("player_health_changed"):
 		bus.emit_signal("player_health_changed", 3, 3)
-	if bus and bus.has_signal("heat_changed"):
-		bus.emit_signal("heat_changed", 0.0, 100.0)
+	if bus and bus.has_signal("round_started"):
+		bus.emit_signal("round_started", 1, total_anomalies)
+	if bus and bus.has_signal("round_timer_changed"):
+		bus.emit_signal("round_timer_changed", time_left)
+	if bus and bus.has_signal("anomalies_remaining_changed"):
+		bus.emit_signal("anomalies_remaining_changed", total_anomalies)
 		
 	var floor_heights: Array[float] = [0.5]
 	if active_floors >= 2:
@@ -274,10 +358,6 @@ func _respawn_simulation() -> void:
 		var f_y: float = floor_heights[(i + 2) % floor_heights.size()]
 		var pos_x: float = randf_range(-14.0, 14.0)
 		pea.global_position = Vector3(pos_x, f_y, 0.0)
-		
-	var total_anomalies := cucumber_count + lettuce_count + pea_count
-	if bus and bus.has_signal("anomalies_remaining_changed"):
-		bus.emit_signal("anomalies_remaining_changed", total_anomalies)
 		
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):

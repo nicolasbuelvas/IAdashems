@@ -196,6 +196,10 @@ func _shoot_projectile(target_player: Node3D = null) -> void:
 	scene_root.add_child(proj)
 	proj.global_position = global_position + Vector3(_facing * 1, 1.1, 0.0)
 
+	var audio := get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_sfx"):
+		audio.call("play_sfx", "res://audio/sfx_pea_shoot.wav", -2.0)
+
 
 ## Contrato de impacto de herbicida:
 func on_herbicide_hit() -> void:

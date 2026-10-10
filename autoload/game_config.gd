@@ -25,7 +25,7 @@ const HAZARD_DAMAGE := 1                  # golpe de cada trampa del escenario (
 const SLIDE_DURATION := 0.5
 const SLIDE_COOLDOWN := 0.6
 const SLIDE_SPEED := 11.0
-const HERBICIDE_COOLDOWN := 5.0
+const HERBICIDE_COOLDOWN := 3.0
 const HERBICIDE_SPEED := 14.0
 
 # Anomalías

@@ -155,6 +155,9 @@ func _calculate_ground_bounce(player: Node3D, player_sliding: bool) -> void:
 
 	velocity.y = launch_vy
 	velocity.x = _dir_x * launch_vx
+	var audio := get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_sfx"):
+		audio.call("play_sfx", "res://audio/sfx_lettuce_bounce.wav", -4.0)
 
 
 ## Contrato de contacto con el jugador:

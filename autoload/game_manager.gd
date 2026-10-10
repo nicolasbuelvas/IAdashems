@@ -119,7 +119,8 @@ func set_state(next: StringName) -> void:
 func _set_paused(paused: bool) -> void:
 	if paused and state != PLAYING:
 		var cur := get_tree().current_scene
-		if cur != null and (cur.name.to_lower().contains("player") or cur.name.to_lower().contains("game")):
+		var has_player := not get_tree().get_nodes_in_group("player").is_empty()
+		if cur != null and (cur.name.to_lower().contains("player") or cur.name.to_lower().contains("game") or cur.name.to_lower().contains("anomal") or cur.name.to_lower().contains("test") or has_player):
 			state = PLAYING
 		else:
 			return
@@ -142,7 +143,8 @@ func _on_pause_toggled(paused: bool) -> void:
 			set_state(PAUSED)
 		elif state != PAUSED:
 			var cur := get_tree().current_scene
-			if cur != null and (cur.name.to_lower().contains("player") or cur.name.to_lower().contains("game")):
+			var has_player := not get_tree().get_nodes_in_group("player").is_empty()
+			if cur != null and (cur.name.to_lower().contains("player") or cur.name.to_lower().contains("game") or cur.name.to_lower().contains("anomal") or cur.name.to_lower().contains("test") or has_player):
 				state = PLAYING
 				get_tree().paused = true
 				set_state(PAUSED)

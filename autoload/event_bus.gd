@@ -7,6 +7,8 @@ signal player_damaged(amount: int)
 signal player_died()
 signal player_slide_started()
 signal player_slide_ended()
+signal dash_cooldown_changed(progress: float)
+signal dash_speed_threshold_changed(speed_reached: bool)
 signal herbicide_fired()
 signal herbicide_cooldown_changed(progress: float)  # 0.0 = recién lanzado, 1.0 = listo
 signal herbicide_ready()

@@ -84,6 +84,9 @@ func _physics_process(delta: float) -> void:
 			if dist_to_player < 3.5 and is_on_floor() and _dodge_jump_cooldown <= 0.0:
 				velocity.y = 8.0
 				_dodge_jump_cooldown = 1.0
+				var audio := get_node_or_null("/root/AudioManager")
+				if audio and audio.has_method("play_sfx"):
+					audio.call("play_sfx", "res://audio/sfx_cucumber_scurry.wav", -2.0)
 
 		# REGLA 2: Cuando el jugador sube o baja una escalera,
 		# ir inmediatamente a la escalera CONTRARIA para cumplir la primera regla.

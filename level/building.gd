@@ -9,11 +9,17 @@
 class_name Building
 extends Node3D
 
+const OfficeHeatVisualsScript = preload("res://level/office_heat_visuals.gd")
+
 ## Numero de piso -> LaddersF<n> sacado del arbol (piso cerrado).
 var _locked_ladders: Dictionary = {}
 
 
 func _ready() -> void:
+	var heat_fx := OfficeHeatVisualsScript.new()
+	add_child(heat_fx)
+	heat_fx.setup(self)
+
 	for child in get_children():
 		if not child.name.begins_with("LaddersF"):
 			continue

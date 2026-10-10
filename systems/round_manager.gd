@@ -62,6 +62,7 @@ func _process(delta: float) -> void:
 ## Inicia la ronda n (1 a 6) o la reintenta. Si n es la ronda actual, conserva contained_ids
 ## (tras morir siguen ahí; tras agotar el reloj _fail ya los borró).
 func start_round(n: int) -> void:
+	_penalty_in_progress = false
 	if n < 1 or n > ROUNDS.size():
 		push_error("RoundManager: la ronda %d no existe" % n)
 		return
@@ -208,6 +209,7 @@ func _on_anomaly_contained(anomaly: Node) -> void:
 
 
 func _win() -> void:
+	_penalty_in_progress = false
 	active = false
 	EventBus.round_won.emit(current_round)
 	if current_round == ROUNDS.size():
@@ -220,12 +222,15 @@ func _win() -> void:
 ##   - &"health" o &"heat" (la papa muere): conserva las anomalías contenidas y el reloj sigue donde iba.
 ##   - &"time" (reloj agotado): game over definitivo del turno. Borra el progreso y el reintento
 ##     trae todas las anomalías con el reloj completo.
+var _penalty_in_progress: bool = false
+
+
 func _fail(reason: StringName) -> void:
 	if not active:
 		return
 	active = false
 	_free_live()
-	if reason == &"time":
+	if reason == &"time" or reason == &"heat":
 		contained_ids.clear()
 		_resume_time = -1.0
 	else:
@@ -245,4 +250,24 @@ func _on_heat_maxed() -> void:
 
 
 func _on_player_died() -> void:
-	_fail(&"health")
+	_apply_death_penalty()
+
+
+func _apply_death_penalty() -> void:
+	if not active or _penalty_in_progress:
+		return
+	_penalty_in_progress = true
+	var penalty := 15
+	while penalty > 0 and active and time_left > 0.0:
+		time_left = maxf(time_left - 1.0, 0.0)
+		EventBus.round_timer_changed.emit(time_left)
+		penalty -= 1
+		if time_left <= 0.0:
+			_penalty_in_progress = false
+			if not expired_emitted:
+				expired_emitted = true
+				EventBus.round_timer_expired.emit()
+			_fail(&"time")
+			return
+		await get_tree().create_timer(0.04).timeout
+	_penalty_in_progress = false
