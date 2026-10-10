@@ -2,17 +2,17 @@ class_name PeaAnomaly
 extends Anomaly
 
 ## Anomalía Lanzaguisantes (Pisum sativum):
-## Lenta. Sigue a la papa en X y le dispara un proyectil cada 2.5 s.
-## Hace daño al contacto.
+## Tirador táctico. Siempre en máxima condición: leading shot predictivo y kiteo a distancia media.
+## Hace daño al contacto y con proyectiles.
 ## Captura: 1 impacto de herbicida (E).
 
 const PROJECTILE_SCENE := preload("res://anomalies/pea_projectile.tscn")
 
-var speed: float = 1.5
-var fire_interval: float = 2.5
-var projectile_speed: float = 7.0
+var speed: float = 2.4
+var fire_interval: float = 1.6
+var projectile_speed: float = 7.5
 
-var _fire_timer: float = 1.2
+var _fire_timer: float = 1.0
 var _facing: float = 1.0
 
 
@@ -23,13 +23,8 @@ func _ready() -> void:
 		speed = cfg.get("PEA_SPEED") if cfg.get("PEA_SPEED") != null else speed
 		fire_interval = cfg.get("PEA_FIRE_INTERVAL") if cfg.get("PEA_FIRE_INTERVAL") != null else fire_interval
 		projectile_speed = cfg.get("PEA_PROJECTILE_SPEED") if cfg.get("PEA_PROJECTILE_SPEED") != null else projectile_speed
-	
-	if difficulty >= 5:
-		speed = 2.4
-		fire_interval = 1.6
-	elif difficulty >= 3:
-		speed = 2.0
-		fire_interval = 2.0
+	speed = maxf(speed, 2.2)
+	fire_interval = minf(fire_interval, 1.8)
 
 
 func _physics_process(delta: float) -> void:
@@ -45,24 +40,20 @@ func _physics_process(delta: float) -> void:
 		var dist_h := absf(diff_x)
 		var dist_v := absf(global_position.y - player.global_position.y)
 		
-		# Mantener orientación hacia el jugador
 		if dist_h > 0.2:
 			_facing = signf(diff_x)
 			
-		# ESTRATEGIA DE KITEO / CONTROL DE DISTANCIA (Dificultad >= 4):
-		# Si la papa está en el mismo piso y se acerca a menos de 4.0m, el tirador retrocede disparando
-		if difficulty >= 4 and dist_h < 4.0 and dist_v < 1.8:
+		# Kiteo / Control de distancia táctica:
+		if dist_h < 4.2 and dist_v < 2.0:
 			var retreat_dir := -signf(diff_x)
-			velocity.x = move_toward(velocity.x, retreat_dir * speed, 14.0 * delta)
-		elif dist_h > 3.5:
-			# Si está lejos, avanza gradualmente para no perder rango
-			velocity.x = move_toward(velocity.x, _facing * (speed * 0.7), 10.0 * delta)
+			velocity.x = move_toward(velocity.x, retreat_dir * speed, 16.0 * delta)
+		elif dist_h > 3.6:
+			velocity.x = move_toward(velocity.x, _facing * (speed * 0.75), 12.0 * delta)
 		else:
-			velocity.x = move_toward(velocity.x, 0.0, 10.0 * delta)
+			velocity.x = move_toward(velocity.x, 0.0, 12.0 * delta)
 			
-		# DISPARO TÁCTICO:
-		# Dispara si está en la misma línea visual o si domina el área
-		if dist_v < 2.5 or (difficulty >= 5 and dist_v < 4.5):
+		# Disparo periódico si la papa está en rango vertical
+		if dist_v < 3.2:
 			_fire_timer -= delta
 			if _fire_timer <= 0.0:
 				_fire_timer = fire_interval
@@ -82,8 +73,8 @@ func _shoot_projectile(target_player: Node3D = null) -> void:
 		
 	var shoot_dir := Vector3(_facing, 0.0, 0.0)
 	
-	# PREDICCIÓN DE DISPARO (LEADING SHOT - Dificultad >= 5):
-	if difficulty >= 5 and target_player != null and target_player is CharacterBody3D:
+	# Disparo predictivo (Leading shot):
+	if target_player != null and target_player is CharacterBody3D:
 		var p_vel_x: float = (target_player as CharacterBody3D).velocity.x
 		var dist_x := absf(target_player.global_position.x - global_position.x)
 		var time_to_hit := dist_x / maxf(projectile_speed, 1.0)

@@ -2,8 +2,8 @@ class_name TestArenaController
 extends Node3D
 
 ## Controlador de la arena de pruebas y Editor Manual Pre-Partida.
-## Permite configurar cantidad de entidades, dificultad de IA (1-6)
-## y número de pisos (1 a 3 + sótano base con mínimo 2 escaleras por piso).
+## Configura cantidad de entidades y pisos (1 a 3 + sótano base con 2 escaleras por piso).
+## Las entidades operan siempre en su máxima condición táctica (sin degradación de dificultad).
 
 const SCENE_CUCUMBER := preload("res://anomalies/cucumber.tscn")
 const SCENE_LETTUCE := preload("res://anomalies/lettuce.tscn")
@@ -12,7 +12,6 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 @export var cucumber_count: int = 1
 @export var lettuce_count: int = 1
 @export var pea_count: int = 1
-@export_range(1, 6) var difficulty_level: int = 4
 @export_range(1, 3) var active_floors: int = 2
 
 @onready var player: Node3D = $Player
@@ -26,7 +25,7 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 @onready var ladders_f1_f2: Node3D = $Architecture/Ladders_F1_F2
 @onready var ladders_f2_f3: Node3D = $Architecture/Ladders_F2_F3
 
-# Referencias del editor manual rediseñado
+# Referencias del editor manual
 @onready var lbl_cuc_val: Label = %LblCucVal
 @onready var btn_cuc_minus: Button = %BtnCucMinus
 @onready var btn_cuc_plus: Button = %BtnCucPlus
@@ -38,12 +37,6 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 @onready var lbl_pea_val: Label = %LblPeaVal
 @onready var btn_pea_minus: Button = %BtnPeaMinus
 @onready var btn_pea_plus: Button = %BtnPeaPlus
-
-@onready var btn_diff_prev: Button = %BtnDiffPrev
-@onready var btn_diff_next: Button = %BtnDiffNext
-@onready var lbl_diff_title: Label = %LblDiffTitle
-@onready var lbl_diff_dots: Label = %LblDiffDots
-@onready var lbl_diff_desc: Label = %LblDiffDesc
 
 @onready var btn_floor_1: Button = %BtnFloor1
 @onready var btn_floor_2: Button = %BtnFloor2
@@ -94,15 +87,6 @@ func _init_setup_ui() -> void:
 		_update_entity_labels()
 	)
 	
-	btn_diff_prev.pressed.connect(func():
-		difficulty_level = maxi(difficulty_level - 1, 1)
-		_update_diff_ui()
-	)
-	btn_diff_next.pressed.connect(func():
-		difficulty_level = mini(difficulty_level + 1, 6)
-		_update_diff_ui()
-	)
-	
 	btn_floor_1.pressed.connect(func(): _set_floors(1))
 	btn_floor_2.pressed.connect(func(): _set_floors(2))
 	btn_floor_3.pressed.connect(func(): _set_floors(3))
@@ -110,7 +94,6 @@ func _init_setup_ui() -> void:
 	btn_start.pressed.connect(_on_btn_start_pressed)
 	btn_reopen.pressed.connect(show_setup_editor)
 	
-	_update_diff_ui()
 	_update_floor_buttons()
 
 
@@ -118,40 +101,6 @@ func _update_entity_labels() -> void:
 	lbl_cuc_val.text = str(cucumber_count)
 	lbl_let_val.text = str(lettuce_count)
 	lbl_pea_val.text = str(pea_count)
-
-
-func _update_diff_ui() -> void:
-	var titles: Array[String] = [
-		"NIVEL 1: FÁCIL (BÁSICO)",
-		"NIVEL 2: FÁCIL+ (ESTÁNDAR)",
-		"NIVEL 3: PROMEDIO (REBOTE EN TECHOS)",
-		"NIVEL 4: PROMEDIO+ (REBOTE ERRÁTICO)",
-		"NIVEL 5: INTELIGENTE (LEADING SHOT)",
-		"NIVEL 6: PAC-MAN COORDINADO"
-	]
-	lbl_diff_title.text = titles[clamp(difficulty_level - 1, 0, 5)]
-	
-	var dots := ""
-	for i in range(1, 7):
-		if i <= difficulty_level:
-			dots += "● "
-		else:
-			dots += "○ "
-	lbl_diff_dots.text = dots.strip_edges()
-	
-	match difficulty_level:
-		1:
-			lbl_diff_desc.text = "Pepino huye solo a corta distancia. Lechuga rebota lineal en suelo. Guisante dispara recto a intervalo largo."
-		2:
-			lbl_diff_desc.text = "Reacciones estándar y velocidad base. Las anomalías responden con mayor fluidez."
-		3:
-			lbl_diff_desc.text = "Lechuga rebota elásticamente en techos y paredes sólidas. Guisante acelera su cadencia a 2.0s."
-		4:
-			lbl_diff_desc.text = "Pepino busca escaleras si es acorralado. Lechuga salta al techo para esquivar slides y contraataca si fallas."
-		5:
-			lbl_diff_desc.text = "Pepino omnisciente. Guisante predice tu trayectoria de carrera (leading shot) y retrocede disparando si te acercas."
-		6:
-			lbl_diff_desc.text = "Estrategia Pac-Man coordinada: el pepino usa lechugas y guisantes como escudo humano, emboscándote en equipo."
 
 
 func _set_floors(f: int) -> void:
@@ -217,7 +166,6 @@ func _respawn_simulation() -> void:
 		
 	for i in range(cucumber_count):
 		var cuc := SCENE_CUCUMBER.instantiate() as Anomaly
-		cuc.difficulty = difficulty_level
 		anomalies_container.add_child(cuc)
 		var f_y: float = floor_heights[i % floor_heights.size()]
 		var pos_x: float = randf_range(-4.0, 8.0)
@@ -225,7 +173,6 @@ func _respawn_simulation() -> void:
 		
 	for i in range(lettuce_count):
 		var let := SCENE_LETTUCE.instantiate() as Anomaly
-		let.difficulty = difficulty_level
 		anomalies_container.add_child(let)
 		var f_y: float = floor_heights[(i + 1) % floor_heights.size()]
 		var pos_x: float = randf_range(-6.0, 7.0)
@@ -233,7 +180,6 @@ func _respawn_simulation() -> void:
 		
 	for i in range(pea_count):
 		var pea := SCENE_PEA.instantiate() as Anomaly
-		pea.difficulty = difficulty_level
 		anomalies_container.add_child(pea)
 		var f_y: float = floor_heights[(i + 2) % floor_heights.size()]
 		var pos_x: float = randf_range(-3.0, 9.0)
@@ -259,9 +205,8 @@ func _update_hud_status() -> void:
 		elif child is PeaAnomaly and not child.is_contained:
 			alive_pea += 1
 			
-	var diff_names: Array[String] = ["Fácil", "Fácil+", "Promedio", "Promedio+", "Inteligente", "Pac-Man"]
-	var diff_str: String = diff_names[clamp(difficulty_level - 1, 0, 5)]
-	
-	hud_label.text = "SIMULADOR • Dificultad %d (%s) • %d Pisos (+ Sótano)\nVivas -> Pepinos: %d  |  Lechugas: %d  |  Guisantes: %d\nWASD (Mover/Escalar) | Espacio (Salto) | Shift (Slide) | E (Herbicida)" % [
-		difficulty_level, diff_str, active_floors, alive_cuc, alive_let, alive_pea
+	hud_label.text = "SIMULADOR • %d Pisos (+ Sótano Base)
+Vivas -> Pepinos: %d  |  Lechugas: %d  |  Guisantes: %d
+WASD (Mover/Escalar) | Espacio (Salto) | Shift (Slide) | E (Herbicida)" % [
+		active_floors, alive_cuc, alive_let, alive_pea
 	]

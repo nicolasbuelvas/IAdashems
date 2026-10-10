@@ -323,5 +323,19 @@ Task: Ajuste de altura de tarjeta del editor (botón jugar visible) y 2 escalera
 Type: AI_ASSISTED
 Files: anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
 Change: Optimización de altura y márgenes verticales de la tarjeta del editor manual (de 580px a ~480px) asegurando que el botón 'COMENZAR SIMULACIÓN' se mantenga visible y holgado en cualquier resolución de ventana. Adición de 2 escaleras verticales independientes (izquierda a X=-7m y derecha a X=+7m) entre cada par de niveles (Sótano a P1, P1 a P2, y P2 a P3), garantizando siempre doble vía de escape/acceso tanto para la papa como para las anomalías.
-Commit: PENDING
+Commit: 57f5de3
 Notes: Verificado con 209/209 comprobaciones en verde y ejecución en headless.
+
+
+---
+
+## AI-IAdashems-NB-000025
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de movimiento activo en pepino, eliminación de dificultad y simplificación del editor
+Type: AI_ASSISTED
+Files: anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
+Change: Corrección del bug donde el pepino se congelaba en paredes o permanecía estático en pisos distintos al jugador: ahora patrulla activamente, corre en todo momento, huye dinámicamente y busca escaleras o rebota al tocar muros sin bloquearse a velocidad 0. Eliminación de la dificultad artificial en favor de que todas las entidades operen permanentemente en su condición máxima y más inteligente (pepino con escudos y evasión, lechuga con rebote 2D suelo/techo y castigo de slide, lanzaguisantes con leading shot y kiteo). Simplificación de la tarjeta modal del editor a 360px de altura, garantizando visibilidad holgada del botón de jugar.
+Commit: PENDING
+Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless limpia.
