@@ -519,5 +519,19 @@ Task: Quemado de oficina 'This is fine', soft-respawn con penalización de -15s,
 Type: AI_ASSISTED
 Files: level/office_heat_visuals.gd, level/building.gd, anomalies/test_arena_controller.gd, player/player.gd, systems/round_manager.gd, systems/tests/round_manager_test.gd, ui/theme.tres, ui/style_eyebrow.tres, Sprites/FLAMES/flame_0..3.png, art/d-ui/fonts/Potato_sans-Bold.otf
 Change: 1) Implementación del efecto 'This is fine' mediante OfficeHeatVisuals: a mayor calor, la luz del sol se satura a naranja fuego incandescente, los escritorios se carbonizan a tonos carbón/hollín y brotan llamas animadas de cómic sobre el mobiliario al superar el 28% de calor. 2) Soft-respawn al morir por daño normal: la papa explota y revive a los 1.2s en su spawn con invulnerabilidad temporal; el tiempo y el calor siguen corriendo y se aplica un castigo de -15 segundos que desciende visualmente de 1 en 1 a 0.04s por tick. 3) Derrota por calor (100%) o tiempo (0s): limpia el progreso de capturas (contained_ids.clear()) reiniciando la ronda completa desde cero. 4) Integración e importación de la tipografía Potato Sans (Potato_sans-Bold.otf) como tipografía global en ui/theme.tres y ui/style_eyebrow.tres.
-Commit: 0da47af
+Commit: e1ec756
 Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000039
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de error de modulate en MeshInstance3D y tintado seguro con material_override
+Type: AI_ASSISTED
+Files: level/office_heat_visuals.gd, player/player.gd
+Change: Se corrigió el error en tiempo de ejecución 'Invalid assignment of property or key modulate with value of type Color on a base object of type MeshInstance3D': en OfficeHeatVisuals se sustituyó el acceso a modulate por la asignación de material_override (StandardMaterial3D.albedo_color) para los MeshInstance3D del mobiliario. En Player se añadieron salvaguardas condicionales ("modulate" in _visual) para garantizar que nunca se invoque modulate si la representación gráfica llega a ser un MeshInstance3D.
+Commit: 385609d
+Notes: 332 comprobaciones automatizadas pasando sin errores y ejecución de escenas sin excepciones.

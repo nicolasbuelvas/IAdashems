@@ -79,7 +79,16 @@ func _apply(ratio: float) -> void:
 	if _target_root != null:
 		var decor := _target_root.find_child("Decor", true, false)
 		if decor != null:
-			var char_color := Color.WHITE.lerp(Color(0.24, 0.16, 0.12), ratio)
+			var base_desk_color := Color(0.62, 0.48, 0.32, 1.0)
+			var charred_color := Color(0.18, 0.12, 0.08, 1.0)
+			var target_color: Color = base_desk_color.lerp(charred_color, ratio)
 			for d in decor.get_children():
-				if d is GeometryInstance3D:
-					d.modulate = char_color
+				if d is MeshInstance3D:
+					var mi := d as MeshInstance3D
+					var mat := mi.material_override as StandardMaterial3D
+					if mat == null:
+						mat = StandardMaterial3D.new()
+						mi.material_override = mat
+					mat.albedo_color = target_color
+				elif "modulate" in d:
+					d.modulate = Color.WHITE.lerp(Color(0.24, 0.16, 0.12), ratio)

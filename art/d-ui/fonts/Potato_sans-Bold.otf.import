@@ -12,6 +12,7 @@ dest_files=["res://.godot/imported/Potato_sans-Bold.otf-01dcec648fd4e1d2a0186845
 
 [params]
 
+Rendering=null
 antialiasing=1
 generate_mipmaps=false
 disable_embedded_bitmaps=true
@@ -25,7 +26,9 @@ hinting=3
 subpixel_positioning=4
 keep_rounding_remainders=true
 oversampling=0.0
+Fallbacks=null
 fallbacks=[]
+Compress=null
 compress=true
 preload=[]
 language_support={}

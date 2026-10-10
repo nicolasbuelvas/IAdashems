@@ -234,7 +234,7 @@ func _update_dash_indicators() -> void:
 		_emit_bus("dash_cooldown_changed", [cooldown_progress])
 		
 	# Feedback visual directo sobre la papa: tinte áureo al alcanzar la velocidad lista para dash
-	if _visual != null and not _blink_on:
+	if _visual != null and "modulate" in _visual and not _blink_on:
 		if speed_reached and cooldown_progress >= 1.0:
 			_visual.modulate = Color(1.15, 1.05, 0.82, 1.0)
 		else:
@@ -283,7 +283,7 @@ func _die_and_explode(is_lethal_defeat: bool = false) -> void:
 	_emit_bus("player_health_changed", [0, max_hp])
 
 	# Anticipación al rojo vivo: la papa se tiñe de rojo intenso, se infla y tiembla antes de estallar
-	if _visual != null:
+	if _visual != null and "modulate" in _visual:
 		_visual.modulate = Color(2.0, 0.15, 0.15, 1.0)
 		var ant_tween := create_tween()
 		ant_tween.tween_property(_visual, "scale", _visual_base_scale * 1.3, 0.38).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -352,7 +352,8 @@ func reset_to(spawn: Vector3) -> void:
 		_visual.position.x = 0.0
 		if _animated_sprite != null:
 			_visual.position.y = _sprite_base_y
-		_visual.modulate = Color.WHITE
+		if "modulate" in _visual:
+			_visual.modulate = Color.WHITE
 	var parent_node := get_parent()
 	if parent_node:
 		var old_fries := parent_node.get_node_or_null("FrenchFriesExplosion")
@@ -511,7 +512,7 @@ func _animate_motion_feedback(target_scale: Vector3) -> void:
 
 
 func _apply_visual() -> void:
-	if _visual == null:
+	if _visual == null or not ("modulate" in _visual):
 		return
 	var alpha := _SLIDE_ALPHA if is_sliding() else 1.0
 	if _blink_on:
