@@ -1,3 +1,6 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+.freebuff/
+.cursor/
+.claude/

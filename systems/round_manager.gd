@@ -109,6 +109,10 @@ func start_round(n: int) -> void:
 	if remaining == 0:
 		push_warning("RoundManager: la ronda %d arranca sin anomalías pendientes" % n)
 
+	# 8. HUD: contador y reloj arrancan con su valor real, sin esperar al primer _process. Va al final.
+	EventBus.anomalies_remaining_changed.emit(remaining)
+	EventBus.round_timer_changed.emit(time_left)
+
 
 func _spawn_anomaly(kind: String, spawn_id: StringName) -> void:
 	# Se resuelve el destino antes de instanciar para no dejar nodos huérfanos.

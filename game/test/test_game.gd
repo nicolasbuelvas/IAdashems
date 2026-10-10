@@ -4,8 +4,9 @@ extends "res://game/game.gd"
 ##   C: contiene la anomalía más cercana a la papa.
 ##   K: emite EventBus.player_died.
 ##   H: HeatSystem.debug_add_heat(50), solo actúa con una ronda activa.
+## Las teclas solo actúan en PLAYING: en ROUND_INTRO no se juega.
 ## Autoplay (@export autoplay, o el argumento de usuario --autoplay para headless):
-##   contiene una anomalía cada 0,5 s e imprime las señales de sistemas.
+##   contiene una anomalía cada 0,5 s en PLAYING e imprime las señales de sistemas.
 ##   En la ronda 4 fuerza un player_died cuando ya hay 2 contenidas, para probar el reintento con progreso.
 
 @export var autoplay := false
@@ -19,16 +20,21 @@ var _forced_death_done: bool = false
 
 
 func _ready() -> void:
-	super._ready()
 	if "--autoplay" in OS.get_cmdline_user_args():
 		autoplay = true
+	# Los logs se conectan antes de super._ready(): la ronda 1 arranca dentro de game.gd (_ready) y sin esto no se imprimiría.
 	if autoplay:
-		_start_autoplay()
+		_connect_autoplay_logs()
+	super._ready()
+	if autoplay:
+		_start_autoplay_timers()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	var key := event as InputEventKey
 	if key == null or not key.pressed or key.echo:
+		return
+	if GameManager.state != GameManager.PLAYING:
 		return
 	match key.keycode:
 		KEY_C:
@@ -44,8 +50,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			heat.debug_add_heat(50.0)
 
 
-func _start_autoplay() -> void:
-	print("[AUTOPLAY] activo: contengo una anomalía cada %.1f s" % AUTOPLAY_INTERVAL)
+func _connect_autoplay_logs() -> void:
+	print("[AUTOPLAY] activo: contengo una anomalía cada %.1f s, solo en PLAYING" % AUTOPLAY_INTERVAL)
 	EventBus.round_started.connect(func(n: int, remaining: int) -> void: print("[SIGNAL] round_started(%d, remaining=%d)" % [n, remaining]))
 	EventBus.floor_unlocked.connect(func(f: int) -> void: print("[SIGNAL] floor_unlocked(%d)" % f))
 	EventBus.round_won.connect(func(n: int) -> void: print("[SIGNAL] round_won(%d)" % n))
@@ -56,6 +62,8 @@ func _start_autoplay() -> void:
 	EventBus.anomaly_spawned.connect(func(a: Node) -> void: print("[SIGNAL] anomaly_spawned(%s)" % _describe(a)))
 	EventBus.anomaly_contained.connect(func(a: Node) -> void: print("[SIGNAL] anomaly_contained(%s)" % _describe(a)))
 
+
+func _start_autoplay_timers() -> void:
 	var timer := Timer.new()
 	timer.wait_time = AUTOPLAY_INTERVAL
 	timer.timeout.connect(_autoplay_tick)
@@ -65,6 +73,9 @@ func _start_autoplay() -> void:
 
 
 func _autoplay_tick() -> void:
+	# Durante ROUND_INTRO la papa y las anomalías están congeladas: no se contiene ni se fuerza nada.
+	if GameManager.state != GameManager.PLAYING:
+		return
 	var rm: RoundManager = $RoundManager
 	if not rm.active:
 		return

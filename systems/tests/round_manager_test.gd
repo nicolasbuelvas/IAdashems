@@ -74,13 +74,15 @@ class FakeAnomaly extends Node3D:
 var _failures := 0
 var _checks := 0
 
-var _log: Array = []           # diario del test: round_started, reset, unlock, spawn, remaining, floor, won, game_won, failed
+var _log: Array = []           # diario del test: round_started, reset, unlock, spawn, remaining, timer, floor, won, game_won, failed
 var _spawned: Array = []       # nodos que llegaron por anomaly_spawned, en orden
 var _floors: Array = []        # floor_unlocked
 var _won: Array = []           # round_won
 var _failed: Array = []        # reasons de round_failed
 var _game_won := 0
 var _spawn_events := 0
+var _remaining_seen: Array = []  # valores de anomalies_remaining_changed desde el último vaciado del test
+var _timer_seen: Array = []      # valores de round_timer_changed desde el último vaciado del test
 var _spawn_fields_ok := true   # al llegar anomaly_spawned ya hay spawn_id y posición final
 
 var _rm_script    # Script de round_manager.gd (cargado con load)
@@ -109,6 +111,7 @@ func _initialize() -> void:
 	_test_floor_unlock()
 	_test_capture_clock()
 	await _test_defeat_and_retry()
+	await _test_start_signals()
 	_test_win_all_rounds()
 	_test_discards()
 	_test_missing_player_and_scene()
@@ -178,6 +181,7 @@ func _connect_listeners() -> void:
 	_event_bus.round_started.connect(_on_round_started)
 	_event_bus.anomaly_spawned.connect(_on_anomaly_spawned)
 	_event_bus.anomalies_remaining_changed.connect(_on_remaining_changed)
+	_event_bus.round_timer_changed.connect(_on_timer_changed)
 	_event_bus.floor_unlocked.connect(_on_floor_unlocked)
 	_event_bus.round_won.connect(_on_round_won)
 	_event_bus.game_won.connect(_on_game_won)
@@ -200,7 +204,13 @@ func _on_anomaly_spawned(anomaly) -> void:
 
 
 func _on_remaining_changed(n: int) -> void:
+	_remaining_seen.append(n)
 	_log.append("remaining:%d" % n)
+
+
+func _on_timer_changed(seconds: float) -> void:
+	_timer_seen.append(seconds)
+	_log.append("timer:%d" % roundi(seconds))
 
 
 func _on_floor_unlocked(f: int) -> void:
@@ -233,6 +243,8 @@ func _new_rm(scenes: Dictionary = {}) -> void:
 		child.queue_free()
 	_log.clear()
 	_spawned.clear()
+	_remaining_seen.clear()
+	_timer_seen.clear()
 	_floors.clear()
 	_won.clear()
 	_failed.clear()
@@ -399,6 +411,67 @@ func _test_defeat_and_retry() -> void:
 	_check(is_equal_approx(_rm.time_left, GameConfigScript.ROUND_BASE_TIME + GameConfigScript.ROUND_TIME_PER_ANOMALY * 1.0), "el reloj del reintento vuelve a 90 + 15 x restantes")
 	_check(_rm.active and _rm.remaining == 1 and _rm.contained_ids.size() == 1, "el reintento queda activo con 1 restante y F1_A contenida")
 	_check(_capture(&"F1_B") and _won == [2] and _game_won == 0, "capturar F1_B tras el reintento gana la ronda 2 (sin game_won)")
+
+
+## Reloj esperado para un número de restantes: 90 + 15 x restantes.
+func _expected_clock(remaining_count: int) -> float:
+	return GameConfigScript.ROUND_BASE_TIME + GameConfigScript.ROUND_TIME_PER_ANOMALY * float(remaining_count)
+
+
+## true si round_started es la primera entrada del diario y no hay otra round_started después.
+func _starts_with_round_started() -> bool:
+	if _log.is_empty() or not str(_log[0]).begins_with("round_started:"):
+		return false
+	for i in range(1, _log.size()):
+		if str(_log[i]).begins_with("round_started:"):
+			return false
+	return true
+
+
+## start_round emite anomalies_remaining_changed y round_timer_changed una vez cada uno, al final del arranque
+## (después de instanciar), con el valor correcto. Y round_started sigue siendo lo primero.
+func _test_start_signals() -> void:
+	print("-- start_round: anomalies_remaining_changed y round_timer_changed al empezar y al reintentar")
+
+	_new_rm()
+	_rm.start_round(1)  # F1_A: 1 anomalía, reloj 90 + 15 x 1
+	_check(_log.size() > 0 and _log[0] == "round_started:1:1", "ronda 1: round_started sigue siendo lo primero (log: %s)" % str(_log))
+	_check(_remaining_seen == [1], "ronda 1 al empezar: anomalies_remaining_changed una vez con 1 (es %s)" % str(_remaining_seen))
+	_check(_timer_seen.size() == 1 and is_equal_approx(_timer_seen[0], _expected_clock(1)), "ronda 1 al empezar: round_timer_changed una vez con 105 (es %s)" % str(_timer_seen))
+
+	_new_rm()
+	_rm.start_round(4)  # F1_A, F2_C, F1_B, F2_D: 4 anomalías, reloj 90 + 15 x 4
+	_check(_log.size() > 0 and _log[0] == "round_started:4:4", "ronda 4: round_started sigue siendo lo primero (log: %s)" % str(_log))
+	_check(_starts_with_round_started(), "ronda 4: round_started es el único del arranque y va primero")
+	_check(_remaining_seen == [4], "ronda 4 al empezar: anomalies_remaining_changed una vez con 4 (es %s)" % str(_remaining_seen))
+	_check(_timer_seen.size() == 1 and is_equal_approx(_timer_seen[0], _expected_clock(4)), "ronda 4 al empezar: round_timer_changed una vez con 150 (es %s)" % str(_timer_seen))
+	var last_spawn := _log.find("spawn:F2_D")
+	_check(_spawned.size() == 4 and last_spawn >= 0, "ronda 4 instancia sus 4 anomalías antes de los avisos")
+	_check(last_spawn >= 0 and _log.find("remaining:4") > last_spawn, "ronda 4: anomalies_remaining_changed sale después de instanciar las anomalías")
+	_check(last_spawn >= 0 and _log.find("timer:150") > last_spawn, "ronda 4: round_timer_changed sale después de instanciar las anomalías")
+
+	# Reintento con 2 restantes: F1_A y F2_C ya están contenidas.
+	_remaining_seen.clear()
+	_timer_seen.clear()
+	_check(_capture(&"F1_A") and _capture(&"F2_C"), "ronda 4: se contienen F1_A y F2_C antes de la derrota")
+	_check(_remaining_seen == [3, 2], "ronda 4: cada captura emite anomalies_remaining_changed con el nuevo valor (es %s)" % str(_remaining_seen))
+	_event_bus.heat_maxed.emit()
+	_check(not _rm.active and _failed.size() == 1 and _failed[0] == &"heat", "ronda 4: la derrota por calor desactiva la ronda")
+	await _settle()
+
+	_remaining_seen.clear()
+	_timer_seen.clear()
+	_spawned.clear()
+	_log.clear()
+	_rm.start_round(4)  # reintento: conserva F1_A y F2_C, instancia F1_B y F2_D
+	_check(_log.size() > 0 and _log[0] == "round_started:4:2", "reintento de la ronda 4: round_started(4, 2) es lo primero (log: %s)" % str(_log))
+	_check(_starts_with_round_started(), "reintento de la ronda 4: round_started es el único del arranque y va primero")
+	_check(_remaining_seen == [2], "reintento de la ronda 4: anomalies_remaining_changed una vez con 2 (es %s)" % str(_remaining_seen))
+	_check(_timer_seen.size() == 1 and is_equal_approx(_timer_seen[0], _expected_clock(2)), "reintento de la ronda 4: round_timer_changed una vez con 120 (es %s)" % str(_timer_seen))
+	_check(_spawned.size() == 2 and not _log.has("spawn:F1_A") and not _log.has("spawn:F2_C"), "reintento de la ronda 4: solo instancia F1_B y F2_D")
+	var last_retry_spawn := _log.find("spawn:F2_D")
+	_check(last_retry_spawn >= 0 and _log.find("remaining:2") > last_retry_spawn and _log.find("timer:120") > last_retry_spawn, "reintento de la ronda 4: los dos avisos salen después de instanciar")
+	_check(_rm.active and _rm.remaining == 2, "reintento de la ronda 4: queda activa con 2 restantes")
 
 
 func _test_win_all_rounds() -> void:
