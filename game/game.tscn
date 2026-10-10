@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/game.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://level/building.tscn" id="2_building"]
+[ext_resource type="Script" path="res://systems/heat_system.gd" id="3_heat"]
+[ext_resource type="Script" path="res://systems/round_manager.gd" id="4_round"]
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_game")
+
+[node name="Building" parent="." instance=ExtResource("2_building")]
+
+[node name="HeatSystem" type="Node" parent="."]
+script = ExtResource("3_heat")
+
+[node name="RoundManager" type="Node" parent="." node_paths=PackedStringArray("building", "anomalies_root")]
+script = ExtResource("4_round")
+building = NodePath("../Building")
+anomalies_root = NodePath("../Anomalies")
+
+[node name="Anomalies" type="Node3D" parent="."]
