@@ -3,8 +3,10 @@ extends CharacterBody3D
 
 ## Clase base para todas las anomalías (Persona B).
 ## Cumple con el contrato de RoundManager y EventBus.
+## Soporta niveles de dificultad (1 a 6) para IA táctica / coordinada estilo Pac-Man.
 
 @export var spawn_id: StringName = &""
+@export_range(1, 6) var difficulty: int = 1
 var is_contained: bool = false
 var in_stairs: bool = false
 
@@ -38,6 +40,23 @@ func _on_detector_area_entered(area: Area3D) -> void:
 func _on_detector_area_exited(area: Area3D) -> void:
 	if area.is_in_group("stairs") or area.name.to_lower().contains("stair") or area.name.to_lower().contains("ladder"):
 		in_stairs = false
+
+
+## Obtiene referencia al jugador si está en escena
+func get_player_node() -> Node3D:
+	var players := get_tree().get_nodes_in_group("player")
+	if not players.is_empty() and is_instance_valid(players[0]):
+		return players[0] as Node3D
+	return null
+
+
+## Obtiene otras anomalías vivas para tácticas de grupo
+func get_allies() -> Array[Anomaly]:
+	var result: Array[Anomaly] = []
+	for n in get_tree().get_nodes_in_group("anomaly"):
+		if n is Anomaly and n != self and not n.is_contained:
+			result.append(n)
+	return result
 
 
 func contain() -> void:

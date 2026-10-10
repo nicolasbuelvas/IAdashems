@@ -281,5 +281,19 @@ Task: Escalera vertical tipo Minecraft con animación bloqueante no cancelable
 Type: AI_ASSISTED
 Files: level/ladder.gd, level/ladder.tscn, player/player.gd, anomalies/cucumber.gd, anomalies/test_cucumber.tscn, anomalies/test_lettuce.tscn, anomalies/test_pea.tscn, anomalies/test_all_anomalies.tscn
 Change: Reemplazo de rampas inclinadas por escaleras totalmente verticales 3D estilo Minecraft (rieles y travesaños) en todos los mapas de prueba de 2 pisos. Implementación de estado de escalada bloqueante (is_climbing / start_climb): al presionar W abajo o S arriba en el área de la escalera, el personaje queda fijado a la escalera y realiza la subida o bajada completa hasta el piso destino sin poder cancelar la animación con saltos, desplazamientos, dash ni ataques. Se habilitó también el uso de la escalera para la evasión del pepino.
-Commit: PENDING
+Commit: 53ca582
 Notes: Verificado en headless (test suites 209/209 PASS y ejecución de mapas de test).
+
+
+---
+
+## AI-IAdashems-NB-000022
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Editor manual interactivo, IA táctica coordinada Pac-Man y arena multinivel con sótano
+Type: AI_ASSISTED
+Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
+Change: Incorporación de panel pre-partida y reconfigurable en vivo (F1) para personalizar cantidad de anomalías por especie, selector de 1 a 3 pisos y 6 niveles de dificultad de IA. Estructura de arena con sótano base donde spawnea el jugador por defecto y pisos superiores con techos sólidos para rebotes 2D. IA táctica: el pepino es omnisciente en niveles altos, usa escaleras para escapar y utiliza aliados como escudos humanos (Pac-Man); la lechuga rebota elásticamente en techos y suelos, esquiva saltando si el jugador hace slide y se abalanza tras fallos del dash; el lanzaguisantes ejecuta leading shots predictivos según la velocidad del jugador y kitea a distancia media.
+Commit: PENDING
+Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless limpia de test_all_anomalies.tscn.
