@@ -1,0 +1,110 @@
+[gd_scene format=3 uid="uid://d310r1vedl67d"]
+
+[ext_resource type="Script" uid="uid://bdn6tpyt8eamf" path="res://player/player.gd" id="1_player"]
+[ext_resource type="Texture2D" uid="uid://bllr65csyalgb" path="res://Sprites/PAPA_CORRIENDO/PAPA_0000.png" id="2_boad6"]
+[ext_resource type="Texture2D" uid="uid://b83sh0xwkhrfo" path="res://Sprites/PAPA_CORRIENDO/PAPA_0001.png" id="3_rgyib"]
+[ext_resource type="Texture2D" uid="uid://ijca1wja7cjn" path="res://Sprites/PAPA_CORRIENDO/PAPA_0002.png" id="4_hg6s5"]
+[ext_resource type="Texture2D" uid="uid://brl8tjsfxoop8" path="res://Sprites/PAPA_CORRIENDO/PAPA_0003.png" id="5_8t03j"]
+[ext_resource type="Texture2D" uid="uid://jcardq8qpgpw" path="res://Sprites/PAPA_CORRIENDO/PAPA_0004.png" id="6_2ieo8"]
+[ext_resource type="Texture2D" uid="uid://b1ro5pvxc314k" path="res://Sprites/PAPA_CORRIENDO/PAPA_0005.png" id="7_ebec5"]
+[ext_resource type="Texture2D" uid="uid://ms7202oxdp3a" path="res://Sprites/PAPA_DASH/PAPA_DASH_0000.png" id="8_yllr7"]
+[ext_resource type="Texture2D" uid="uid://waaimbp4vo4i" path="res://Sprites/PAPA_DASH/PAPA_DASH_0001.png" id="9_kb6p2"]
+[ext_resource type="Texture2D" uid="uid://15byeocw4ek5" path="res://Sprites/PAPA_DASH/PAPA_DASH_0002.png" id="10_wodsf"]
+[ext_resource type="Texture2D" uid="uid://c75f8v4sn1pjj" path="res://Sprites/PAPA_DASH/PAPA_DASH_0003.png" id="11_32hag"]
+[ext_resource type="Texture2D" uid="uid://bkdpfb1a03bg6" path="res://Sprites/PAPA_DASH/PAPA_DASH_0004.png" id="12_tqiix"]
+[ext_resource type="Texture2D" uid="uid://t1btist84vg7" path="res://Sprites/PAPA_DASH/PAPA_DASH_0005.png" id="13_e7oew"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.42
+height = 1.55
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_seqjs"]
+resource_name = "Potato"
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_boad6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_rgyib")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_hg6s5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_8t03j")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_2ieo8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_ebec5")
+}],
+"loop": 1,
+"name": &"correr",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_yllr7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_kb6p2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_wodsf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_32hag")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tqiix")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_e7oew")
+}],
+"loop": 0,
+"name": &"dash",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_contact"]
+radius = 0.48
+height = 1.65
+
+[node name="Player" type="CharacterBody3D" unique_id=2104887993 groups=["player"]]
+collision_layer = 2
+axis_lock_linear_z = true
+floor_constant_speed = true
+floor_max_angle = 1.0472
+floor_snap_length = 0.4
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=272775990]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.775, 0)
+shape = SubResource("CapsuleShape3D_player")
+debug_color = Color(0.99514896, 0, 0.21801919, 0.41960785)
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=621835400]
+transform = Transform3D(0.6169872, 0, 0, 0, 0.6169872, 0, 0, 0, 1, -0.0233441, 0.8986554, -0.017205834)
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_seqjs")
+animation = &"correr"
+frame = 5
+
+[node name="ContactArea" type="Area3D" parent="." unique_id=602657720]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+collision_layer = 0
+collision_mask = 4
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ContactArea" unique_id=1940767654]
+shape = SubResource("CapsuleShape3D_contact")
+
+[connection signal="area_entered" from="ContactArea" to="." method="_on_contact_area_area_entered"]
+[connection signal="body_entered" from="ContactArea" to="." method="_on_contact_area_body_entered"]
