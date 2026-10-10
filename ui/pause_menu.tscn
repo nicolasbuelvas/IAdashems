@@ -1,8 +1,9 @@
-[gd_scene format=3 uid="uid://cmf2f53o82h1z"]
+[gd_scene load_steps=2 format=3 uid="uid://cmf2f53o82h1z"]
 
 [ext_resource type="Script" path="res://ui/pause_menu.gd" id="1_pqrst"]
 
 [node name="PauseMenu" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,18 +30,22 @@ theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="Center/Rows"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 40
 text = "PAUSA"
 horizontal_alignment = 1
 
 [node name="ResumeButton" type="Button" parent="Center/Rows"]
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 text = "Reanudar"
 
 [node name="OptionsButton" type="Button" parent="Center/Rows"]
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 text = "Opciones"
 
 [node name="QuitButton" type="Button" parent="Center/Rows"]
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 text = "Salir al menú"
 [connection signal="pressed" from="Center/Rows/ResumeButton" to="." method="_on_ResumeButton_pressed"]
