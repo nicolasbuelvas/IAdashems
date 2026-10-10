@@ -35,3 +35,14 @@ Files: player/player.tscn, player/player.gd, player/player.gd.uid
 Change: CharacterBody3D 2.5D con A/D, salto Espacio, gravedad, floor_constant_speed para rampas, capa 2 / máscara 1. Constantes desde GameConfig si existe, si no 6.0 / 9.0. Placeholder cápsula. Sin escena de prueba ni suelo (fuera de player/).
 Limitaciones: No se pudo jugar el criterio de rampa/suelo en runtime porque no hay nivel; se validó carga headless de la escena. Input por teclas físicas (InputMap aún no definido).
 Commit: PENDING
+
+## AI-IAdashems-SM-000002
+
+Timestamp: 2026-10-09T22:45:26-05:00
+Participant: SM (Sebastian Marquez)
+Task: Vida (3 HP), iframes 1 s con parpadeo, señales de daño y deslizamiento con Shift
+Type: AI_GENERATED
+Files: player/player.gd
+Change: Contrato take_damage/is_sliding/is_invulnerable/reset_to. Slide 0.5 s a 11.0, cooldown 0.6 s al terminar, invuln y alpha 0.4. Daño ignora slide/iframes; muerte emite player_died una vez. EventBus si existe.
+Limitaciones: EventBus y GameConfig aún no están en el repo; las señales no se pueden verificar en runtime. Parpadeo sobre AnimatedSprite3D. Cooldown del slide empieza al terminar el deslizamiento, no al iniciarlo.
+Commit: PENDING
