@@ -76,4 +76,17 @@ Type: AI_ASSISTED
 Files: scenes/credits.tscn, scenes/credits.gd
 Change: Se creó el script credits.gd con funcionalidad de avance por botón y se implementó el diseño visual de la escena de créditos con un título, nombres del equipo y un botón para volver al menú.
 Commit: PENDING
-Notes: La navegación real al menú se integrará cuando GameManager.goto() esté disponible.
+
+
+---
+
+## AI-IAdashems-NB-000007
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Desarrollar la escena del HUD (ui/hud.tscn) y su emisor de señales de prueba
+Type: AI_ASSISTED
+Files: ui/hud.tscn, ui/hud.gd, ui/test_signal_emitter.gd
+Change: Se crearon los scripts hud.gd y test_signal_emitter.gd. Se implementó el diseño visual del HUD con elementos para calor, tiempo, vida, anomalías y herbicida, y se configuró el HUD para conectarse al emisor de pruebas.
+Commit: PENDING
+Notes: El HUD se probó en aislamiento con el test_signal_emitter.gd. La conexión al EventBus real se hará cuando esté disponible.
