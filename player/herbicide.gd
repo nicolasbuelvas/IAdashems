@@ -30,6 +30,9 @@ func _on_body_entered(body: Node3D) -> void:
 
 
 func _on_area_entered(area: Area3D) -> void:
+	# Los proyectiles enemigos no interceptan el herbicida: se atraviesan.
+	if area is PeaProjectile:
+		return
 	_handle_impact(area)
 
 
