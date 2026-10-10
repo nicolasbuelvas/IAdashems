@@ -57,7 +57,9 @@ func _on_round_won(round_number: int) -> void:
 
 
 func _on_round_failed(_reason: StringName) -> void:
-	# Se reintenta la misma ronda. RoundManager decide qué se conserva: al morir, capturas y reloj; con el reloj agotado, nada.
-	# Diferido para salir de la cadena de player_died.
+	# Se reintenta la misma ronda tras permitir ver la explosión de la papa.
+	# RoundManager decide qué se conserva: al morir, capturas y reloj; con el reloj agotado, nada.
 	GameManager.set_state(GameManager.ROUND_FAILED)
-	call_deferred(&"_start_round_after_card")
+	await get_tree().create_timer(1.5).timeout
+	if is_inside_tree():
+		_start_round_after_card()

@@ -1,9 +1,9 @@
 [gd_resource type="LabelSettings" load_steps=2 format=3]
 
-[ext_resource type="FontFile" path="res://art/d-ui/fonts/nunito.ttf" id="1_nunito"]
+[ext_resource type="FontFile" path="res://art/d-ui/fonts/Potato_sans-Bold.otf" id="1_potato"]
 
 [resource]
-font = ExtResource("1_nunito")
+font = ExtResource("1_potato")
 font_size = 13
 font_color = Color(0.909804, 0.639216, 0.239216, 1)
 letter_spacing = 3.4

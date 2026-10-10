@@ -19,7 +19,8 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel") and not event.is_echo():
+	var is_esc: bool = (event is InputEventKey and event.pressed and not event.echo and (event as InputEventKey).physical_keycode == KEY_ESCAPE)
+	if (event.is_action_pressed("ui_cancel") and not event.is_echo()) or is_esc:
 		if _options_instance != null and _options_instance.visible:
 			_on_options_back()
 		else:

@@ -435,5 +435,145 @@ Task: Corrección de hitbox sobredimensionada en el guisante e implementación d
 Type: AI_ASSISTED
 Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/pea.tscn, anomalies/pea_projectile.tscn
 Change: Corrección del tamaño de hitbox en el lanzaguisantes (SphereShape3D_hit reducido de 0.55 a 0.40 para quedar estrictamente contenido dentro del cuerpo esférico de radio 0.48, eliminando daños fantasma; proyectil ajustado de radio 0.22 a 0.18). Implementación de soporte universal de escalada vertical y navegación entre pisos en la clase base Anomaly (start_climb, process_climbing, helpers de niveles y escaleras) para que todas las entidades puedan subir y bajar escaleras. En pea.gd: búsqueda de escaleras hacia el nivel del jugador si este está en otro piso y kiteo vertical para escapar si el jugador se aproxima en cuerpo a cuerpo. En lettuce.gd: integración de tránsito vertical en escaleras para perseguir verticalmente al jugador o rotar de piso.
-Commit: cd8fb01
+Commit: 61eccb1
 Notes: Verificado con 209/209 comprobaciones automatizadas en verde y ejecuciones headless limpias de test_pea.tscn, test_lettuce.tscn, test_cucumber.tscn y test_all_anomalies.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000033
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: HUD profesional renovado sin AI slop, temporizador y calor activos, botón de pausa, explosión de papitas fritas y SFX para entidades
+Type: AI_ASSISTED
+Files: ui/hud.tscn, ui/hud.gd, ui/theme.tres, ui/audio_manager.gd, player/player.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, anomalies/pea.gd, anomalies/pea_projectile.gd, anomalies/lettuce.gd, anomalies/cucumber.gd, audio/sfx_pea_shoot.wav, audio/sfx_pea_impact.wav, audio/sfx_lettuce_bounce.wav, audio/sfx_anomaly_bite.wav, audio/sfx_cucumber_scurry.wav, audio/sfx_potato_explode.wav
+Change: Rediseño completo del HUD eliminando textos innecesarios y adoptando iconografía técnica (♨ para temperatura con porcentaje, ◷ para reloj, ◎ para anomalías, ♥ para vidas y [E] para herbicida). Integración de botón de pausa ⏸ en pantalla superior derecha. Activación de lógica y visualización de temporizador de ronda con alerta en <15s, e integración del nodo HeatSystem para simulación real de temperatura vinculada a anomalías, daño y expiración de reloj con sobrecalentamiento crítico. Implementación de muerte de la papa con explosión cómica y fragmentación en 24 papitas fritas francesas doradas con física balística 3D. Creación y enlace de efectos de audio procedurales a 44.1kHz (disparo de guisante, impacto de proyectil, rebote elástico de lechuga, mordisco cuerpo a cuerpo, correteo de pepino y estallido crujiente de papitas).
+Commit: 4012def
+Notes: Verificado con 209/209 comprobaciones en verde y renderizado visual directo.
+
+
+---
+
+## AI-IAdashems-NB-000034
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de timing en Game Over tras explosión, fijación de pausa Esc/botón, enfriamiento de temperatura por captura e indicadores visuales de dash
+Type: AI_ASSISTED
+Files: anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn, autoload/event_bus.gd, autoload/game_manager.gd, player/player.gd, ui/hud.gd, ui/hud.tscn, ui/pause_menu.gd
+Change: Se añadió delay asíncrono (1.5s) al morir el jugador en test_arena_controller para permitir que la explosión de papitas fritas francesas se disperse y termine físicamente antes de pausar y desplegar el Game Over. Se corrigió el sistema de pausa otorgando process_mode ALWAYS al PauseLayer, añadiendo captura explícita de KEY_ESCAPE en pause_menu y eliminando el rechazo de pausa en GameManager para escenas de prueba/anomalías. Se solucionó el enfriamiento del HeatSystem emitiendo round_started previo a la instanciación de anomalías para evitar que la limpieza de active_ids descartara capturas legítimas. Se implementaron indicadores visuales completos para el Dash: señales reactivas en EventBus (dash_cooldown_changed, dash_speed_threshold_changed), feedback diegético dorado sobre la papa al alcanzar la velocidad mínima (72%), y ranura DashSlot en HUD con icono de rayo ⚡, porcentaje de recarga y aviso ¡LISTO!.
+Commit: 7b53318
+Notes: 209/209 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000035
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Disparo letal y animación al alcanzar 100% de calor, y atenuación ambiental del SFX de vapor
+Type: AI_ASSISTED
+Files: player/player.gd, anomalies/test_arena_controller.gd, game/game.gd, ui/audio_manager.gd
+Change: Se conectó directamente el evento EventBus.heat_maxed en Player para ejecutar el método letal kill(), garantizando que la papa muera y explote en papitas francesas sin ser bloqueada por iframes o deslizamientos. Se enriqueció la explosión con nubes ascendentes de vapor/humo blanco translúcido en 3D. Se garantizó que _on_player_died espere 1.5s antes de desplegar el Game Over tanto en la arena como en la campaña principal, protegiendo contra llamadas reentrantes. Se ajustó el volumen del reproductor de vapor de calor en AudioManager a -22.0 dB para mantenerlo como sonido ambiente sutil de fondo, y se aseguró su detención inmediata al morir el jugador.
+Commit: c5c4489
+Notes: 209/209 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000036
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Anticipación al rojo vivo de la papa antes de estallar y caída balística de papitas fritas al vacío
+Type: AI_ASSISTED
+Files: player/player.gd, player/french_fries_explosion.gd
+Change: Se implementó fase de anticipación dramática al morir la papa (_die_and_explode): se tiñe de rojo incandescente (Color(2.0, 0.15, 0.15)), se infla un 30% y tiembla rápidamente durante 0.4s antes de estallar. Se creó la clase FrenchFriesExplosion (french_fries_explosion.gd) que simula gravedad dinámica (26.0 m/s²) y velocidades angulares 3D continuas sobre cada una de las 24 papitas fritas, logrando que salgan despedidas en abanico y se precipiten acelerando hacia el vacío en lugar de quedar suspendidas en el aire.
+Commit: 59c29e6
+Notes: 209/209 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000037
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Auditoría legal de assets externos e integración de estallido cómico retro original
+Type: AI_ASSISTED
+Files: Sprites/EXPLOSION/explosion_0000.png..0005.png, audio/sfx_comic_explosion.wav, player/french_fries_explosion.gd, player/player.gd, ui/audio_manager.gd
+Change: Auditoría legal exhaustiva sobre los enlaces de Deltarune: se determinó que los rips comerciales de Toby Fox están protegidos por copyright estricto y su inclusión directa acarrearía descalificación automática en Game Jams. Como solución 100% legal y libre de infracciones, se creó un asset procedural original inspirado en la estética retro cómica de Deltarune: 6 frames de animación de estallido cartoon (Sprites/EXPLOSION/) reproducidos mediante AnimatedSprite3D en billboard, y un efecto de audio de impacto crujiente bitcrushed (audio/sfx_comic_explosion.wav) a 44.1 kHz, reemplazando el humo anterior e integrándose con la caída balística de las papitas fritas.
+Commit: 41f64a8
+Notes: 209/209 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000038
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Quemado de oficina 'This is fine', soft-respawn con penalización de -15s, reseteo de capturas por calor/tiempo y tipografía Potato Sans
+Type: AI_ASSISTED
+Files: level/office_heat_visuals.gd, level/building.gd, anomalies/test_arena_controller.gd, player/player.gd, systems/round_manager.gd, systems/tests/round_manager_test.gd, ui/theme.tres, ui/style_eyebrow.tres, Sprites/FLAMES/flame_0..3.png, art/d-ui/fonts/Potato_sans-Bold.otf
+Change: 1) Implementación del efecto 'This is fine' mediante OfficeHeatVisuals: a mayor calor, la luz del sol se satura a naranja fuego incandescente, los escritorios se carbonizan a tonos carbón/hollín y brotan llamas animadas de cómic sobre el mobiliario al superar el 28% de calor. 2) Soft-respawn al morir por daño normal: la papa explota y revive a los 1.2s en su spawn con invulnerabilidad temporal; el tiempo y el calor siguen corriendo y se aplica un castigo de -15 segundos que desciende visualmente de 1 en 1 a 0.04s por tick. 3) Derrota por calor (100%) o tiempo (0s): limpia el progreso de capturas (contained_ids.clear()) reiniciando la ronda completa desde cero. 4) Integración e importación de la tipografía Potato Sans (Potato_sans-Bold.otf) como tipografía global en ui/theme.tres y ui/style_eyebrow.tres.
+Commit: e1ec756
+Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000039
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de error de modulate en MeshInstance3D y tintado seguro con material_override
+Type: AI_ASSISTED
+Files: level/office_heat_visuals.gd, player/player.gd
+Change: Se corrigió el error en tiempo de ejecución 'Invalid assignment of property or key modulate with value of type Color on a base object of type MeshInstance3D': en OfficeHeatVisuals se sustituyó el acceso a modulate por la asignación de material_override (StandardMaterial3D.albedo_color) para los MeshInstance3D del mobiliario. En Player se añadieron salvaguardas condicionales ("modulate" in _visual) para garantizar que nunca se invoque modulate si la representación gráfica llega a ser un MeshInstance3D.
+Commit: 0170380
+Notes: 332 comprobaciones automatizadas pasando sin errores y ejecución de escenas sin excepciones.
+
+
+---
+
+## AI-IAdashems-NB-000040
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corrección de invisibilidad tras captura en muerte y activación de derrota por tiempo en arena
+Type: AI_ASSISTED
+Files: player/player.gd, systems/round_manager.gd, anomalies/test_arena_controller.gd
+Change: 1) Se resolvió la condición de carrera donde capturar la última anomalía durante la animación de muerte dejaba la papa invisible y penalizaba la ronda siguiente: se implementó token de generación de muerte (_death_token) en Player para invalidar corrutinas pendientes al invocar reset_to o emitirse round_won, restableciendo visibilidad del sprite inmediatamente y cancelando cualquier ciclo de penalización en RoundManager. 2) Se corrigió la expiración del reloj en test_arena_controller: se conectó la llamada directa a _on_timer_expired() cuando time_left llega a 0 en _process(), desplegando el Game Over y pausando la arena adecuadamente.
+Commit: 2231151
+Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000041
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Reducción del cooldown del herbicida del jugador a 3 segundos
+Type: AI_ASSISTED
+Files: autoload/game_config.gd, player/player.gd, docs/GDD.md
+Change: Se redujo la constante HERBICIDE_COOLDOWN de 5.0s a 3.0s en autoload/game_config.gd, su valor fallback en player/player.gd y la documentación en docs/GDD.md, aumentando la cadencia y dinamismo del lanzamiento de herbicida para contener guisantes.
+Commit: e76f5ca
+Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000042
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Apertura visual y escotilla en el techo/piso superior de las escaleras
+Type: AI_ASSISTED
+Files: level/ladder.tscn
+Change: Se integró una abertura visual estructurada (CeilingOpeningHatch) en la parte superior de cada escalera (y = 4.0m) para evitar que las entidades y el jugador atraviesen el forjado como un sólido continuo: incluye una cavidad oscura de profundidad (HatchCavity), marco perimetral de madera (RimFront, RimBack, RimLeft, RimRight), escotilla abierta inclinada (OpenTrapdoor) y asas de seguridad metálicas (HandleLeft, HandleRight) que sobresalen hacia el piso superior. El marco visual no añade colisión obstructiva ni interfiere con la superficie de apoyo, asegurando que pararse allí no produzca caídas accidentales.
+Commit: f2c4552
+Notes: 332 comprobaciones automatizadas pasando sin errores.

@@ -31,7 +31,7 @@ const _DASH_RECOVERY_SPEED_RATIO := 0.55
 const _DASH_CARRY_DECELERATION := 10.0
 const _DASH_EXIT_SPEED_RATIO := 0.9
 const _FALLBACK_HERBICIDE_SPEED := 14.0
-const _FALLBACK_HERBICIDE_COOLDOWN := 5.0
+const _FALLBACK_HERBICIDE_COOLDOWN := 3.0
 const _HERBICIDE_SCENE: PackedScene = preload("res://player/herbicide.tscn")
 const _BLINK_INTERVAL := 0.08
 const _SLIDE_ALPHA := 0.4
@@ -82,6 +82,10 @@ var climb_target_y: float = 0.0
 var climb_exit_x: float = 0.0
 var climb_speed: float = 4.5
 var _climb_ladder_x: float = 0.0
+var _prev_speed_threshold: bool = false
+var _prev_cooldown_progress: float = -1.0
+var _respawn_position: Vector3 = Vector3(-16.0, -3.5, 0.0)
+var _death_token: int = 0
 
 
 func _ready() -> void:
@@ -97,6 +101,9 @@ func _ready() -> void:
 		var finished_callback := Callable(self, "_on_sprite_animation_finished")
 		if not _animated_sprite.animation_finished.is_connected(finished_callback):
 			_animated_sprite.animation_finished.connect(finished_callback)
+	var bus_node := get_node_or_null("/root/EventBus")
+	if bus_node and bus_node.has_signal("round_won"):
+		bus_node.connect("round_won", _on_round_won)
 	if _visual == null:
 		_visual = get_node_or_null("MeshInstance3D") as GeometryInstance3D
 	if _visual != null:
@@ -219,6 +226,34 @@ func _physics_process(delta: float) -> void:
 		_animate_motion_feedback(Vector3(1.12, 0.86, 1.0))
 	global_position.z = 0.0
 	_update_animation()
+	_update_dash_indicators()
+
+
+func _update_dash_indicators() -> void:
+	if _dead:
+		return
+	var minimum_dash_speed := move_speed * _DASH_MIN_SPEED_RATIO
+	var speed_reached := is_on_floor() and (absf(velocity.x) >= minimum_dash_speed)
+	var cooldown_progress := 1.0
+	if _slide_cooldown_left > 0.0:
+		cooldown_progress = 1.0 - (_slide_cooldown_left / slide_cooldown)
+	elif is_sliding() or _dash_recovery_left > 0.0:
+		cooldown_progress = 0.0
+		
+	if speed_reached != _prev_speed_threshold:
+		_prev_speed_threshold = speed_reached
+		_emit_bus("dash_speed_threshold_changed", [speed_reached])
+		
+	if not is_equal_approx(cooldown_progress, _prev_cooldown_progress):
+		_prev_cooldown_progress = cooldown_progress
+		_emit_bus("dash_cooldown_changed", [cooldown_progress])
+		
+	# Feedback visual directo sobre la papa: tinte áureo al alcanzar la velocidad lista para dash
+	if _visual != null and "modulate" in _visual and not _blink_on:
+		if speed_reached and cooldown_progress >= 1.0:
+			_visual.modulate = Color(1.15, 1.05, 0.82, 1.0)
+		else:
+			_visual.modulate = Color.WHITE
 
 
 ## pierce_slide: el golpe atraviesa el slide (trampas aéreas de level/hazard.gd). Los iframes siempre protegen.
@@ -235,8 +270,7 @@ func take_damage(amount: int, pierce_slide: bool = false) -> void:
 	_blink_on = true
 	_apply_visual()
 	if _hp <= 0:
-		_dead = true
-		_emit_bus("player_died", [])
+		_die_and_explode(false)
 
 
 func is_sliding() -> bool:
@@ -245,6 +279,67 @@ func is_sliding() -> bool:
 
 func is_invulnerable() -> bool:
 	return _iframe_left > 0.0 or is_sliding()
+
+
+func kill() -> void:
+	if _dead:
+		return
+	_die_and_explode(true)
+
+
+func _die_and_explode(is_lethal_defeat: bool = false) -> void:
+	if _dead:
+		return
+	_dead = true
+	_death_token += 1
+	var token := _death_token
+	_hp = 0
+	_iframe_left = 0.0
+	_blink_on = false
+	velocity = Vector3.ZERO
+	_emit_bus("player_health_changed", [0, max_hp])
+
+	# Anticipación al rojo vivo: la papa se tiñe de rojo intenso, se infla y tiembla antes de estallar
+	if _visual != null and "modulate" in _visual:
+		_visual.modulate = Color(2.0, 0.15, 0.15, 1.0)
+		var ant_tween := create_tween()
+		ant_tween.tween_property(_visual, "scale", _visual_base_scale * 1.3, 0.38).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		for k in 6:
+			ant_tween.tween_property(_visual, "position:x", randf_range(-0.14, 0.14), 0.05)
+		ant_tween.tween_property(_visual, "position:x", 0.0, 0.05)
+		await ant_tween.finished
+
+	# Si se reinició la ronda o se ganó durante la anticipación, cancelar
+	if token != _death_token or not is_inside_tree() or not _dead:
+		return
+
+	_explode_into_fries()
+	_emit_bus("player_died", [])
+
+	# Al morir por daño normal, revive en el spawn manteniendo tiempo y calor activos
+	if not is_lethal_defeat:
+		await get_tree().create_timer(1.2).timeout
+		if token != _death_token or not is_inside_tree() or not _dead:
+			return
+		reset_to(_respawn_position)
+		_iframe_left = 2.5
+		_blink_on = true
+
+
+func _on_round_won(_round_number: int) -> void:
+	_death_token += 1
+	_dead = false
+	if _visual != null:
+		_visual.visible = true
+		_visual.scale = _visual_base_scale
+		_visual.position.x = 0.0
+		if _animated_sprite != null:
+			_visual.position.y = _sprite_base_y
+		if "modulate" in _visual:
+			_visual.modulate = Color.WHITE
+	var spr := get_node_or_null("AnimatedSprite3D") as Node3D
+	if spr:
+		spr.visible = true
 
 
 func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
@@ -266,11 +361,13 @@ func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
 
 
 func reset_to(spawn: Vector3) -> void:
+	_death_token += 1
+	_dead = false
+	_respawn_position = spawn
 	is_climbing = false
 	global_position = spawn
 	velocity = Vector3.ZERO
 	_hp = max_hp
-	_dead = false
 	_jump_queued = false
 	_jump_started_this_frame = false
 	_slide_queued = false
@@ -287,8 +384,97 @@ func reset_to(spawn: Vector3) -> void:
 	_iframe_left = 0.0
 	_blink_on = false
 	_blink_accum = 0.0
+	var spr := get_node_or_null("AnimatedSprite3D") as Node3D
+	if spr:
+		spr.visible = true
+	if _visual != null:
+		_visual.visible = true
+		_visual.scale = _visual_base_scale
+		_visual.position.x = 0.0
+		if _animated_sprite != null:
+			_visual.position.y = _sprite_base_y
+		if "modulate" in _visual:
+			_visual.modulate = Color.WHITE
+	var parent_node := get_parent()
+	if parent_node:
+		var old_fries := parent_node.get_node_or_null("FrenchFriesExplosion")
+		if old_fries:
+			old_fries.name = "FrenchFriesExplosion_Old"
+			old_fries.queue_free()
 	_apply_visual()
 	_emit_bus("player_health_changed", [_hp, max_hp])
+
+
+func _explode_into_fries() -> void:
+	var spr := get_node_or_null("AnimatedSprite3D") as Node3D
+	if spr:
+		spr.visible = false
+	if _visual != null:
+		_visual.visible = false
+		
+	var audio := get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_sfx"):
+		audio.call("play_sfx", "res://audio/sfx_comic_explosion.wav", 4.0)
+		
+	var parent_node := get_parent()
+	if parent_node == null:
+		parent_node = self
+		
+	var old_fries := parent_node.get_node_or_null("FrenchFriesExplosion")
+	if old_fries:
+		old_fries.name = "FrenchFriesExplosion_Old"
+		old_fries.queue_free()
+		
+	var fries_container := FrenchFriesExplosion.new()
+	fries_container.name = "FrenchFriesExplosion"
+	parent_node.add_child(fries_container)
+	fries_container.global_position = global_position + Vector3(0.0, 0.75, 0.0)
+	
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.98, 0.78, 0.20, 1.0)
+	mat.roughness = 0.35
+	
+	var fry_mesh := BoxMesh.new()
+	fry_mesh.size = Vector3(0.09, 0.48, 0.09)
+	fry_mesh.material = mat
+	
+	for i in 24:
+		var fry := MeshInstance3D.new()
+		fry.mesh = fry_mesh
+		fries_container.add_child(fry)
+		fry.position = Vector3(randf_range(-0.25, 0.25), randf_range(-0.25, 0.25), randf_range(-0.1, 0.1))
+		fry.rotation = Vector3(randf_range(0.0, TAU), randf_range(0.0, TAU), randf_range(0.0, TAU))
+		
+		var vel := Vector3(
+			randf_range(-8.5, 8.5),
+			randf_range(7.0, 13.5),
+			randf_range(-2.0, 2.0)
+		)
+		var rot_vel := Vector3(
+			randf_range(-10.0, 10.0),
+			randf_range(-10.0, 10.0),
+			randf_range(-15.0, 15.0)
+		)
+		fries_container.add_fry(fry, vel, rot_vel)
+
+	var steam_mesh := SphereMesh.new()
+	steam_mesh.radius = 0.35
+	steam_mesh.height = 0.7
+	for j in 6:
+		var steam_mat := StandardMaterial3D.new()
+		steam_mat.albedo_color = Color(1.0, 0.95, 0.88, 0.55)
+		steam_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		steam_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		var puff := MeshInstance3D.new()
+		puff.mesh = steam_mesh
+		puff.material_override = steam_mat
+		fries_container.add_child(puff)
+		puff.position = Vector3(randf_range(-0.35, 0.35), randf_range(-0.1, 0.5), randf_range(-0.2, 0.2))
+		var ptween := puff.create_tween()
+		ptween.set_parallel(true)
+		ptween.tween_property(puff, "scale", Vector3(2.6, 2.6, 2.6), 0.95).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		ptween.tween_property(puff, "position:y", puff.position.y + randf_range(1.2, 2.4), 0.95)
+		ptween.tween_property(steam_mat, "albedo_color:a", 0.0, 0.95)
 
 
 func _update_slide(delta: float) -> void:
@@ -367,7 +553,7 @@ func _animate_motion_feedback(target_scale: Vector3) -> void:
 
 
 func _apply_visual() -> void:
-	if _visual == null:
+	if _visual == null or not ("modulate" in _visual):
 		return
 	var alpha := _SLIDE_ALPHA if is_sliding() else 1.0
 	if _blink_on:
@@ -490,10 +676,19 @@ func _connect_heat_changed() -> void:
 		var scene_root := get_tree().current_scene
 		if scene_root != null:
 			bus = scene_root.find_child("EventBus", true, false)
-	if bus != null and bus.has_signal("heat_changed"):
-		var callback := Callable(self, "_on_heat_changed")
-		if not bus.is_connected("heat_changed", callback):
-			bus.connect("heat_changed", callback)
+	if bus != null:
+		if bus.has_signal("heat_changed"):
+			var callback := Callable(self, "_on_heat_changed")
+			if not bus.is_connected("heat_changed", callback):
+				bus.connect("heat_changed", callback)
+		if bus.has_signal("heat_maxed"):
+			var callback_maxed := Callable(self, "_on_heat_maxed")
+			if not bus.is_connected("heat_maxed", callback_maxed):
+				bus.connect("heat_maxed", callback_maxed)
+
+
+func _on_heat_maxed() -> void:
+	kill()
 
 
 func _on_heat_changed(value: float, _max_value: float) -> void:
