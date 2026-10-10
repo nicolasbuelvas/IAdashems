@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://player/player.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://player/Sprite/PAPA_CORRIENDO/PAPA_0000.png" id="2_f0"]
+[ext_resource type="Texture2D" path="res://player/Sprite/PAPA_CORRIENDO/PAPA_0001.png" id="3_f1"]
+[ext_resource type="Texture2D" path="res://player/Sprite/PAPA_CORRIENDO/PAPA_0002.png" id="4_f2"]
+[ext_resource type="Texture2D" path="res://player/Sprite/PAPA_CORRIENDO/PAPA_0003.png" id="5_f3"]
+[ext_resource type="Texture2D" path="res://player/Sprite/PAPA_CORRIENDO/PAPA_0004.png" id="6_f4"]
+[ext_resource type="Texture2D" path="res://player/Sprite/PAPA_CORRIENDO/PAPA_0005.png" id="7_f5"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_run"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_f0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_f1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_f2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_f3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_f4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_f5")
+}],
+"loop": true,
+"name": &"run",
+"speed": 10.0
+}]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.3
+height = 1.6
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.855, 0)
+pixel_size = 0.005
+shaded = false
+alpha_cut = 2
+texture_filter = 2
+sprite_frames = SubResource("SpriteFrames_run")
+animation = &"run"

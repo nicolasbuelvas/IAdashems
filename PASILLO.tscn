@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://b27b1gfj271w3"]
+
+[ext_resource type="MeshLibrary" uid="uid://cqdv3unjk7px3" path="res://MeshesLibrary/MeshLibraryBuilding.meshlib" id="1_xwe48"]
+[ext_resource type="PackedScene" path="res://player/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://cssuaojn3rr8l" path="res://level/follow_camera.gd" id="3_cam"]
+[ext_resource type="PackedScene" path="res://enemy/enemy.tscn" id="4_enemy"]
+[ext_resource type="Script" uid="uid://bothl3hgyvq7u" path="res://level/gridmap_collider.gd" id="5_gcol"]
+
+[sub_resource type="Environment" id="Env_pasillo"]
+background_mode = 1
+background_color = Color(0.12, 0.12, 0.16, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.85, 0.9, 1)
+ambient_light_energy = 0.8
+
+[sub_resource type="BoxShape3D" id="Box_cap"]
+size = Vector3(3.2, 4, 0.2)
+
+[node name="Node3D" type="Node3D" unique_id=984454088]
+
+[node name="GridMap" type="GridMap" parent="." unique_id=1534017894]
+mesh_library = ExtResource("1_xwe48")
+cell_size = Vector3(1, 1, 1)
+cell_octant_size = 1
+data = {
+"cells": PackedInt32Array(0, 0, 46, 0, 65535, 46, 0, 65534, 46, 0, 65533, 80, 0, 65532, 46, 0, 65531, 46, 0, 1, 46, 65535, 1, 46, 0, 2, 46, 65535, 2, 46, 65535, 3, 80, 65535, 4, 46, 65535, 5, 46, 0, 5, 46, 0, 4, 46, 0, 3, 80, 65535, 0, 46, 65535, 65535, 46, 65535, 65534, 46, 65535, 65533, 80, 65535, 65532, 46, 65535, 65531, 46, 65534, 65531, 46, 65534, 65532, 46, 65534, 65533, 80, 65534, 65534, 46, 65534, 65535, 46, 65534, 0, 46, 65534, 1, 46, 65534, 2, 46, 65534, 3, 80, 65534, 4, 46, 65534, 5, 46, 65534, 6, 46, 65535, 6, 46, 0, 6, 46, 65534, 65530, 46, 65535, 65530, 46, 0, 65530, 46, 65533, 0, 85, 65533, 65535, 85, 65533, 65534, 85, 65533, 65533, 85, 65533, 65532, 85, 65533, 65531, 85, 65533, 65530, 85, 65533, 1, 85, 65533, 2, 85, 65533, 3, 85, 65533, 4, 85, 65533, 6, 85, 65533, 5, 85, 131069, 6, 85, 131069, 5, 85, 131069, 4, 85, 131069, 3, 85, 131069, 2, 85, 131069, 1, 85, 131069, 0, 85, 131069, 65535, 85, 131069, 65534, 85, 131069, 65533, 85, 131069, 65532, 85, 131069, 65531, 85, 131069, 65530, 85, 196605, 5, 85, 196605, 4, 85, 196605, 3, 85, 196605, 2, 85, 196605, 1, 85, 196605, 0, 85, 196605, 65535, 85, 196605, 65534, 85, 196605, 65533, 85, 196605, 65532, 85, 196605, 65531, 85, 196605, 65530, 85, 196605, 6, 85)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1247919445]
+environment = SubResource("Env_pasillo")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=493014126]
+transform = Transform3D(1, 0, 0, 0, 0.9, 0.43, 0, -0.43, 0.9, 0, 6, 4)
+
+[node name="ColisionesGridMap" type="StaticBody3D" parent="." unique_id=840931384 node_paths=PackedStringArray("gridmap")]
+script = ExtResource("5_gcol")
+gridmap = NodePath("../GridMap")
+
+[node name="Colisiones" type="StaticBody3D" parent="." unique_id=80754980]
+
+[node name="LimiteFondo" type="CollisionShape3D" parent="Colisiones" unique_id=1573539220]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 2.5, -6.1)
+shape = SubResource("Box_cap")
+
+[node name="LimiteFrente" type="CollisionShape3D" parent="Colisiones" unique_id=500997210]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 2.5, 7.1)
+shape = SubResource("Box_cap")
+
+[node name="Player" parent="." unique_id=549490639 instance=ExtResource("2_player")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.011362076, 0.56014943, 1.1374226)
+speed = 2.0
+
+[node name="Enemy" parent="." unique_id=947208524 node_paths=PackedStringArray("player") instance=ExtResource("4_enemy")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.018636584, 0.77484584, -1.1044191)
+player = NodePath("../Player")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=440645507 node_paths=PackedStringArray("target")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 3, 2, 0.5)
+fov = 60.0
+script = ExtResource("3_cam")
+target = NodePath("../Player")
+follow_axis = Vector3(0, 0, -1)
+min_x = -2.0
+max_x = 1.0
