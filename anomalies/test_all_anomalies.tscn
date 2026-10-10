@@ -1,10 +1,12 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://anomalies/test_arena_controller.gd" id="1_controller"]
 [ext_resource type="PackedScene" uid="uid://d310r1vedl67d" path="res://player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="3_camera"]
 [ext_resource type="PackedScene" uid="uid://cmf2f53o82h1z" path="res://ui/pause_menu.tscn" id="4_pause"]
 [ext_resource type="PackedScene" path="res://level/ladder.tscn" id="5_ladder"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="6_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="7_eyebrow"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_Basement"]
 albedo_color = Color(0.18, 0.16, 0.15, 1)
@@ -48,29 +50,51 @@ height = 1.0
 height = 1.0
 radius = 0.5
 
-[sub_resource type="StyleBoxFlat" id="Style_Panel"]
-bg_color = Color(0.09, 0.07, 0.05, 0.94)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.96, 0.68, 0.22, 1)
+[sub_resource type="StyleBoxFlat" id="Style_StepperVal"]
+content_margin_left = 12.0
+content_margin_right = 12.0
+bg_color = Color(0.14, 0.1, 0.08, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.26, 0.18, 0.8)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxFlat" id="Style_BtnAmber"]
-bg_color = Color(0.96, 0.68, 0.22, 1)
+[sub_resource type="StyleBoxFlat" id="Style_DescBox"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.12, 0.09, 0.07, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.32, 0.23, 0.16, 0.7)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="Style_HUDCard"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.10, 0.07, 0.05, 0.88)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 0.82, 0.45, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+border_color = Color(0.96, 0.68, 0.22, 0.6)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
 
 [node name="TestAllAnomalies" type="Node3D"]
 script = ExtResource("1_controller")
@@ -250,36 +274,37 @@ light_energy = 1.15
 
 [node name="UI" type="CanvasLayer" parent="."]
 
-[node name="HUD" type="ColorRect" parent="UI"]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 560.0
-offset_bottom = 140.0
-color = Color(0.08, 0.05, 0.03, 0.88)
+[node name="HUDCard" type="PanelContainer" parent="UI"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 540.0
+offset_bottom = 120.0
+theme = ExtResource("6_theme")
+theme_override_styles/panel = SubResource("Style_HUDCard")
 
-[node name="Label" type="Label" parent="UI/HUD"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 14.0
-offset_top = 10.0
-offset_right = -14.0
-offset_bottom = -10.0
+[node name="Margin" type="MarginContainer" parent="UI/HUDCard"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/HUDCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="UI/HUDCard/Margin/VBox"]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
-text = "CARGANDO SIMULADOR..."
+theme_override_font_sizes/font_size = 14
+text = "SIMULADOR EN CURSO"
 
 [node name="BtnReopenSetup" type="Button" parent="UI"]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -210.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 54.0
-theme_override_colors/font_color = Color(0.09, 0.07, 0.05, 1)
-theme_override_styles/normal = SubResource("Style_BtnAmber")
-text = "⚙ CONFIGURAR (F1)"
+offset_left = -220.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 60.0
+theme = ExtResource("6_theme")
+text = "CONFIGURACIÓN (F1)"
 
 [node name="SetupUI" type="CanvasLayer" parent="."]
 process_mode = 3
@@ -289,135 +314,248 @@ layer = 15
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0, 0, 0, 0.7)
+color = Color(0.04, 0.03, 0.02, 0.82)
 
-[node name="Panel" type="Panel" parent="SetupUI"]
-custom_minimum_size = Vector2(560, 480)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -240.0
-offset_right = 280.0
-offset_bottom = 240.0
-theme_override_styles/panel = SubResource("Style_Panel")
-
-[node name="VBox" type="VBoxContainer" parent="SetupUI/Panel"]
-layout_mode = 1
+[node name="Center" type="CenterContainer" parent="SetupUI"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = 22.0
-offset_right = -28.0
-offset_bottom = -22.0
+
+[node name="Card" type="PanelContainer" parent="SetupUI/Center"]
+custom_minimum_size = Vector2(660, 0)
+layout_mode = 2
+theme = ExtResource("6_theme")
+
+[node name="Rows" type="VBoxContainer" parent="SetupUI/Center/Card"]
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="SetupUI/Panel/VBox"]
+[node name="Eyebrow" type="Label" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+label_settings = ExtResource("7_eyebrow")
+text = "LABORATORIO DE PRUEBAS • SIMULADOR"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+theme_type_variation = &"TitleLg"
+text = "EDITOR DE ANOMALÍAS"
+horizontal_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="SetupUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(72, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.96, 0.68, 0.22, 1)
+
+[node name="Gap1" type="Control" parent="SetupUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="RowCuc" type="HBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblCucTag" type="Label" parent="SetupUI/Center/Card/Rows/RowCuc"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pepino (Cucumis sativus • Evasor)"
+
+[node name="BtnCucMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowCuc"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 36)
+layout_mode = 2
+text = "◄"
+
+[node name="ValBoxCuc" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowCuc"]
+custom_minimum_size = Vector2(46, 36)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_StepperVal")
+
+[node name="LblCucVal" type="Label" parent="SetupUI/Center/Card/Rows/RowCuc/ValBoxCuc"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
-theme_override_font_sizes/font_size = 22
-text = "EDITOR MANUAL DE ANOMALÍAS"
+theme_override_font_sizes/font_size = 18
+text = "1"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="SetupUI/Panel/VBox"]
+[node name="BtnCucPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowCuc"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 36)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.75, 0.7, 1)
+text = "►"
+
+[node name="RowLet" type="HBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblLetTag" type="Label" parent="SetupUI/Center/Card/Rows/RowLet"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Lechuga (Lactuca sativa • Rebote 2D)"
+
+[node name="BtnLetMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowLet"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 36)
+layout_mode = 2
+text = "◄"
+
+[node name="ValBoxLet" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowLet"]
+custom_minimum_size = Vector2(46, 36)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_StepperVal")
+
+[node name="LblLetVal" type="Label" parent="SetupUI/Center/Card/Rows/RowLet/ValBoxLet"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
+theme_override_font_sizes/font_size = 18
+text = "1"
+horizontal_alignment = 1
+
+[node name="BtnLetPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowLet"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 36)
+layout_mode = 2
+text = "►"
+
+[node name="RowPea" type="HBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+alignment = 1
+
+[node name="LblPeaTag" type="Label" parent="SetupUI/Center/Card/Rows/RowPea"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Lanzaguisantes (Pisum sativum • Artillero)"
+
+[node name="BtnPeaMinus" type="Button" parent="SetupUI/Center/Card/Rows/RowPea"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 36)
+layout_mode = 2
+text = "◄"
+
+[node name="ValBoxPea" type="PanelContainer" parent="SetupUI/Center/Card/Rows/RowPea"]
+custom_minimum_size = Vector2(46, 36)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Style_StepperVal")
+
+[node name="LblPeaVal" type="Label" parent="SetupUI/Center/Card/Rows/RowPea/ValBoxPea"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
+theme_override_font_sizes/font_size = 18
+text = "1"
+horizontal_alignment = 1
+
+[node name="BtnPeaPlus" type="Button" parent="SetupUI/Center/Card/Rows/RowPea"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 36)
+layout_mode = 2
+text = "►"
+
+[node name="HSeparator1" type="HSeparator" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+
+[node name="DiffSection" type="VBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DiffNav" type="HBoxContainer" parent="SetupUI/Center/Card/Rows/DiffSection"]
+layout_mode = 2
+alignment = 1
+
+[node name="BtnDiffPrev" type="Button" parent="SetupUI/Center/Card/Rows/DiffSection/DiffNav"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 36)
+layout_mode = 2
+text = "◄"
+
+[node name="LblDiffTitle" type="Label" parent="SetupUI/Center/Card/Rows/DiffSection/DiffNav"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 1)
+theme_override_font_sizes/font_size = 16
+text = "NIVEL 4: PROMEDIO+"
+horizontal_alignment = 1
+
+[node name="BtnDiffNext" type="Button" parent="SetupUI/Center/Card/Rows/DiffSection/DiffNav"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 36)
+layout_mode = 2
+text = "►"
+
+[node name="LblDiffDots" type="Label" parent="SetupUI/Center/Card/Rows/DiffSection"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.68, 0.22, 0.8)
 theme_override_font_sizes/font_size = 13
-text = "Configura entidades, dificultad táctica y pisos (con sótano base)"
+text = "● ● ● ● ○ ○"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="SetupUI/Panel/VBox"]
+[node name="DescPanel" type="PanelContainer" parent="SetupUI/Center/Card/Rows/DiffSection"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("Style_DescBox")
 
-[node name="RowCucumber" type="HBoxContainer" parent="SetupUI/Panel/VBox"]
+[node name="LblDiffDesc" type="Label" parent="SetupUI/Center/Card/Rows/DiffSection/DescPanel"]
+unique_name_in_owner = true
 layout_mode = 2
-
-[node name="Label" type="Label" parent="SetupUI/Panel/VBox/RowCucumber"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Pepinos (Evasión / Corredor):"
-
-[node name="SpinCucumber" type="SpinBox" parent="SetupUI/Panel/VBox/RowCucumber"]
-layout_mode = 2
-max_value = 10.0
-value = 1.0
-
-[node name="RowLettuce" type="HBoxContainer" parent="SetupUI/Panel/VBox"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SetupUI/Panel/VBox/RowLettuce"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Lechugas (Rebote techo/suelo):"
-
-[node name="SpinLettuce" type="SpinBox" parent="SetupUI/Panel/VBox/RowLettuce"]
-layout_mode = 2
-max_value = 10.0
-value = 1.0
-
-[node name="RowPea" type="HBoxContainer" parent="SetupUI/Panel/VBox"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SetupUI/Panel/VBox/RowPea"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Lanzaguisantes (Tirador táctico):"
-
-[node name="SpinPea" type="SpinBox" parent="SetupUI/Panel/VBox/RowPea"]
-layout_mode = 2
-max_value = 10.0
-value = 1.0
-
-[node name="RowDiff" type="HBoxContainer" parent="SetupUI/Panel/VBox"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="SetupUI/Panel/VBox/RowDiff"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Dificultad de la IA (Nivel 1-6):"
-
-[node name="OptDiff" type="OptionButton" parent="SetupUI/Panel/VBox/RowDiff"]
-custom_minimum_size = Vector2(250, 0)
-layout_mode = 2
-
-[node name="DiffDescLabel" type="Label" parent="SetupUI/Panel/VBox"]
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.88, 0.72, 1)
-theme_override_font_sizes/font_size = 12
-text = "Descripción de la IA seleccionada..."
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 13
+text = "Descripción táctica de la IA..."
 autowrap_mode = 3
 
-[node name="RowFloors" type="HBoxContainer" parent="SetupUI/Panel/VBox"]
+[node name="HSeparator2" type="HSeparator" parent="SetupUI/Center/Card/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="SetupUI/Panel/VBox/RowFloors"]
+[node name="FloorsSection" type="VBoxContainer" parent="SetupUI/Center/Card/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LblFloorsHeader" type="Label" parent="SetupUI/Center/Card/Rows/FloorsSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.78, 0.7, 1)
+theme_override_font_sizes/font_size = 13
+text = "Pisos Habilitados (+ Sótano Base):"
+horizontal_alignment = 1
+
+[node name="FloorButtons" type="HBoxContainer" parent="SetupUI/Center/Card/Rows/FloorsSection"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="BtnFloor1" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Cantidad de Pisos:"
+text = "1 PISO"
 
-[node name="OptFloors" type="OptionButton" parent="SetupUI/Panel/VBox/RowFloors"]
-custom_minimum_size = Vector2(250, 0)
+[node name="BtnFloor2" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"PrimaryButton"
+text = "2 PISOS"
+
+[node name="BtnFloor3" type="Button" parent="SetupUI/Center/Card/Rows/FloorsSection/FloorButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "3 PISOS"
+
+[node name="Gap2" type="Control" parent="SetupUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 6)
 layout_mode = 2
 
-[node name="Spacer" type="Control" parent="SetupUI/Panel/VBox"]
+[node name="BtnStart" type="Button" parent="SetupUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="BtnStart" type="Button" parent="SetupUI/Panel/VBox"]
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.09, 0.07, 0.05, 1)
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("Style_BtnAmber")
-text = "▶ COMENZAR PARTIDA"
+theme_type_variation = &"PrimaryButton"
+text = "COMENZAR SIMULACIÓN"
 
 [node name="PauseLayer" type="CanvasLayer" parent="."]
 layer = 20
 
 [node name="PauseMenu" parent="PauseLayer" instance=ExtResource("4_pause")]
-
-[connection signal="pressed" from="UI/BtnReopenSetup" to="." method="show_setup_editor"]

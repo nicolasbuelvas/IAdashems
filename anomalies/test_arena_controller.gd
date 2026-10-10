@@ -2,8 +2,8 @@ class_name TestArenaController
 extends Node3D
 
 ## Controlador de la arena de pruebas y Editor Manual Pre-Partida.
-## Permite configurar cantidad de entidades, dificultad de IA (1-6)
-## y número de pisos (1, 2 o 3 pisos además del sótano base).
+## Permite configurar cantidad de entidades con steppers limpios,
+## selector de dificultad táctica (1-6) y pisos (1 a 3 + sótano).
 
 const SCENE_CUCUMBER := preload("res://anomalies/cucumber.tscn")
 const SCENE_LETTUCE := preload("res://anomalies/lettuce.tscn")
@@ -18,20 +18,38 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 @onready var player: Node3D = $Player
 @onready var anomalies_container: Node3D = $SpawnedAnomalies
 @onready var setup_canvas: CanvasLayer = $SetupUI
-@onready var hud_label: Label = $UI/HUD/Label
+@onready var hud_canvas: CanvasLayer = $UI
+@onready var hud_label: Label = $UI/HUDCard/Margin/VBox/Label
 @onready var floor_2_node: Node3D = $Architecture/Floor2
 @onready var floor_3_node: Node3D = $Architecture/Floor3
 @onready var ladder_f1_f2: Node3D = $Architecture/Ladder_F1_F2
 @onready var ladder_f2_f3: Node3D = $Architecture/Ladder_F2_F3
 
-# Controles de la UI de configuración
-@onready var spin_cucumber: SpinBox = $SetupUI/Panel/VBox/RowCucumber/SpinCucumber
-@onready var spin_lettuce: SpinBox = $SetupUI/Panel/VBox/RowLettuce/SpinLettuce
-@onready var spin_pea: SpinBox = $SetupUI/Panel/VBox/RowPea/SpinPea
-@onready var opt_diff: OptionButton = $SetupUI/Panel/VBox/RowDiff/OptDiff
-@onready var opt_floors: OptionButton = $SetupUI/Panel/VBox/RowFloors/OptFloors
-@onready var diff_desc_label: Label = $SetupUI/Panel/VBox/DiffDescLabel
-@onready var btn_start: Button = $SetupUI/Panel/VBox/BtnStart
+# Referencias del editor manual rediseñado
+@onready var lbl_cuc_val: Label = %LblCucVal
+@onready var btn_cuc_minus: Button = %BtnCucMinus
+@onready var btn_cuc_plus: Button = %BtnCucPlus
+
+@onready var lbl_let_val: Label = %LblLetVal
+@onready var btn_let_minus: Button = %BtnLetMinus
+@onready var btn_let_plus: Button = %BtnLetPlus
+
+@onready var lbl_pea_val: Label = %LblPeaVal
+@onready var btn_pea_minus: Button = %BtnPeaMinus
+@onready var btn_pea_plus: Button = %BtnPeaPlus
+
+@onready var btn_diff_prev: Button = %BtnDiffPrev
+@onready var btn_diff_next: Button = %BtnDiffNext
+@onready var lbl_diff_title: Label = %LblDiffTitle
+@onready var lbl_diff_dots: Label = %LblDiffDots
+@onready var lbl_diff_desc: Label = %LblDiffDesc
+
+@onready var btn_floor_1: Button = %BtnFloor1
+@onready var btn_floor_2: Button = %BtnFloor2
+@onready var btn_floor_3: Button = %BtnFloor3
+
+@onready var btn_start: Button = %BtnStart
+@onready var btn_reopen: Button = $UI/BtnReopenSetup
 
 
 func _ready() -> void:
@@ -46,63 +64,122 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _init_setup_ui() -> void:
-	spin_cucumber.value = cucumber_count
-	spin_lettuce.value = lettuce_count
-	spin_pea.value = pea_count
+	_update_entity_labels()
 	
-	opt_diff.clear()
-	opt_diff.add_item("Nivel 1: Fácil (Básico)", 1)
-	opt_diff.add_item("Nivel 2: Fácil+ (Movimiento estándar)", 2)
-	opt_diff.add_item("Nivel 3: Promedio (Rebote en techos)", 3)
-	opt_diff.add_item("Nivel 4: Promedio+ (Rebote errático & táctica)", 4)
-	opt_diff.add_item("Nivel 5: Inteligente (Leading shot & evasión)", 5)
-	opt_diff.add_item("Nivel 6: Pac-Man Coordinado (Escudos y emboscadas)", 6)
-	opt_diff.selected = difficulty_level - 1
-	
-	opt_floors.clear()
-	opt_floors.add_item("1 Piso (+ Sótano)", 1)
-	opt_floors.add_item("2 Pisos (+ Sótano)", 2)
-	opt_floors.add_item("3 Pisos (+ Sótano)", 3)
-	opt_floors.selected = active_floors - 1
-	
-	_update_diff_description(difficulty_level)
-	
-	opt_diff.item_selected.connect(func(idx):
-		_update_diff_description(idx + 1)
+	btn_cuc_minus.pressed.connect(func():
+		cucumber_count = maxi(cucumber_count - 1, 0)
+		_update_entity_labels()
+	)
+	btn_cuc_plus.pressed.connect(func():
+		cucumber_count = mini(cucumber_count + 1, 10)
+		_update_entity_labels()
 	)
 	
+	btn_let_minus.pressed.connect(func():
+		lettuce_count = maxi(lettuce_count - 1, 0)
+		_update_entity_labels()
+	)
+	btn_let_plus.pressed.connect(func():
+		lettuce_count = mini(lettuce_count + 1, 10)
+		_update_entity_labels()
+	)
+	
+	btn_pea_minus.pressed.connect(func():
+		pea_count = maxi(pea_count - 1, 0)
+		_update_entity_labels()
+	)
+	btn_pea_plus.pressed.connect(func():
+		pea_count = mini(pea_count + 1, 10)
+		_update_entity_labels()
+	)
+	
+	btn_diff_prev.pressed.connect(func():
+		difficulty_level = maxi(difficulty_level - 1, 1)
+		_update_diff_ui()
+	)
+	btn_diff_next.pressed.connect(func():
+		difficulty_level = mini(difficulty_level + 1, 6)
+		_update_diff_ui()
+	)
+	
+	btn_floor_1.pressed.connect(func(): _set_floors(1))
+	btn_floor_2.pressed.connect(func(): _set_floors(2))
+	btn_floor_3.pressed.connect(func(): _set_floors(3))
+	
 	btn_start.pressed.connect(_on_btn_start_pressed)
+	btn_reopen.pressed.connect(show_setup_editor)
+	
+	_update_diff_ui()
+	_update_floor_buttons()
 
 
-func _update_diff_description(lvl: int) -> void:
-	match lvl:
+func _update_entity_labels() -> void:
+	lbl_cuc_val.text = str(cucumber_count)
+	lbl_let_val.text = str(lettuce_count)
+	lbl_pea_val.text = str(pea_count)
+
+
+func _update_diff_ui() -> void:
+	var titles: Array[String] = [
+		"NIVEL 1: FÁCIL (BÁSICO)",
+		"NIVEL 2: FÁCIL+ (ESTÁNDAR)",
+		"NIVEL 3: PROMEDIO (REBOTE EN TECHOS)",
+		"NIVEL 4: PROMEDIO+ (REBOTE ERRÁTICO)",
+		"NIVEL 5: INTELIGENTE (LEADING SHOT)",
+		"NIVEL 6: PAC-MAN COORDINADO"
+	]
+	lbl_diff_title.text = titles[clamp(difficulty_level - 1, 0, 5)]
+	
+	var dots := ""
+	for i in range(1, 7):
+		if i <= difficulty_level:
+			dots += "● "
+		else:
+			dots += "○ "
+	lbl_diff_dots.text = dots.strip_edges()
+	
+	match difficulty_level:
 		1:
-			diff_desc_label.text = "IA Básica: El pepino huye linealmente si estás cerca. La lechuga rebota solo en suelo. El guisante dispara recto a intervalo largo."
+			lbl_diff_desc.text = "Pepino huye solo a corta distancia. Lechuga rebota lineal en suelo. Guisante dispara recto a intervalo largo."
 		2:
-			diff_desc_label.text = "IA Fácil+: Movimiento continuo y reacción estándar a la presencia de la papa."
+			lbl_diff_desc.text = "Reacciones estándar y velocidad base. Las anomalías responden con mayor fluidez."
 		3:
-			diff_desc_label.text = "IA Promedio: La lechuga rebota elásticamente en techos y paredes. El guisante acelera su cadencia de disparo."
+			lbl_diff_desc.text = "Lechuga rebota elásticamente en techos y paredes sólidas. Guisante acelera su cadencia a 2.0s."
 		4:
-			diff_desc_label.text = "IA Promedio+: El pepino busca escaleras si es arrinconado. La lechuga esquiva slides saltando al techo y castiga si fallas."
+			lbl_diff_desc.text = "Pepino busca escaleras si es acorralado. Lechuga salta al techo para esquivar slides y contraataca si fallas."
 		5:
-			diff_desc_label.text = "IA Inteligente: El pepino es omnisciente. El guisante predice tu trayectoria (leading shot) y retrocede si te acercas."
+			lbl_diff_desc.text = "Pepino omnisciente. Guisante predice tu trayectoria de carrera (leading shot) y retrocede disparando si te acercas."
 		6:
-			diff_desc_label.text = "IA Pac-Man Coordinada: El pepino se resguarda detrás de lechugas/guisantes usándolos como escudo humano. ¡Trabajo en equipo hostil!"
+			lbl_diff_desc.text = "Estrategia Pac-Man coordinada: el pepino usa lechugas y guisantes como escudo humano, emboscándote en equipo."
+
+
+func _set_floors(f: int) -> void:
+	active_floors = f
+	_update_floor_buttons()
+
+
+func _update_floor_buttons() -> void:
+	_style_toggle_button(btn_floor_1, active_floors == 1)
+	_style_toggle_button(btn_floor_2, active_floors == 2)
+	_style_toggle_button(btn_floor_3, active_floors == 3)
+
+
+func _style_toggle_button(btn: Button, is_active: bool) -> void:
+	if is_active:
+		btn.theme_type_variation = "PrimaryButton"
+	else:
+		btn.theme_type_variation = ""
 
 
 func show_setup_editor() -> void:
 	setup_canvas.visible = true
+	hud_canvas.visible = false
 	get_tree().paused = true
 
 
 func _on_btn_start_pressed() -> void:
-	cucumber_count = int(spin_cucumber.value)
-	lettuce_count = int(spin_lettuce.value)
-	pea_count = int(spin_pea.value)
-	difficulty_level = opt_diff.selected + 1
-	active_floors = opt_floors.selected + 1
-	
 	setup_canvas.visible = false
+	hud_canvas.visible = true
 	get_tree().paused = false
 	
 	_apply_floor_configuration()
@@ -110,7 +187,6 @@ func _on_btn_start_pressed() -> void:
 
 
 func _apply_floor_configuration() -> void:
-	# Piso 1 y Sótano siempre existen
 	floor_2_node.visible = (active_floors >= 2)
 	floor_2_node.process_mode = Node.PROCESS_MODE_INHERIT if (active_floors >= 2) else Node.PROCESS_MODE_DISABLED
 	ladder_f1_f2.visible = (active_floors >= 2)
@@ -123,29 +199,21 @@ func _apply_floor_configuration() -> void:
 
 
 func _respawn_simulation() -> void:
-	# Limpiar anomalías anteriores
 	for child in anomalies_container.get_children():
 		child.queue_free()
 	
-	# Reposicionar jugador en el SÓTANO por default (Y = -3.5)
 	if player != null and player.has_method("reset_to"):
 		player.call("reset_to", Vector3(-10.0, -3.5, 0.0))
 	elif player != null:
 		player.global_position = Vector3(-10.0, -3.5, 0.0)
 		player.velocity = Vector3.ZERO
 		
-	# Alturas de suelo según piso:
-	# Sótano: Y = -3.5 (Jugador)
-	# Piso 1: Y = 0.5
-	# Piso 2: Y = 4.5
-	# Piso 3: Y = 8.5
 	var floor_heights: Array[float] = [0.5]
 	if active_floors >= 2:
 		floor_heights.append(4.5)
 	if active_floors >= 3:
 		floor_heights.append(8.5)
 		
-	# Instanciar pepinos
 	for i in range(cucumber_count):
 		var cuc := SCENE_CUCUMBER.instantiate() as Anomaly
 		cuc.difficulty = difficulty_level
@@ -154,7 +222,6 @@ func _respawn_simulation() -> void:
 		var pos_x: float = randf_range(-4.0, 8.0)
 		cuc.global_position = Vector3(pos_x, f_y, 0.0)
 		
-	# Instanciar lechugas
 	for i in range(lettuce_count):
 		var let := SCENE_LETTUCE.instantiate() as Anomaly
 		let.difficulty = difficulty_level
@@ -163,7 +230,6 @@ func _respawn_simulation() -> void:
 		var pos_x: float = randf_range(-6.0, 7.0)
 		let.global_position = Vector3(pos_x, f_y + 0.5, 0.0)
 		
-	# Instanciar lanzaguisantes
 	for i in range(pea_count):
 		var pea := SCENE_PEA.instantiate() as Anomaly
 		pea.difficulty = difficulty_level
@@ -192,12 +258,9 @@ func _update_hud_status() -> void:
 		elif child is PeaAnomaly and not child.is_contained:
 			alive_pea += 1
 			
-	var diff_names: Array[String] = ["Fácil", "Fácil+", "Promedio", "Promedio+", "Inteligente", "Pac-Man Coordinado"]
+	var diff_names: Array[String] = ["Fácil", "Fácil+", "Promedio", "Promedio+", "Inteligente", "Pac-Man"]
 	var diff_str: String = diff_names[clamp(difficulty_level - 1, 0, 5)]
 	
-	hud_label.text = "SIMULADOR DE ANOMALÍAS [F1: Reconfigurar]
-Dificultad: Nivel %d (%s) | Pisos: %d (+ Sótano de inicio)
-Activas -> Pepinos: %d | Lechugas: %d | Guisantes: %d
-Controles: WASD (Mover/Escalar) | Espacio (Salto) | Shift (Slide) | E (Herbicida)" % [
+	hud_label.text = "SIMULADOR • Dificultad %d (%s) • %d Pisos (+ Sótano)\nVivas -> Pepinos: %d  |  Lechugas: %d  |  Guisantes: %d\nWASD (Mover/Escalar) | Espacio (Salto) | Shift (Slide) | E (Herbicida)" % [
 		difficulty_level, diff_str, active_floors, alive_cuc, alive_let, alive_pea
 	]

@@ -295,5 +295,19 @@ Task: Editor manual interactivo, IA táctica coordinada Pac-Man y arena multiniv
 Type: AI_ASSISTED
 Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
 Change: Incorporación de panel pre-partida y reconfigurable en vivo (F1) para personalizar cantidad de anomalías por especie, selector de 1 a 3 pisos y 6 niveles de dificultad de IA. Estructura de arena con sótano base donde spawnea el jugador por defecto y pisos superiores con techos sólidos para rebotes 2D. IA táctica: el pepino es omnisciente en niveles altos, usa escaleras para escapar y utiliza aliados como escudos humanos (Pac-Man); la lechuga rebota elásticamente en techos y suelos, esquiva saltando si el jugador hace slide y se abalanza tras fallos del dash; el lanzaguisantes ejecuta leading shots predictivos según la velocidad del jugador y kitea a distancia media.
-Commit: PENDING
+Commit: 803300f
 Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless limpia de test_all_anomalies.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000023
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Rediseño visual del editor de anomalías con tema retro corporativo y controles nativos
+Type: AI_ASSISTED
+Files: anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd
+Change: Eliminación de SpinBoxes y OptionButtons genéricos por defecto de Godot. Reemplazo por tarjeta corporativa PanelContainer integrada con res://ui/theme.tres, tipografías Fredoka y Nunito, filete ambar y steppers circulares minimalistas (◄ / ►) con insignias de conteo independientes para cada especie. Selector horizontal de dificultad con indicador de puntos (● / ○) y caja descriptiva con auto-ajuste de texto. Botones de segmento para selección de pisos y botón primario ambar 'COMENZAR SIMULACIÓN'. Ocultamiento automático del HUD durante la edición para evitar solapamientos visuales.
+Commit: PENDING
+Notes: Verificado con tools/ui_check.gd (41/41 PASS), systems/tests/heat_system_test.gd (32/32 PASS) y systems/tests/round_manager_test.gd (136/136 PASS). Total: 209 checks en verde.
