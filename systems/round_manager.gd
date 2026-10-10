@@ -254,20 +254,7 @@ func _on_player_died() -> void:
 
 
 func _apply_death_penalty() -> void:
-	if not active or _penalty_in_progress:
+	if not active:
 		return
-	_penalty_in_progress = true
-	var penalty := 15
-	while penalty > 0 and active and time_left > 0.0:
-		time_left = maxf(time_left - 1.0, 0.0)
-		EventBus.round_timer_changed.emit(time_left)
-		penalty -= 1
-		if time_left <= 0.0:
-			_penalty_in_progress = false
-			if not expired_emitted:
-				expired_emitted = true
-				EventBus.round_timer_expired.emit()
-			_fail(&"time")
-			return
-		await get_tree().create_timer(0.04).timeout
-	_penalty_in_progress = false
+	time_left = maxf(time_left - 15.0, 10.0)
+	EventBus.round_timer_changed.emit(time_left)

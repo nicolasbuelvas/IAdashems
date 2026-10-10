@@ -22,6 +22,8 @@ var _dash_speed_reached: bool = false
 ]
 
 var _shake_tween: Tween
+var _banner_tween: Tween
+var _draining_hearts: bool = false
 
 
 func _ready() -> void:
@@ -35,6 +37,9 @@ func _ready() -> void:
 
 func attach_source(source: Node) -> void:
 	_connect_if_missing(source, &"heat_changed", _on_heat_changed)
+	_connect_if_missing(source, &"heat_maxed", _on_heat_maxed)
+	_connect_if_missing(source, &"lives_sacrificed_for_heat", _on_lives_sacrificed_for_heat)
+	_connect_if_missing(source, &"holders_shattered", _on_holders_shattered)
 	_connect_if_missing(source, &"player_health_changed", _on_player_health_changed)
 	_connect_if_missing(source, &"round_timer_changed", _on_round_timer_changed)
 	_connect_if_missing(source, &"anomalies_remaining_changed", _on_anomalies_remaining_changed)
@@ -80,8 +85,110 @@ func _on_heat_changed(value: float, max_value: float) -> void:
 
 
 func _on_player_health_changed(current: int, max_hp: int) -> void:
+	if _draining_hearts:
+		return
 	for i in range(life_icons.size()):
-		life_icons[i].visible = i < current and i < max_hp
+		var active: bool = (i < current and i < max_hp)
+		life_icons[i].visible = active
+	if current > 0:
+		_reset_holders()
+
+
+func _on_lives_sacrificed_for_heat(heat_added: float) -> void:
+	_reset_holders()
+	
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_sfx"):
+		audio.call("play_sfx", "res://audio/sfx_heat_steam.ogg")
+	
+	var banner = get_node_or_null("SacrificeBanner")
+	var lbl = get_node_or_null("SacrificeBanner/BannerLabel") as Label
+	if banner and lbl:
+		lbl.text = "♨  +%d%% CALOR (VIDAS RECUPERADAS)" % int(heat_added)
+		if _banner_tween and _banner_tween.is_valid():
+			_banner_tween.kill()
+		_banner_tween = create_tween()
+		banner.modulate.a = 0.0
+		banner.position.y = 84.0
+		_banner_tween.tween_property(banner, "modulate:a", 1.0, 0.2)
+		_banner_tween.parallel().tween_property(banner, "position:y", 72.0, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		_banner_tween.tween_interval(1.4)
+		_banner_tween.tween_property(banner, "modulate:a", 0.0, 0.3)
+	
+	var hp = get_node_or_null("TopBar/HeatPanel")
+	if hp:
+		var ht = create_tween()
+		ht.tween_property(hp, "modulate", Color(2.0, 0.75, 0.3, 1.0), 0.15)
+		ht.tween_property(hp, "modulate", Color.WHITE, 0.35)
+	
+	for i in range(life_icons.size()):
+		life_icons[i].visible = true
+		life_icons[i].modulate = Color.WHITE
+		life_icons[i].scale = Vector2(0.2, 0.2)
+		var pt = create_tween()
+		pt.tween_interval(i * 0.09)
+		pt.tween_property(life_icons[i], "scale", Vector2(1.2, 1.2), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		pt.tween_property(life_icons[i], "scale", Vector2.ONE, 0.08)
+
+
+func _on_heat_maxed() -> void:
+	if _draining_hearts:
+		return
+	_draining_hearts = true
+	# Pérdida suave una por una si aún tiene vidas
+	for i in range(life_icons.size() - 1, -1, -1):
+		if life_icons[i].visible:
+			var dt = create_tween()
+			dt.tween_property(life_icons[i], "modulate", Color(2.2, 0.2, 0.1, 1.0), 0.15)
+			dt.tween_property(life_icons[i], "scale", Vector2(0.1, 0.1), 0.16)
+			var audio = get_node_or_null("/root/AudioManager")
+			if audio and audio.has_method("play_sfx"):
+				audio.call("play_sfx", "res://audio/sfx_potato_explode.wav")
+			await get_tree().create_timer(0.3).timeout
+			life_icons[i].visible = false
+			life_icons[i].scale = Vector2.ONE
+	
+	_shatter_holders()
+	_draining_hearts = false
+
+
+func _shatter_holders() -> void:
+	for i in range(1, 4):
+		var crack = get_node_or_null("BottomBar/LivesPanel/LivesRow/Slot%d/Cracked%d" % [i, i])
+		if crack:
+			crack.visible = true
+	var audio = get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_sfx"):
+		audio.call("play_sfx", "res://audio/sfx_holder_crack.wav")
+	
+	var lp = get_node_or_null("BottomBar/LivesPanel")
+	if lp:
+		var st = create_tween()
+		var base_x: float = lp.position.x
+		for k in 6:
+			st.tween_property(lp, "position:x", base_x + randf_range(-6.0, 6.0), 0.04)
+		st.tween_property(lp, "position:x", base_x, 0.04)
+	
+	var bus = get_node_or_null("/root/EventBus")
+	if bus and bus.has_signal("holders_shattered"):
+		bus.emit_signal("holders_shattered")
+
+
+func _on_holders_shattered() -> void:
+	for i in range(1, 4):
+		var crack = get_node_or_null("BottomBar/LivesPanel/LivesRow/Slot%d/Cracked%d" % [i, i])
+		if crack:
+			crack.visible = true
+
+
+func _reset_holders() -> void:
+	for i in range(1, 4):
+		var crack = get_node_or_null("BottomBar/LivesPanel/LivesRow/Slot%d/Cracked%d" % [i, i])
+		if crack:
+			crack.visible = false
+	for icon in life_icons:
+		icon.modulate = Color.WHITE
+		icon.scale = Vector2.ONE
 
 
 func _on_round_timer_changed(seconds_left: float) -> void:

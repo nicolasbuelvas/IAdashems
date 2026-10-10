@@ -5,6 +5,8 @@ extends Node
 signal player_health_changed(current: int, max_hp: int)
 signal player_damaged(amount: int)
 signal player_died()
+signal lives_sacrificed_for_heat(heat_added: float)
+signal holders_shattered()
 signal player_slide_started()
 signal player_slide_ended()
 signal dash_cooldown_changed(progress: float)

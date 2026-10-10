@@ -8,6 +8,10 @@
 [ext_resource type="PackedScene" path="res://level/hazards/rolling_chair.tscn" id="6_rolling_chair"]
 [ext_resource type="PackedScene" path="res://level/hazards/falling_tile.tscn" id="7_falling_tile"]
 [ext_resource type="PackedScene" path="res://level/props/filing_cabinet.tscn" id="8_filing_cabinet"]
+[ext_resource type="Texture2D" path="res://Textures/office_brick_wall.png" id="9_tex_brick"]
+[ext_resource type="Texture2D" path="res://Textures/office_drywall_panel.png" id="10_tex_drywall"]
+[ext_resource type="Texture2D" path="res://Textures/office_concrete_floor.png" id="11_tex_concrete"]
+[ext_resource type="Texture2D" path="res://Textures/office_carpet_tiles.png" id="12_tex_carpet"]
 
 [sub_resource type="BoxShape3D" id="Shape_slab"]
 size = Vector3(50.0, 0.6, 4.0)
@@ -16,10 +20,14 @@ size = Vector3(50.0, 0.6, 4.0)
 size = Vector3(1.0, 13.0, 4.0)
 
 [sub_resource type="StandardMaterial3D" id="Mat_wall"]
-albedo_color = Color(0.3, 0.32, 0.36, 1.0)
+albedo_color = Color(0.88, 0.88, 0.88, 1.0)
+albedo_texture = ExtResource("9_tex_brick")
+uv1_scale = Vector3(1, 4, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_roof"]
-albedo_color = Color(0.22, 0.2, 0.19, 1.0)
+albedo_color = Color(0.85, 0.85, 0.85, 1.0)
+albedo_texture = ExtResource("10_tex_drywall")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_desk"]
 albedo_color = Color(0.62, 0.48, 0.32, 1.0)
@@ -43,10 +51,14 @@ albedo_color = Color(0.95, 0.78, 0.1, 1.0)
 albedo_color = Color(0.08, 0.08, 0.08, 1.0)
 
 [sub_resource type="StandardMaterial3D" id="Mat_floor_1"]
-albedo_color = Color(0.55, 0.5, 0.44, 1.0)
+albedo_color = Color(0.88, 0.85, 0.82, 1.0)
+albedo_texture = ExtResource("11_tex_concrete")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_back_1"]
-albedo_color = Color(0.86, 0.8, 0.68, 1.0)
+albedo_color = Color(0.92, 0.9, 0.86, 1.0)
+albedo_texture = ExtResource("10_tex_drywall")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="BoxMesh" id="Mesh_floor_1"]
 material = SubResource("Mat_floor_1")
@@ -57,10 +69,14 @@ material = SubResource("Mat_back_1")
 size = Vector3(49.0, 3.4, 0.2)
 
 [sub_resource type="StandardMaterial3D" id="Mat_floor_2"]
-albedo_color = Color(0.42, 0.46, 0.44, 1.0)
+albedo_color = Color(0.85, 0.85, 0.82, 1.0)
+albedo_texture = ExtResource("12_tex_carpet")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_back_2"]
-albedo_color = Color(0.66, 0.74, 0.7, 1.0)
+albedo_color = Color(0.88, 0.9, 0.88, 1.0)
+albedo_texture = ExtResource("10_tex_drywall")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="BoxMesh" id="Mesh_floor_2"]
 material = SubResource("Mat_floor_2")

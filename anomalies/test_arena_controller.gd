@@ -49,6 +49,8 @@ var _game_over_shown: bool = false
 
 # Game Over botones
 @onready var btn_retry: Button = %BtnRetry
+@onready var btn_restart_game: Button = %BtnRestartGame
+@onready var btn_main_menu: Button = %BtnMainMenu
 @onready var btn_game_over_setup: Button = %BtnGameOverSetup
 
 
@@ -75,12 +77,10 @@ func _process(delta: float) -> void:
 	if get_tree().paused:
 		return
 	if time_left > 0.0:
-		time_left = maxf(time_left - delta, 0.0)
+		time_left = maxf(time_left - delta, 10.0)
 		var bus := get_node_or_null("/root/EventBus")
 		if bus and bus.has_signal("round_timer_changed"):
 			bus.emit_signal("round_timer_changed", time_left)
-		if time_left <= 0.0 and not timer_expired:
-			_on_timer_expired()
 
 
 func _connect_event_bus() -> void:
@@ -135,6 +135,10 @@ func _init_setup_ui() -> void:
 	
 	btn_start.pressed.connect(_on_btn_start_pressed)
 	btn_retry.pressed.connect(_on_btn_retry_pressed)
+	if btn_restart_game != null:
+		btn_restart_game.pressed.connect(_on_btn_restart_game_pressed)
+	if btn_main_menu != null:
+		btn_main_menu.pressed.connect(_on_btn_main_menu_pressed)
 	btn_game_over_setup.pressed.connect(show_setup_editor)
 	
 	var btn_reopen := get_node_or_null("HUDLayer/BtnReopenSetup") as Button
@@ -195,29 +199,42 @@ func _on_btn_retry_pressed() -> void:
 	_respawn_simulation()
 
 
+func _on_btn_restart_game_pressed() -> void:
+	game_over_canvas.visible = false
+	get_tree().paused = false
+	var gm := get_node_or_null("/root/GameManager")
+	if gm:
+		gm.state = GameManager.PLAYING
+		gm.current_round = 1
+	_set_floors(1)
+	cucumber_count = 1
+	lettuce_count = 0
+	pea_count = 0
+	_update_entity_labels()
+	_respawn_simulation()
+
+
+func _on_btn_main_menu_pressed() -> void:
+	game_over_canvas.visible = false
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+
+
 var _penalty_in_progress: bool = false
 
 func _on_player_died() -> void:
-	_apply_death_penalty()
+	if _game_over_shown:
+		return
+	var hs := get_node_or_null("HeatSystem")
+	if hs and hs.has_method("debug_add_heat"):
+		hs.call("debug_add_heat", 30.0)
+	var bus := get_node_or_null("/root/EventBus")
+	if bus and bus.has_signal("lives_sacrificed_for_heat"):
+		bus.emit_signal("lives_sacrificed_for_heat", 30.0)
 
 
 func _apply_death_penalty() -> void:
-	if _penalty_in_progress or timer_expired or _game_over_shown:
-		return
-	_penalty_in_progress = true
-	var penalty := 15
-	while penalty > 0 and time_left > 0.0 and not timer_expired:
-		time_left = maxf(time_left - 1.0, 0.0)
-		var bus := get_node_or_null("/root/EventBus")
-		if bus and bus.has_signal("round_timer_changed"):
-			bus.emit_signal("round_timer_changed", time_left)
-		penalty -= 1
-		if time_left <= 0.0:
-			_penalty_in_progress = false
-			_on_timer_expired()
-			return
-		await get_tree().create_timer(0.035).timeout
-	_penalty_in_progress = false
+	pass
 
 
 func _on_timer_expired() -> void:

@@ -575,5 +575,19 @@ Task: Apertura visual y escotilla en el techo/piso superior de las escaleras
 Type: AI_ASSISTED
 Files: level/ladder.tscn
 Change: Se integró una abertura visual estructurada (CeilingOpeningHatch) en la parte superior de cada escalera (y = 4.0m) para evitar que las entidades y el jugador atraviesen el forjado como un sólido continuo: incluye una cavidad oscura de profundidad (HatchCavity), marco perimetral de madera (RimFront, RimBack, RimLeft, RimRight), escotilla abierta inclinada (OpenTrapdoor) y asas de seguridad metálicas (HandleLeft, HandleRight) que sobresalen hacia el piso superior. El marco visual no añade colisión obstructiva ni interfiere con la superficie de apoyo, asegurando que pararse allí no produzca caídas accidentales.
-Commit: f2c4552
+Commit: 53ddbfc
+Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000043
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Temperatura como mecánica principal, vidas de papa, sacrificio al revivir, ruptura de holders y texturas de oficina
+Type: AI_ASSISTED
+Files: autoload/event_bus.gd, autoload/game_config.gd, systems/heat_system.gd, systems/round_manager.gd, ui/hud.gd, ui/hud.tscn, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/building.tscn, Textures/office_brick_wall.png, Textures/office_concrete_floor.png, Textures/office_drywall_panel.png, Textures/office_carpet_tiles.png, art/d-ui/holder_cracked.png, audio/sfx_holder_crack.wav
+Change: Se eliminó el tiempo como condición de derrota o presión, consolidando la temperatura como la mecánica principal. Se integraron las cabezas de papa (Sprites/SE_ESTA_RESISTIENDO/papaXLL.png) como corazones de vida en el HUD. Al agotarse las vidas, el jugador revive a cambio de un aumento de +30% de calor (HEAT_PENALTY_ON_DEATH) con banner visual y audio de vapor. Al llegar al 100% de calor, las vidas restantes se drenan suavemente una a una y los holders de los corazones se fracturan con sfx_holder_crack.wav dando paso al Game Over. Se adaptó la pantalla de Game Over con las 3 opciones requeridas: Reintentar turno actual, Reiniciar desde cero y Menú principal. Se crearon y aplicaron 4 texturas procedurales originales para paredes y suelos de oficina (ladrillo, drywall, concreto pulido y alfombra) eliminando los colores planos.
+Commit: 2058f09
 Notes: 332 comprobaciones automatizadas pasando sin errores.

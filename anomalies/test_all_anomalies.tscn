@@ -9,15 +9,31 @@
 [ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="7_eyebrow"]
 [ext_resource type="PackedScene" uid="uid://cmf2f53o82h1y" path="res://ui/hud.tscn" id="8_hud"]
 [ext_resource type="Script" path="res://systems/heat_system.gd" id="9_heat"]
+[ext_resource type="Texture2D" path="res://Textures/office_brick_wall.png" id="10_tex_brick"]
+[ext_resource type="Texture2D" path="res://Textures/office_concrete_floor.png" id="11_tex_concrete"]
+[ext_resource type="Texture2D" path="res://Textures/office_drywall_panel.png" id="12_tex_drywall"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_Basement"]
 albedo_color = Color(0.18, 0.16, 0.15, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_Floor"]
-albedo_color = Color(0.24, 0.22, 0.2, 1)
+albedo_color = Color(0.88, 0.85, 0.82, 1)
+albedo_texture = ExtResource("11_tex_concrete")
+uv1_scale = Vector3(15, 2, 1)
 
 [sub_resource type="StandardMaterial3D" id="Mat_Ceiling"]
-albedo_color = Color(0.15, 0.14, 0.13, 1)
+albedo_color = Color(0.9, 0.88, 0.85, 1)
+albedo_texture = ExtResource("12_tex_drywall")
+uv1_scale = Vector3(15, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Wall"]
+albedo_color = Color(0.88, 0.88, 0.88, 1)
+albedo_texture = ExtResource("10_tex_brick")
+uv1_scale = Vector3(1, 4, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_Wall"]
+material = SubResource("Mat_Wall")
+size = Vector3(1, 18, 4)
 
 [sub_resource type="BoxShape3D" id="Shape_Platform"]
 size = Vector3(50, 0.6, 4)
@@ -272,12 +288,18 @@ collision_layer = 1
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/WallLeft"]
 shape = SubResource("Shape_Wall")
 
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/WallLeft"]
+mesh = SubResource("Mesh_Wall")
+
 [node name="WallRight" type="StaticBody3D" parent="Architecture"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 4, 0)
 collision_layer = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Architecture/WallRight"]
 shape = SubResource("Shape_Wall")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Architecture/WallRight"]
+mesh = SubResource("Mesh_Wall")
 
 [node name="Player" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, -3.5, 0)
@@ -556,7 +578,7 @@ color = Color(0.95, 0.35, 0.25, 1)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.85, 0.8, 1)
 theme_override_font_sizes/font_size = 14
-text = "Has recibido 3 impactos y caíste derrotado ante las anomalías."
+text = "Sobrecalentamiento crítico: los contenedores de vida colapsaron."
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -566,14 +588,26 @@ layout_mode = 2
 
 [node name="BtnRetry" type="Button" parent="GameOverUI/Center/Card/Rows"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
-text = "REINTENTAR SIMULACIÓN"
+text = "⟳   REINTENTAR TURNO ACTUAL"
+
+[node name="BtnRestartGame" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "⏮   REINICIAR DESDE CERO"
+
+[node name="BtnMainMenu" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "↶   MENÚ PRINCIPAL"
 
 [node name="BtnGameOverSetup" type="Button" parent="GameOverUI/Center/Card/Rows"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 text = "CONFIGURAR ENTIDADES (F1)"
 
