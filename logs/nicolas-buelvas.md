@@ -227,3 +227,17 @@ Files: ui/audio_manager.gd, autoload/event_bus.gd, autoload/game_manager.gd, pla
 Change: Implementación de AudioManager como autoload para gestionar música (BGM en loop para menús, juego normal, calor crítico, victoria y game over) y efectos de sonido enrutados a buses Music y SFX. Conexión automática de hover y click a botones de UI. Emisión de player_jumped desde player.gd y escucha de todas las señales de EventBus (daño, slide, herbicida, recarga, anomalía contenida, vapor de calor). Conexión del flujo de navegación entre menús (Nueva partida -> player/test_player.tscn, Opciones, Volver, Pausa) y añadido de menú de pausa a la escena de prueba.
 Commit: PENDING
 Notes: Se verificó con tools/ui_check.gd (41/41 PASS) y systems/tests/heat_system_test.gd (32/32 PASS).
+
+
+---
+
+## AI-IAdashems-NB-000018
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Rework visual del Menú Principal, Opciones y Créditos según artes oficiales
+Type: AI_ASSISTED
+Files: scenes/main_menu.tscn, ui/options_menu.tscn, scenes/credits.tscn, ui/theme.tres, scenes/intro.gd, art/d-ui/menu_background.png, art/d-ui/options_background.png, art/d-ui/credits_opt2_bg.png
+Change: Integración de artes de fondo de alta definición (campo de papas para menú principal y opciones, espacio orbital dorado para créditos). Rework de tarjetas con borde dorado brillante (glow amber) de 2px, esquinas redondeadas de 22px y sombra ámbar. Botones principales estilo píldora dorada con iconos táctiles (▶ Nueva partida, ⚙ Opciones, ➔ Salir, ↶ Volver al menú) y slots oscuros para configuración de volumen y pantalla. Créditos estructurados según Opción 2 con avatares de integrantes y separador de diamante.
+Commit: PENDING
+Notes: Verificado con tools/ui_check.gd (41/41 PASS) y systems/tests/heat_system_test.gd (32/32 PASS).
