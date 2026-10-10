@@ -19,12 +19,12 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_cancel") and not event.is_echo():
 		if _options_instance != null and _options_instance.visible:
 			_on_options_back()
-			get_viewport().set_input_as_handled()
 		else:
 			toggle_pause()
+		get_viewport().set_input_as_handled()
 
 
 ## Pausa/reanuda. Sin EventBus lo hace él mismo; con EventBus emite la señal
@@ -45,12 +45,16 @@ func _set_paused(paused: bool) -> void:
 	get_tree().paused = paused
 	visible = paused
 	if not paused and _options_instance != null and _options_instance.visible:
-		_options_instance.hide()
+		_options_instance.queue_free()
+		_options_instance = null
 		$Center.show()
 
 
 func _on_ResumeButton_pressed() -> void:
-	if _event_bus:
+	var gm := get_node_or_null("/root/GameManager")
+	if gm and gm.has_method("set_paused"):
+		gm.set_paused(false)
+	elif _event_bus:
 		_event_bus.emit_signal("pause_toggled", false)
 	else:
 		_set_paused(false)
@@ -67,7 +71,8 @@ func _on_OptionsButton_pressed() -> void:
 
 func _on_options_back() -> void:
 	if _options_instance != null:
-		_options_instance.hide()
+		_options_instance.queue_free()
+		_options_instance = null
 	$Center.show()
 
 

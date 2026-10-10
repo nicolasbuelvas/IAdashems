@@ -40,7 +40,8 @@ func _on_OptionsButton_pressed() -> void:
 
 func _on_options_back() -> void:
 	if _options_instance != null:
-		_options_instance.hide()
+		_options_instance.queue_free()
+		_options_instance = null
 	$MenuCard.show()
 
 
