@@ -45,7 +45,6 @@ transform = Transform3D(0.96105546, 0.27635565, 0, -0.27635565, 0.96105546, 0, 0
 shape = SubResource("RampShape")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ramp" unique_id=1655921315]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.77317023, 2.6887798, 0)
 mesh = SubResource("RampMesh")
 
 [node name="Player" parent="." unique_id=578043155 instance=ExtResource("1_player")]
