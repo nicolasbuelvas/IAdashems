@@ -11,6 +11,12 @@ var speed: float = 5.0
 var flee_distance: float = 6.0
 var stairs_mult: float = 0.5
 
+var is_climbing: bool = false
+var climb_target_y: float = 0.0
+var climb_exit_x: float = 0.0
+var climb_speed: float = 3.5
+var _climb_ladder_x: float = 0.0
+
 
 func _ready() -> void:
 	super._ready()
@@ -23,6 +29,17 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_contained:
+		return
+
+	if is_climbing:
+		global_position.x = move_toward(global_position.x, _climb_ladder_x, 8.0 * delta)
+		global_position.y = move_toward(global_position.y, climb_target_y, climb_speed * delta)
+		global_position.z = 0.0
+		velocity = Vector3.ZERO
+		if is_equal_approx(global_position.y, climb_target_y):
+			is_climbing = false
+			global_position.x = climb_exit_x
+			velocity = Vector3.ZERO
 		return
 		
 	if not is_on_floor():
@@ -64,3 +81,15 @@ func _physics_process(delta: float) -> void:
 func on_player_contact(_player: Node) -> void:
 	if not is_contained:
 		contain()
+
+
+func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
+	if is_climbing or is_contained:
+		return
+	is_climbing = true
+	velocity = Vector3.ZERO
+	_climb_ladder_x = ladder_x
+	climb_target_y = target_y
+	climb_exit_x = exit_x
+	global_position.x = ladder_x
+	global_position.z = 0.0

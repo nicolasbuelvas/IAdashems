@@ -267,5 +267,19 @@ Task: Implementación completa de las 3 anomalías (Pepino, Lechuga, Guisante) y
 Type: AI_ASSISTED
 Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/cucumber.tscn, anomalies/lettuce.gd, anomalies/lettuce.tscn, anomalies/pea.gd, anomalies/pea.tscn, anomalies/pea_projectile.gd, anomalies/pea_projectile.tscn, anomalies/test_cucumber.tscn, anomalies/test_lettuce.tscn, anomalies/test_pea.tscn, anomalies/test_all_anomalies.tscn
 Change: Creación de la clase base Anomaly cumpliendo el contrato de RoundManager y EventBus (spawn_id, anomaly_spawned, tween hacia contenedor más cercano con anomaly_contained). Pepino (Cápsula esmeralda) huye en X, se ralentiza en escaleras y se acorrala contra paredes; captura por contacto directo. Lechuga (Esfera lima) rebota por suelos y paredes, hiere al contacto y se captura deslizándose con Shift. Lanzaguisantes (Esfera verde oscura) avanza lento, dispara proyectiles de guisante cada 2.5s e hiere al contacto; se captura con impacto de herbicida (E). Creación de 4 mapas de prueba 3D de 2 pisos con rampa/escalera funcional (StairsArea en grupo stairs), contenedores y cámara.
-Commit: PENDING
+Commit: ee34f15
 Notes: Verificado con tools/ui_check.gd (41/41 PASS), systems/tests/heat_system_test.gd (32/32 PASS) y systems/tests/round_manager_test.gd (136/136 PASS). Total: 209 comprobaciones automatizadas en verde.
+
+
+---
+
+## AI-IAdashems-NB-000021
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Escalera vertical tipo Minecraft con animación bloqueante no cancelable
+Type: AI_ASSISTED
+Files: level/ladder.gd, level/ladder.tscn, player/player.gd, anomalies/cucumber.gd, anomalies/test_cucumber.tscn, anomalies/test_lettuce.tscn, anomalies/test_pea.tscn, anomalies/test_all_anomalies.tscn
+Change: Reemplazo de rampas inclinadas por escaleras totalmente verticales 3D estilo Minecraft (rieles y travesaños) en todos los mapas de prueba de 2 pisos. Implementación de estado de escalada bloqueante (is_climbing / start_climb): al presionar W abajo o S arriba en el área de la escalera, el personaje queda fijado a la escalera y realiza la subida o bajada completa hasta el piso destino sin poder cancelar la animación con saltos, desplazamientos, dash ni ataques. Se habilitó también el uso de la escalera para la evasión del pepino.
+Commit: PENDING
+Notes: Verificado en headless (test suites 209/209 PASS y ejecución de mapas de test).

@@ -76,6 +76,12 @@ var _animated_sprite: AnimatedSprite3D
 var _sprite_base_y := 0.0
 var _heat_active := false
 
+var is_climbing: bool = false
+var climb_target_y: float = 0.0
+var climb_exit_x: float = 0.0
+var climb_speed: float = 4.5
+var _climb_ladder_x: float = 0.0
+
 
 func _ready() -> void:
 	add_to_group("player")
@@ -100,6 +106,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_climbing:
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_SPACE:
 			_jump_queued = true
@@ -110,6 +118,21 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if is_climbing:
+		global_position.x = move_toward(global_position.x, _climb_ladder_x, 10.0 * delta)
+		global_position.y = move_toward(global_position.y, climb_target_y, climb_speed * delta)
+		global_position.z = 0.0
+		velocity = Vector3.ZERO
+		if _animated_sprite != null:
+			_animated_sprite.position.y = _sprite_base_y + sin(Time.get_ticks_msec() * 0.015) * 0.06
+		if is_equal_approx(global_position.y, climb_target_y):
+			is_climbing = false
+			global_position.x = climb_exit_x
+			velocity = Vector3.ZERO
+			if _animated_sprite != null:
+				_animated_sprite.position.y = _sprite_base_y
+		return
+
 	_jump_started_this_frame = false
 	if _dash_recovery_left > 0.0:
 		_dash_recovery_left = maxf(_dash_recovery_left - delta, 0.0)
@@ -212,7 +235,25 @@ func is_invulnerable() -> bool:
 	return _iframe_left > 0.0 or is_sliding()
 
 
+func start_climb(target_y: float, exit_x: float, ladder_x: float) -> void:
+	if is_climbing or _dead:
+		return
+	is_climbing = true
+	_slide_time_left = 0.0
+	_dash_active = false
+	_jump_queued = false
+	_slide_queued = false
+	_herbicide_queued = false
+	velocity = Vector3.ZERO
+	_climb_ladder_x = ladder_x
+	climb_target_y = target_y
+	climb_exit_x = exit_x
+	global_position.x = ladder_x
+	global_position.z = 0.0
+
+
 func reset_to(spawn: Vector3) -> void:
+	is_climbing = false
 	global_position = spawn
 	velocity = Vector3.ZERO
 	_hp = max_hp

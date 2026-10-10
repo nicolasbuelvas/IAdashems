@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="2_camera"]
 [ext_resource type="PackedScene" path="res://anomalies/cucumber.tscn" id="3_cucumber"]
 [ext_resource type="PackedScene" uid="uid://cmf2f53o82h1z" path="res://ui/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" path="res://level/ladder.tscn" id="5_ladder"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_Floor"]
 albedo_color = Color(0.24, 0.22, 0.2, 1)
@@ -67,7 +68,7 @@ shape = SubResource("Shape_Floor1")
 mesh = SubResource("Mesh_Floor1")
 
 [node name="Floor2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 3.7, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 3.7, 0)
 collision_layer = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor2"]
@@ -76,23 +77,12 @@ shape = SubResource("Shape_Floor2")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor2"]
 mesh = SubResource("Mesh_Floor2")
 
-[node name="StairRamp" type="StaticBody3D" parent="."]
-transform = Transform3D(0.866, 0.5, 0, -0.5, 0.866, 0, 0, 0, 1, -4.5, 1.8, 0)
-collision_layer = 1
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StairRamp"]
-shape = SubResource("Shape_Ramp")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StairRamp"]
-mesh = SubResource("Mesh_Ramp")
-
-[node name="StairsArea" type="Area3D" parent="." groups=["stairs"]]
-transform = Transform3D(0.866, 0.5, 0, -0.5, 0.866, 0, 0, 0, 1, -4.5, 2.2, 0)
-collision_layer = 2
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StairsArea"]
-shape = SubResource("Shape_StairsArea")
+[node name="VerticalLadder" parent="." instance=ExtResource("5_ladder")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+bottom_y = 0.5
+top_y = 4.5
+bottom_exit_offset_x = -1.0
+top_exit_offset_x = 1.2
 
 [node name="WallLeft" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 3.5, 0)
@@ -159,9 +149,9 @@ offset_right = -14.0
 offset_bottom = -10.0
 theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
 text = "TEST: PEPINO (Cucumis sativus)
-Huye de la papa. Se frena en la rampa/escalera.
-Se acorrala contra paredes.
-Captura: ¡Tócalo directamente!"
+Escalera vertical Minecraft: W para subir, S para bajar.
+¡La animación no se puede cancelar una vez iniciada!
+Captura al pepino: ¡Tócalo directamente!"
 
 [node name="PauseLayer" type="CanvasLayer" parent="."]
 layer = 20
