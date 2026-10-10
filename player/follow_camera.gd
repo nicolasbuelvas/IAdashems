@@ -5,7 +5,7 @@ extends Camera3D
 @export var fixed_z := 12.0
 @export var look_ahead_distance := 1.0
 @export var look_ahead_speed := 5.0
-@export var look_ahead_reference_speed := 8.0
+@export var look_ahead_reference_speed := 11.0
 
 var _target: Node3D
 var _look_ahead_x := 0.0

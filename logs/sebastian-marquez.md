@@ -133,3 +133,14 @@ Files: player/player.gd, player/follow_camera.gd
 Change: Reducida la aceleración y frenado horizontal para tardar cerca de 0.33 s en alcanzar velocidad de carrera y cerca de 0.4 s en invertirla. El dash termina conservando velocidad por 0.55 s; el salto tiene gravedad reducida de forma breve cerca del ápice y al soltar Espacio cae más rápido. La cámara sigue el impulso con anticipación suavizada.
 Limitaciones: Parámetros de balance iniciales; faltan pruebas jugables para valorar la curva de velocidad y el arrastre tras el dash en el nivel completo.
 Commit: PENDING
+
+## AI-IAdashems-SM-000012
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Aumentar velocidad de carrera y hacer el dash dependiente del momentum; permitir salto con control aéreo
+Type: AI_ASSISTED
+Files: player/player.gd, player/follow_camera.gd
+Change: Velocidad máxima base 8, aceleración de suelo más gradual y umbral de dash al 72 % de la velocidad máxima en la dirección solicitada. El dash mantiene dirección fija; saltar lo termina, conserva el impulso y permite corregir trayectoria en el aire. Se ajustó la anticipación de cámara al nuevo rango de velocidades.
+Limitaciones: El umbral y la transferencia del impulso requieren playtest para confirmar que el dash se siente alcanzable y que el salto durante dash queda legible.
+Commit: PENDING

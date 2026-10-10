@@ -4,16 +4,17 @@ extends CharacterBody3D
 ## Movimiento 2.5D, vida/iframes y deslizamiento. Balance desde GameConfig
 ## si el autoload existe; si no, fallbacks del spec.
 
-const _FALLBACK_SPEED := 6.0
+const _FALLBACK_SPEED := 8.0
 const _FALLBACK_JUMP_VELOCITY := 9.0
 const _FALLBACK_MAX_HP := 3
 const _FALLBACK_IFRAMES := 1.0
 const _FALLBACK_SLIDE_DURATION := 0.65
 const _FALLBACK_SLIDE_COOLDOWN := 0.6
 const _FALLBACK_SLIDE_SPEED := 11.0
-const _GROUND_ACCELERATION := 18.0
+const _GROUND_ACCELERATION := 15.0
 const _AIR_ACCELERATION := 14.0
 const _TURNAROUND_ACCELERATION := 30.0
+const _AIR_TURNAROUND_ACCELERATION := 26.0
 const _GROUND_DECELERATION := 22.0
 const _AIR_DECELERATION := 10.0
 const _PLAYER_GRAVITY_SCALE := 2.25
@@ -21,9 +22,10 @@ const _FALL_GRAVITY_MULTIPLIER := 1.35
 const _JUMP_RELEASE_GRAVITY_MULTIPLIER := 1.6
 const _JUMP_APEX_GRAVITY_MULTIPLIER := 0.72
 const _JUMP_APEX_VELOCITY_RATIO := 0.25
+const _DASH_MIN_SPEED_RATIO := 0.72
 const _DASH_CARRY_DURATION := 0.55
 const _DASH_CARRY_DECELERATION := 10.0
-const _DASH_EXIT_SPEED_RATIO := 0.82
+const _DASH_EXIT_SPEED_RATIO := 0.9
 const _FALLBACK_HERBICIDE_SPEED := 14.0
 const _FALLBACK_HERBICIDE_COOLDOWN := 5.0
 const _HERBICIDE_SCENE: PackedScene = preload("res://player/herbicide.tscn")
@@ -113,7 +115,7 @@ func _physics_process(delta: float) -> void:
 			gravity_multiplier = _JUMP_APEX_GRAVITY_MULTIPLIER
 		velocity.y -= _gravity * _PLAYER_GRAVITY_SCALE * gravity_multiplier * delta
 
-	if _wants_jump() and not is_sliding() and is_on_floor():
+	if _wants_jump() and is_on_floor():
 		velocity.y = jump_velocity
 		_jump_started_this_frame = true
 		_animate_motion_feedback(Vector3(0.92, 1.14, 1.0))
@@ -127,7 +129,7 @@ func _physics_process(delta: float) -> void:
 		_fire_herbicide()
 
 	var input_x := _horizontal_axis()
-	if input_x != 0.0 and (is_zero_approx(velocity.x) or signf(velocity.x) == signf(input_x)):
+	if not is_sliding() and input_x != 0.0 and (is_zero_approx(velocity.x) or signf(velocity.x) == signf(input_x)):
 		_facing = signf(input_x)
 
 	if is_sliding():
@@ -144,7 +146,8 @@ func _physics_process(delta: float) -> void:
 		elif input_x == 0.0:
 			velocity.x = move_toward(velocity.x, 0.0, _DASH_CARRY_DECELERATION * delta)
 		else:
-			velocity.x = move_toward(velocity.x, input_x * move_speed, _TURNAROUND_ACCELERATION * delta)
+			var turnaround_acceleration := _TURNAROUND_ACCELERATION if is_on_floor() else _AIR_TURNAROUND_ACCELERATION
+			velocity.x = move_toward(velocity.x, input_x * move_speed, turnaround_acceleration * delta)
 		_dash_carry_time_left = maxf(_dash_carry_time_left - delta, 0.0)
 	elif input_x != 0.0:
 		var acceleration := _GROUND_ACCELERATION if is_on_floor() else _AIR_ACCELERATION
@@ -215,18 +218,25 @@ func _update_slide(delta: float) -> void:
 	if _slide_queued:
 		_slide_queued = false
 		_try_start_slide()
-	if _slide_time_left > 0.0:
+	if _jump_started_this_frame and is_sliding():
+		# El salto termina el dash; su impulso pasa al control aéreo.
+		_finish_slide()
+	if is_sliding():
 		_slide_time_left -= delta
 		if _slide_time_left <= 0.0:
-			_slide_time_left = 0.0
-			_slide_cooldown_left = slide_cooldown
-			_dash_carry_direction = signf(velocity.x)
-			_dash_carry_speed = maxf(absf(velocity.x), move_speed)
-			_dash_carry_time_left = _DASH_CARRY_DURATION
-			_emit_bus("player_slide_ended", [])
-			_apply_visual()
+			_finish_slide()
 	elif _slide_cooldown_left > 0.0:
 		_slide_cooldown_left -= delta
+
+
+func _finish_slide() -> void:
+	_slide_time_left = 0.0
+	_slide_cooldown_left = slide_cooldown
+	_dash_carry_direction = _slide_dir
+	_dash_carry_speed = maxf(absf(velocity.x), move_speed)
+	_dash_carry_time_left = _DASH_CARRY_DURATION
+	_emit_bus("player_slide_ended", [])
+	_apply_visual()
 
 
 func _try_start_slide() -> void:
@@ -238,6 +248,9 @@ func _try_start_slide() -> void:
 	_slide_dir = signf(input_x) if input_x != 0.0 else _facing
 	if _slide_dir == 0.0:
 		_slide_dir = 1.0
+	var minimum_dash_speed := move_speed * _DASH_MIN_SPEED_RATIO
+	if velocity.x * _slide_dir < minimum_dash_speed:
+		return
 	_slide_time_left = slide_duration
 	_emit_bus("player_slide_started", [])
 	_apply_visual()
