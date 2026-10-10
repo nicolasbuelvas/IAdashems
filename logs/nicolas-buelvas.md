@@ -89,4 +89,17 @@ Type: AI_ASSISTED
 Files: ui/hud.tscn, ui/hud.gd, ui/test_signal_emitter.gd
 Change: Se crearon los scripts hud.gd y test_signal_emitter.gd. Se implementó el diseño visual del HUD con elementos para calor, tiempo, vida, anomalías y herbicida, y se configuró el HUD para conectarse al emisor de pruebas.
 Commit: PENDING
-Notes: El HUD se probó en aislamiento con el test_signal_emitter.gd. La conexión al EventBus real se hará cuando esté disponible.
+
+
+---
+
+## AI-IAdashems-NB-000008
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Desarrollar la escena del menú de pausa (ui/pause_menu.tscn)
+Type: AI_ASSISTED
+Files: ui/pause_menu.tscn, ui/pause_menu.gd
+Change: Se creó el script pause_menu.gd con funcionalidad de pausa, y se implementó el diseño visual del menú de pausa con título y botones para Reanudar, Opciones y Salir al menú.
+Commit: PENDING
+Notes: La navegación a opciones y al menú principal se integrará cuando GameManager.goto() esté disponible.
