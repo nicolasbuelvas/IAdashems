@@ -4,13 +4,32 @@ extends CharacterBody3D
 ## Movimiento 2.5D, vida/iframes y deslizamiento. Balance desde GameConfig
 ## si el autoload existe; si no, fallbacks del spec.
 
-const _FALLBACK_SPEED := 6.0
+const _FALLBACK_SPEED := 8.0
 const _FALLBACK_JUMP_VELOCITY := 9.0
 const _FALLBACK_MAX_HP := 3
 const _FALLBACK_IFRAMES := 1.0
-const _FALLBACK_SLIDE_DURATION := 0.5
+const _FALLBACK_SLIDE_DURATION := 0.65
 const _FALLBACK_SLIDE_COOLDOWN := 0.6
 const _FALLBACK_SLIDE_SPEED := 11.0
+const _GROUND_ACCELERATION := 15.0
+const _AIR_ACCELERATION := 14.0
+const _TURNAROUND_ACCELERATION := 30.0
+const _AIR_TURNAROUND_ACCELERATION := 26.0
+const _GROUND_DECELERATION := 22.0
+const _AIR_DECELERATION := 10.0
+const _PLAYER_GRAVITY_SCALE := 2.25
+const _FALL_GRAVITY_MULTIPLIER := 1.35
+const _JUMP_RELEASE_GRAVITY_MULTIPLIER := 1.6
+const _JUMP_APEX_GRAVITY_MULTIPLIER := 0.72
+const _JUMP_APEX_VELOCITY_RATIO := 0.25
+const _DASH_MIN_SPEED_RATIO := 0.72
+const _DASH_CARRY_DURATION := 0.55
+const _DASH_BRAKING := 9.0
+const _DASH_STOP_SPEED := 0.2
+const _DASH_RECOVERY_DURATION := 1.0
+const _DASH_RECOVERY_SPEED_RATIO := 0.55
+const _DASH_CARRY_DECELERATION := 10.0
+const _DASH_EXIT_SPEED_RATIO := 0.9
 const _FALLBACK_HERBICIDE_SPEED := 14.0
 const _FALLBACK_HERBICIDE_COOLDOWN := 5.0
 const _HERBICIDE_SCENE: PackedScene = preload("res://player/herbicide.tscn")
@@ -32,11 +51,18 @@ var herbicide_cooldown: float = _FALLBACK_HERBICIDE_COOLDOWN
 var _hp: int = _FALLBACK_MAX_HP
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _jump_queued: bool = false
+var _jump_started_this_frame: bool = false
+var _herbicide_queued: bool = false
 var _slide_queued: bool = false
 var _facing: float = 1.0
 var _slide_dir: float = 1.0
+var _dash_active: bool = false
+var _dash_recovery_left: float = 0.0
 var _slide_time_left: float = 0.0
 var _slide_cooldown_left: float = 0.0
+var _dash_carry_time_left: float = 0.0
+var _dash_carry_speed: float = 0.0
+var _dash_carry_direction: float = 0.0
 var _herbicide_cooldown_left: float = 0.0
 var _last_aim_direction := Vector2.RIGHT
 var _iframe_left: float = 0.0
@@ -44,6 +70,8 @@ var _blink_accum: float = 0.0
 var _blink_on: bool = false
 var _dead: bool = false
 var _visual: GeometryInstance3D
+var _visual_base_scale := Vector3.ONE
+var _visual_tween: Tween
 var _animated_sprite: AnimatedSprite3D
 var _sprite_base_y := 0.0
 var _heat_active := false
@@ -61,6 +89,8 @@ func _ready() -> void:
 		_sprite_base_y = _animated_sprite.position.y
 	if _visual == null:
 		_visual = get_node_or_null("MeshInstance3D") as GeometryInstance3D
+	if _visual != null:
+		_visual_base_scale = _visual.scale
 	_apply_game_config()
 	_hp = max_hp
 	_apply_visual()
@@ -76,35 +106,83 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.physical_keycode == KEY_SHIFT:
 			_slide_queued = true
 		elif event.physical_keycode == KEY_E:
-			_fire_herbicide()
+			_herbicide_queued = true
 
 
 func _physics_process(delta: float) -> void:
+	_jump_started_this_frame = false
+	if _dash_recovery_left > 0.0:
+		_dash_recovery_left = maxf(_dash_recovery_left - delta, 0.0)
 	if not is_on_floor():
-		velocity.y -= _gravity * delta
+		var gravity_multiplier := 1.0
+		if velocity.y < 0.0:
+			gravity_multiplier = _FALL_GRAVITY_MULTIPLIER
+		elif not Input.is_physical_key_pressed(KEY_SPACE):
+			gravity_multiplier = _JUMP_RELEASE_GRAVITY_MULTIPLIER
+		elif velocity.y < jump_velocity * _JUMP_APEX_VELOCITY_RATIO:
+			gravity_multiplier = _JUMP_APEX_GRAVITY_MULTIPLIER
+		velocity.y -= _gravity * _PLAYER_GRAVITY_SCALE * gravity_multiplier * delta
 
 	if _wants_jump() and is_on_floor():
 		velocity.y = jump_velocity
 		_emit_bus("player_jumped", [])
+		_jump_started_this_frame = true
+		_animate_motion_feedback(Vector3(0.92, 1.14, 1.0))
 
 	_update_slide(delta)
 	_update_iframes(delta)
 	_update_herbicide_cooldown(delta)
 	_update_aim_direction()
+	if _herbicide_queued:
+		_herbicide_queued = false
+		_fire_herbicide()
 
 	var input_x := _horizontal_axis()
-	if input_x != 0.0:
+	if not is_sliding() and input_x != 0.0 and (is_zero_approx(velocity.x) or signf(velocity.x) == signf(input_x)):
 		_facing = signf(input_x)
 
 	if is_sliding():
-		velocity.x = _slide_dir * slide_speed
+		if _slide_time_left > 0.0:
+			var slide_progress := 1.0 - _slide_time_left / slide_duration
+			var deceleration := smoothstep(0.7, 1.0, slide_progress)
+			var dash_exit_speed := maxf(move_speed, slide_speed * _DASH_EXIT_SPEED_RATIO)
+			var current_slide_speed := lerpf(slide_speed, dash_exit_speed, deceleration)
+			velocity.x = _slide_dir * current_slide_speed
+		else:
+			velocity.x = move_toward(velocity.x, 0.0, _DASH_BRAKING * delta)
+	elif _dash_recovery_left > 0.0:
+		var recovery_speed := move_speed * _DASH_RECOVERY_SPEED_RATIO
+		if input_x != 0.0:
+			var acceleration := _GROUND_ACCELERATION if is_on_floor() else _AIR_ACCELERATION
+			velocity.x = move_toward(velocity.x, input_x * recovery_speed, acceleration * delta)
+		else:
+			var deceleration := _GROUND_DECELERATION if is_on_floor() else _AIR_DECELERATION
+			velocity.x = move_toward(velocity.x, 0.0, deceleration * delta)
+	elif _dash_carry_time_left > 0.0:
+		var carry_ratio := _dash_carry_time_left / _DASH_CARRY_DURATION
+		if input_x == _dash_carry_direction:
+			var carry_speed := lerpf(move_speed, _dash_carry_speed, carry_ratio)
+			velocity.x = _dash_carry_direction * carry_speed
+		elif input_x == 0.0:
+			velocity.x = move_toward(velocity.x, 0.0, _DASH_CARRY_DECELERATION * delta)
+		else:
+			var turnaround_acceleration := _TURNAROUND_ACCELERATION if is_on_floor() else _AIR_TURNAROUND_ACCELERATION
+			velocity.x = move_toward(velocity.x, input_x * move_speed, turnaround_acceleration * delta)
+		_dash_carry_time_left = maxf(_dash_carry_time_left - delta, 0.0)
 	elif input_x != 0.0:
-		velocity.x = input_x * move_speed
+		var acceleration := _GROUND_ACCELERATION if is_on_floor() else _AIR_ACCELERATION
+		if velocity.x * input_x < 0.0:
+			acceleration = _TURNAROUND_ACCELERATION
+		velocity.x = move_toward(velocity.x, input_x * move_speed, acceleration * delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0.0, move_speed)
+		var deceleration := _GROUND_DECELERATION if is_on_floor() else _AIR_DECELERATION
+		velocity.x = move_toward(velocity.x, 0.0, deceleration * delta)
 
 	velocity.z = 0.0
+	var was_on_floor := is_on_floor()
 	move_and_slide()
+	if not was_on_floor and is_on_floor():
+		_animate_motion_feedback(Vector3(1.12, 0.86, 1.0))
 	global_position.z = 0.0
 	_update_animation()
 
@@ -127,7 +205,7 @@ func take_damage(amount: int) -> void:
 
 
 func is_sliding() -> bool:
-	return _slide_time_left > 0.0
+	return _dash_active
 
 
 func is_invulnerable() -> bool:
@@ -140,9 +218,16 @@ func reset_to(spawn: Vector3) -> void:
 	_hp = max_hp
 	_dead = false
 	_jump_queued = false
+	_jump_started_this_frame = false
 	_slide_queued = false
+	_herbicide_queued = false
 	_slide_time_left = 0.0
 	_slide_cooldown_left = 0.0
+	_dash_active = false
+	_dash_recovery_left = 0.0
+	_dash_carry_time_left = 0.0
+	_dash_carry_speed = 0.0
+	_dash_carry_direction = 0.0
 	_herbicide_cooldown_left = 0.0
 	_iframe_left = 0.0
 	_blink_on = false
@@ -155,24 +240,48 @@ func _update_slide(delta: float) -> void:
 	if _slide_queued:
 		_slide_queued = false
 		_try_start_slide()
-	if _slide_time_left > 0.0:
-		_slide_time_left -= delta
-		if _slide_time_left <= 0.0:
-			_slide_time_left = 0.0
-			_slide_cooldown_left = slide_cooldown
-			_emit_bus("player_slide_ended", [])
-			_apply_visual()
+	if _jump_started_this_frame and is_sliding():
+		# El salto cancela el dash y conserva su impulso para el control aéreo.
+		_finish_slide(true)
+	if is_sliding():
+		if _slide_time_left > 0.0:
+			_slide_time_left = maxf(_slide_time_left - delta, 0.0)
+		if _slide_time_left <= 0.0 and absf(velocity.x) <= _DASH_STOP_SPEED:
+			velocity.x = 0.0
+			_finish_slide(false)
 	elif _slide_cooldown_left > 0.0:
 		_slide_cooldown_left -= delta
 
 
+func _finish_slide(cancelled_by_jump: bool) -> void:
+	_slide_time_left = 0.0
+	_dash_active = false
+	_slide_cooldown_left = slide_cooldown
+	if cancelled_by_jump:
+		_dash_carry_direction = _slide_dir
+		_dash_carry_speed = maxf(absf(velocity.x), move_speed)
+		_dash_carry_time_left = _DASH_CARRY_DURATION
+	else:
+		_dash_carry_time_left = 0.0
+		_dash_recovery_left = _DASH_RECOVERY_DURATION
+		velocity.x = 0.0
+	_emit_bus("player_slide_ended", [])
+	_apply_visual()
+
+
 func _try_start_slide() -> void:
-	if is_sliding() or _slide_cooldown_left > 0.0 or _dead:
+	if is_sliding() or _slide_cooldown_left > 0.0 or _dash_recovery_left > 0.0 or _dead:
+		return
+	if not is_on_floor() or _jump_started_this_frame:
 		return
 	var input_x := _horizontal_axis()
 	_slide_dir = signf(input_x) if input_x != 0.0 else _facing
 	if _slide_dir == 0.0:
 		_slide_dir = 1.0
+	var minimum_dash_speed := move_speed * _DASH_MIN_SPEED_RATIO
+	if velocity.x * _slide_dir < minimum_dash_speed:
+		return
+	_dash_active = true
 	_slide_time_left = slide_duration
 	_emit_bus("player_slide_started", [])
 	_apply_visual()
@@ -190,6 +299,16 @@ func _update_iframes(delta: float) -> void:
 		_iframe_left = 0.0
 		_blink_on = false
 	_apply_visual()
+
+
+func _animate_motion_feedback(target_scale: Vector3) -> void:
+	if _visual == null:
+		return
+	if _visual_tween != null and _visual_tween.is_running():
+		_visual_tween.kill()
+	_visual.scale = _visual_base_scale * target_scale
+	_visual_tween = create_tween()
+	_visual_tween.tween_property(_visual, "scale", _visual_base_scale, 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 func _apply_visual() -> void:
@@ -258,21 +377,15 @@ func _wants_jump() -> bool:
 
 
 func _update_aim_direction() -> void:
-	var aim := Vector2.ZERO
-	if Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT):
-		aim.x -= 1.0
-	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
-		aim.x += 1.0
-	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
-		aim.y += 1.0
-	if Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN):
-		aim.y -= 1.0
-	if not aim.is_zero_approx():
-		_last_aim_direction = aim.normalized()
+	var aim_x := _horizontal_axis()
+	if aim_x != 0.0:
+		_last_aim_direction = Vector2(signf(aim_x), 0.0)
 
 
 func _fire_herbicide() -> void:
 	if _dead or _herbicide_cooldown_left > 0.0:
+		return
+	if is_sliding() or not is_on_floor() or _jump_started_this_frame:
 		return
 	var projectile := _HERBICIDE_SCENE.instantiate() as Area3D
 	if projectile == null:
