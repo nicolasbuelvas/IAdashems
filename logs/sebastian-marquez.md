@@ -188,3 +188,14 @@ Files: player/follow_camera.gd, player/follow_camera.tscn, anomalies/cucumber.gd
 Change: Se reemplazó el balanceo dinámico por una cámara oblicua fija (pitch -11°, yaw -12°), compensando el seguimiento para conservar el encuadre. El hongo ahora reproduce run, usa billboard hacia cámara y una escala/posición alineadas con su cápsula de colisión.
 Limitaciones: Los ángulos y escala requieren inspección visual en Godot; no se pudo ejecutar el motor en este entorno.
 Commit: PENDING
+
+## AI-IAdashems-SM-000017
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Hacer que el sprite del hongo mire en la dirección de su desplazamiento
+Type: AI_ASSISTED
+Files: anomalies/cucumber.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: El AnimatedSprite3D invierte horizontalmente la textura cuando la velocidad X del hongo es negativa y conserva la orientación cuando se detiene.
+Limitaciones: No se pudo validar visualmente en ejecución porque Godot no está disponible en este entorno.
+Commit: PENDING

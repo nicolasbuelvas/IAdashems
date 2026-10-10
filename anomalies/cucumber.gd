@@ -162,6 +162,8 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, move_x * current_speed, 50.0 * delta)
 	else:
 		velocity.x = move_toward(velocity.x, _patrol_dir * current_speed, 25.0 * delta)
+	if _animated_sprite != null and not is_zero_approx(velocity.x):
+		_animated_sprite.flip_h = velocity.x < 0.0
 		
 	velocity.z = 0.0
 	move_and_slide()
