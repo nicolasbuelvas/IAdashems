@@ -213,3 +213,17 @@ Files: ui/theme.tres, ui/backdrop.tscn, ui/style_eyebrow.tres, ui/hud.tscn, ui/h
 Change: Sistema visual compartido: ui/theme.tres (paleta ámbar/crema sobre espresso, botones primario/secundario, píldoras, barras y sliders) y ui/backdrop.tscn (degradado + grano + viñeta) reutilizado por las 8 pantallas. Tipografía Fredoka (títulos) y Nunito (texto), licencia OFL de Google Fonts, en art/d-ui/fonts/; los títulos usan outline del mismo color como faux bold porque Godot 4.7 no aplica el eje wght de la fuente variable. Rediseño de las 8 pantallas: menú (marca, mascota con sprites PAPA del equipo, tarjeta con botón primario), HUD (módulos de calor/reloj/anomalías, ranuras de vida, slot de herbicida), pausa, opciones, tarjeta de ronda, intro (pista parpadeante), outro (conserva WhiteFlash para la explosión) y créditos.
 Commit: PENDING
 Notes: La navegación entre escenas queda vacía porque depende de GameManager (C). Verificación: godot --path . -s tools/ui_check.gd → 41/41 PASS en Godot 4.7.2. El kenney_retro-urban-kit es un kit 3D (FBX), no sirve para UI. Rutas de nodos de hud.gd cambiaron; el contrato de señales con EventBus no cambió.
+
+
+---
+
+## AI-IAdashems-NB-000017
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Integración de audio (BGM/SFX), AudioManager y conexión de navegación de menús
+Type: AI_ASSISTED
+Files: ui/audio_manager.gd, autoload/event_bus.gd, autoload/game_manager.gd, player/player.gd, player/test_anomaly.gd, player/test_player.tscn, scenes/main_menu.gd, scenes/intro.gd, scenes/outro.gd, scenes/credits.gd, ui/options_menu.gd, ui/pause_menu.gd, project.godot
+Change: Implementación de AudioManager como autoload para gestionar música (BGM en loop para menús, juego normal, calor crítico, victoria y game over) y efectos de sonido enrutados a buses Music y SFX. Conexión automática de hover y click a botones de UI. Emisión de player_jumped desde player.gd y escucha de todas las señales de EventBus (daño, slide, herbicida, recarga, anomalía contenida, vapor de calor). Conexión del flujo de navegación entre menús (Nueva partida -> player/test_player.tscn, Opciones, Volver, Pausa) y añadido de menú de pausa a la escena de prueba.
+Commit: PENDING
+Notes: Se verificó con tools/ui_check.gd (41/41 PASS) y systems/tests/heat_system_test.gd (32/32 PASS).

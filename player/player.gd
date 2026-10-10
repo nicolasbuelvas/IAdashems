@@ -85,6 +85,7 @@ func _physics_process(delta: float) -> void:
 
 	if _wants_jump() and is_on_floor():
 		velocity.y = jump_velocity
+		_emit_bus("player_jumped", [])
 
 	_update_slide(delta)
 	_update_iframes(delta)

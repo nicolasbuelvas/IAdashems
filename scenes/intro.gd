@@ -10,6 +10,9 @@ func _process(_delta: float) -> void:
 
 func _input(event):
 	if event.is_pressed():
-		# Pendiente: GameManager.goto(&"game") — GameManager es de C y está vacío.
-		print("Ir al juego")
+		var gm := get_node_or_null("/root/GameManager")
+		if gm and gm.has_method("goto"):
+			gm.goto(&"game")
+		else:
+			get_tree().change_scene_to_file("res://player/test_player.tscn")
 		get_tree().set_input_as_handled()

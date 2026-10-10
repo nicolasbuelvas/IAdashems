@@ -5,7 +5,8 @@ extends Node
 const SCENE_PATHS := {
 	&"menu": "res://scenes/main_menu.tscn",
 	&"intro": "res://scenes/intro.tscn",
-	&"game": "res://game/game.tscn",
+	&"game": "res://player/test_player.tscn",
+	&"options": "res://ui/options_menu.tscn",
 	&"outro": "res://scenes/outro.tscn",
 	&"credits": "res://scenes/credits.tscn",
 }
@@ -36,7 +37,8 @@ const _NEXT_STATES := {
 const _STATE_FOR_SCENE := {
 	&"menu": MENU,
 	&"intro": INTRO,
-	&"game": ROUND_INTRO,
+	&"game": PLAYING,
+	&"options": MENU,
 	&"outro": OUTRO,
 	&"credits": CREDITS,
 }

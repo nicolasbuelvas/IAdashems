@@ -48,10 +48,16 @@ func _on_ResumeButton_pressed() -> void:
 
 
 func _on_OptionsButton_pressed() -> void:
-	# Pendiente: GameManager.goto(&"options") — GameManager es de C y está vacío.
-	print("Ir a opciones")
+	var gm := get_node_or_null("/root/GameManager")
+	if gm and gm.has_method("goto"):
+		gm.goto(&"options")
+	else:
+		get_tree().change_scene_to_file("res://ui/options_menu.tscn")
 
 
 func _on_QuitButton_pressed() -> void:
-	# Pendiente: GameManager.goto(&"menu") — GameManager es de C y está vacío.
-	print("Salir al menú principal")
+	var gm := get_node_or_null("/root/GameManager")
+	if gm and gm.has_method("goto"):
+		gm.goto(&"menu")
+	else:
+		get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
