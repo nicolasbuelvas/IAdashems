@@ -27,6 +27,7 @@ Task: Vaciar autoloads, quitar referencias de project.godot y agregar .gdkeep pa
 Type: HUMAN_REFINEMENT
 Files: autoload/event_bus.gd, autoload/game_config.gd, autoload/game_manager.gd, project.godot, anomalies/.gdkeep, art/a-player/.gdkeep, art/b-anomalies/.gdkeep, art/c-systems/.gdkeep, art/d-ui/.gdkeep, audio/.gdkeep, autoload/.gdkeep, game/.gdkeep, level/.gdkeep, player/.gdkeep, scenes/.gdkeep, systems/.gdkeep, ui/.gdkeep
 Change: Se vaciaron los scripts de autoload, se eliminaron sus referencias de project.godot y se añadieron archivos .gdkeep en los directorios para establecer una estructura de proyecto Godot completamente vacía, solo con directorios y archivos de escena mínimos.
+Commit: 0879300
 
 
 ---
@@ -63,6 +64,9 @@ Timestamp: N/A
 Participant: NB (Nicolas Buelvas)
 Task: Desarrollar la escena del Outro (outro.tscn)
 Type: AI_ASSISTED
+Files: scenes/outro.tscn, scenes/outro.gd
+Change: Se creó el script outro.gd y se implementó el diseño visual de la escena de outro con título y mensaje de cierre.
+Commit: abb500b
 
 
 ---
@@ -591,3 +595,17 @@ Files: autoload/event_bus.gd, systems/heat_system.gd, systems/round_manager.gd, 
 Change: Eliminación de la mecánica de derrota por reloj (reloj oculto del HUD y temporizador desactivado como factor de derrota) priorizando la temperatura como única mecánica principal de tensión. Rediseño del HUD: reubicación de las vidas a la barra superior con el sprite de papa sin extremidades (Sprites/SE_ESTA_RESISTIENDO/papaXLL.png) montado sobre una silueta idéntica negra inferior que genera apariencia de borde negro/holder físico. Ocultación del slot de dash y estilización limpia del slot de herbicida. Implementación de secuencia de revivir con causalidad diegética pura: al llegar a 0 vidas, los 3 corazones se restauran sucesivamente con rebote elástico, seguido de sonido de vapor alarmante (sfx_heat_steam.ogg), pulso visual de la barra de calor y penalización de +30% de temperatura. En sobrecalentamiento crítico (100% calor): los corazones se evaporan suavemente uno por uno con sfx de fritura, se fracturan y destruyen los holders negros (sfx_comic_explosion.wav con grietas) y se ejecuta la muerte definitiva de la papa abriendo el modal de Game Over adaptado estrictamente a 3 opciones limpias con iconografía técnica (Reintentar donde estás, Reiniciar desde cero, Menú principal). Regla de audio: la música de Game Over suena exclusivamente al perder definitivamente; en muertes normales la música de gameplay continúa. Generación e integración de texturas procedurales PBR 100% legales y originales para paredes y forjados (cemento cepillado, ladrillo de oficina, panel de yeso/drywall y alfombra acústica modular), eliminando superficies planas grises en la arquitectura.
 Commit: 90963f5
 Notes: 215 comprobaciones automatizadas pasando sin errores (ui_check 44/44, heat_system_test 32/32, round_manager_test 139/139).
+
+
+---
+
+## AI-IAdashems-NB-000044
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Eliminación del reloj de tiempo, temperatura y corazones de papa prominentes, orden de sacrificio al revivir, rotura de holders y texturas de pared
+Type: AI_ASSISTED
+Files: ui/hud.tscn, ui/hud.gd, systems/round_manager.gd, game/game.tscn, game/game.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, level/building.tscn, Textures/office_concrete_wall.png, art/d-ui/heart_potato.png
+Change: Se eliminó el reloj y la mecánica de tiempo de la interfaz y del flujo de juego, priorizando exclusivamente la temperatura como condición central y los corazones de papa sin extremidades en holders ampliados de 48x48. Al morir, la secuencia visual y sonora refleja claramente que las vidas se regeneran primero y a cambio la temperatura sube +30% con sonido de vapor e iconografía pura (♨ +30%) sin texto AI-slop. Al llegar al 100% de calor, las vidas restantes se drenan suavemente una a una, se fracturan los holders físicos con sonido de rotura y vibración, y se abre el Game Over adaptado a 3 únicas opciones: Reintentar, Reiniciar desde cero y Menú. Se aplicaron texturas originales de cemento, ladrillo, drywall y alfombra a todas las paredes y pisos de la oficina eliminando superficies planas.
+Commit: 2c8eb39
+Notes: 139 comprobaciones en round_manager_test, 32 en heat_system_test y 120 en level_layout_test pasando sin errores.
