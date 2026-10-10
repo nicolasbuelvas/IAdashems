@@ -77,3 +77,15 @@ Files: player/player.gd, player/player.tscn, player/test_player.tscn, project.go
 Change: Hitbox física y ContactArea alineadas; animaciones conducidas desde movimiento; prueba como escena principal con overlay de controles y luz.
 Commit: PENDING
 Notes: Godot 4.7.1 headless sin errores; runtime reportó contacto, heat_changed y golpe del herbicida. Pendiente playtest manual visual y de movimiento.
+
+
+## AI-IAdashems-SM-000007
+
+Timestamp: 2026-10-10T01:12:57-05:00
+Participant: SM (Sebastian Marquez)
+Task: Corregir sensación de levitación y validar separación entre colisión y contacto
+Type: DEBUGGING
+Files: player/player.gd, player/player.tscn
+Change: Idle usa el frame con menor espacio transparente bajo los pies; se ajustó el offset vertical de sprite y dash. Se mantiene la separación de collider sólido y ContactArea sensor.
+Commit: PENDING
+Notes: Godot 4.7.1 headless validó carga sin errores; ventana abierta para confirmación visual del apoyo.

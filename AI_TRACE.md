@@ -94,3 +94,15 @@ Files: player/player.gd, player/player.tscn, player/test_player.tscn, project.go
 Change: Hitbox física y ContactArea quedaron de tamaños alineados; se agregaron estados de animación correr/quieto/dash y flip horizontal. test_player es la escena principal, muestra controles y tiene luz para inspección.
 Limitaciones: Se validó carga headless y el runtime reportó contacto, emisión heat_changed y golpe del herbicida. Sin inspección visual automatizada; falta playtest manual de movimiento, salto y presentación.
 Commit: PENDING
+
+
+## AI-IAdashems-SM-000007
+
+Timestamp: 2026-10-10T01:12:57-05:00
+Participant: SM (Sebastian Marquez)
+Task: Corregir sensación de levitación y validar separación entre colisión y contacto
+Type: DEBUGGING
+Files: player/player.gd, player/player.tscn
+Change: El estado quieto ahora usa el frame de correr con menor margen transparente bajo los pies (14 px en vez de 46 px), se bajó el sprite y el dash recibe un offset visual leve hacia el piso. Se conserva el collider sólido para world y ContactArea como sensor no bloqueante de anomalías.
+Limitaciones: Godot 4.7.1 headless validó la carga sin errores; la ventana está abierta para confirmar visualmente el apoyo final.
+Commit: PENDING

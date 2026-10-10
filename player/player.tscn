@@ -18,10 +18,6 @@
 radius = 0.42
 height = 1.55
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_contact"]
-radius = 0.48
-height = 1.65
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_seqjs"]
 resource_name = "Potato"
 animations = [{
@@ -77,6 +73,10 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_contact"]
+radius = 0.48
+height = 1.65
+
 [node name="Player" type="CharacterBody3D" unique_id=2104887993 groups=["player"]]
 collision_layer = 2
 axis_lock_linear_z = true
@@ -91,21 +91,19 @@ shape = SubResource("CapsuleShape3D_player")
 debug_color = Color(0.99514896, 0, 0.21801919, 0.41960785)
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=621835400]
-transform = Transform3D(0.6169872, 0, 0, 0, 0.6169872, 0, 0, 0, 1, -0.0233441, 1.05, -0.017205834)
+transform = Transform3D(0.6169872, 0, 0, 0, 0.6169872, 0, 0, 0, 1, -0.0233441, 0.8986554, -0.017205834)
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_seqjs")
 animation = &"correr"
-frame = 0
-frame_progress = 0.0
+frame = 5
 
-[node name="ContactArea" type="Area3D" parent="."]
-position = Vector3(0, 0.8, 0)
+[node name="ContactArea" type="Area3D" parent="." unique_id=602657720]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 collision_layer = 0
 collision_mask = 4
-monitoring = true
 monitorable = false
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ContactArea"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ContactArea" unique_id=1940767654]
 shape = SubResource("CapsuleShape3D_contact")
 
 [connection signal="area_entered" from="ContactArea" to="." method="_on_contact_area_area_entered"]

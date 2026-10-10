@@ -16,6 +16,7 @@ const _FALLBACK_HERBICIDE_COOLDOWN := 5.0
 const _HERBICIDE_SCENE: PackedScene = preload("res://player/herbicide.tscn")
 const _BLINK_INTERVAL := 0.08
 const _SLIDE_ALPHA := 0.4
+const _DASH_VISUAL_OFFSET_Y := 0.18
 const HEAT_HIGH_THRESHOLD := 70.0
 
 var move_speed: float = _FALLBACK_SPEED
@@ -44,6 +45,7 @@ var _blink_on: bool = false
 var _dead: bool = false
 var _visual: GeometryInstance3D
 var _animated_sprite: AnimatedSprite3D
+var _sprite_base_y := 0.0
 var _heat_active := false
 
 
@@ -55,6 +57,8 @@ func _ready() -> void:
 	floor_max_angle = deg_to_rad(60.0)
 	_animated_sprite = get_node_or_null("AnimatedSprite3D") as AnimatedSprite3D
 	_visual = _animated_sprite
+	if _animated_sprite != null:
+		_sprite_base_y = _animated_sprite.position.y
 	if _visual == null:
 		_visual = get_node_or_null("MeshInstance3D") as GeometryInstance3D
 	_apply_game_config()
@@ -329,14 +333,17 @@ func _update_animation() -> void:
 		return
 	_animated_sprite.flip_h = _facing < 0.0
 	if is_sliding():
+		_animated_sprite.position.y = _sprite_base_y - _DASH_VISUAL_OFFSET_Y
 		if _animated_sprite.animation != &"dash" or not _animated_sprite.is_playing():
 			_animated_sprite.play(&"dash")
 	elif is_on_floor() and absf(velocity.x) > 0.1:
+		_animated_sprite.position.y = _sprite_base_y
 		if _animated_sprite.animation != &"correr" or not _animated_sprite.is_playing():
 			_animated_sprite.play(&"correr")
 	else:
-		if _animated_sprite.animation != &"correr" or _animated_sprite.is_playing():
+		_animated_sprite.position.y = _sprite_base_y
+		if _animated_sprite.animation != &"correr" or _animated_sprite.is_playing() or _animated_sprite.frame != 5:
 			_animated_sprite.animation = &"correr"
 			_animated_sprite.stop()
-			_animated_sprite.frame = 0
+			_animated_sprite.frame = 5
 			_animated_sprite.frame_progress = 0.0
