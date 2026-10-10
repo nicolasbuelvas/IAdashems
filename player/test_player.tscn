@@ -1,0 +1,92 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="PackedScene" path="res://player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="2_camera"]
+[ext_resource type="Script" path="res://player/test_anomaly.gd" id="3_anomaly_script"]
+[ext_resource type="Script" path="res://player/test_heat_bus.gd" id="4_heat_bus"]
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(20, 1, 4)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+size = Vector3(20, 1, 4)
+
+[sub_resource type="BoxShape3D" id="RampShape"]
+size = Vector3(3.5, 0.3, 3)
+
+[sub_resource type="BoxMesh" id="RampMesh"]
+size = Vector3(3.5, 0.3, 3)
+
+[sub_resource type="SphereShape3D" id="AnomalyShape"]
+radius = 0.65
+
+[sub_resource type="SphereMesh" id="AnomalyMesh"]
+radius = 0.65
+height = 1.3
+
+[node name="TestPlayer" type="Node3D"]
+
+[node name="EventBus" type="Node" parent="."]
+script = ExtResource("4_heat_bus")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.5, 0)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("FloorShape")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("FloorMesh")
+
+[node name="Ramp" type="StaticBody3D" parent="."]
+position = Vector3(2.8, 0.65, 0)
+rotation = Vector3(0, 0, -0.28)
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ramp"]
+shape = SubResource("RampShape")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ramp"]
+mesh = SubResource("RampMesh")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+position = Vector3(-5, 0, 0)
+
+[node name="AnomalyDummy" type="Area3D" parent="." groups=["anomaly"]]
+position = Vector3(4.0, 0.8, 0.0)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("3_anomaly_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnomalyDummy"]
+shape = SubResource("AnomalyShape")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="AnomalyDummy"]
+mesh = SubResource("AnomalyMesh")
+
+[node name="FollowCamera" parent="." instance=ExtResource("2_camera")]
+target_path = NodePath("../Player")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-45, -20, 0)
+light_energy = 1.2
+
+[node name="Controls" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Background" type="ColorRect" parent="Controls"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 370.0
+offset_bottom = 128.0
+color = Color(0.04, 0.04, 0.04, 0.78)
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="Controls/Background"]
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 340.0
+offset_bottom = 102.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "A / D or arrows: move\nSpace: jump    Shift: slide\nE: herbicide    H: heat test"
