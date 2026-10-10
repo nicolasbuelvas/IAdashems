@@ -166,3 +166,36 @@ Files: player/player.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
 Change: La recuperación de 1 s reduce la velocidad horizontal al 55 % y permite saltar y disparar; se elimina la inmovilización y el descarte de entradas. Se integraron los cambios disponibles de origin/main mediante merge.
 Limitaciones: El porcentaje de velocidad es un valor inicial para probar. La compilación y el gameplay deben verificarse en Godot después de resolver la integración.
 Commit: PENDING
+
+## AI-IAdashems-SM-000015
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Dar más sensación de profundidad a la cámara lateral con inclinación dinámica
+Type: AI_ASSISTED
+Files: player/follow_camera.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: La cámara conserva su ángulo lateral actual y añade un balanceo de hasta 2 grados según la velocidad horizontal, suavizado con interpolación exponencial y centrado al reducir la velocidad.
+Limitaciones: El ángulo máximo y la respuesta son valores iniciales; falta playtest visual para confirmar que aporta profundidad sin distraer. No se pudo ejecutar Godot en este entorno.
+Commit: PENDING
+
+## AI-IAdashems-SM-000016
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Inclinar la cámara para revelar profundidad 3D y ajustar el sprite animado del hongo
+Type: AI_ASSISTED
+Files: player/follow_camera.gd, player/follow_camera.tscn, anomalies/cucumber.gd, anomalies/cucumber.tscn, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: Se reemplazó el balanceo dinámico por una cámara oblicua fija (pitch -11°, yaw -12°), compensando el seguimiento para conservar el encuadre. El hongo ahora reproduce run, usa billboard hacia cámara y una escala/posición alineadas con su cápsula de colisión.
+Limitaciones: Los ángulos y escala requieren inspección visual en Godot; no se pudo ejecutar el motor en este entorno.
+Commit: PENDING
+
+## AI-IAdashems-SM-000017
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Hacer que el sprite del hongo mire en la dirección de su desplazamiento
+Type: AI_ASSISTED
+Files: anomalies/cucumber.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: El AnimatedSprite3D invierte horizontalmente la textura cuando la velocidad X del hongo es negativa y conserva la orientación cuando se detiene.
+Limitaciones: No se pudo validar visualmente en ejecución porque Godot no está disponible en este entorno.
+Commit: PENDING
