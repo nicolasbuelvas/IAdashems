@@ -53,4 +53,14 @@ Type: AI_ASSISTED
 Files: scenes/intro.tscn, scenes/intro.gd
 Change: Se creó el script intro.gd con funcionalidad de avance por input y se implementó el diseño visual de la escena de introducción con un título y un mensaje para continuar.
 Commit: be203cd
-Notes: La navegación real al juego se integrará cuando GameManager.goto() esté disponible.
+
+
+---
+
+## AI-IAdashems-NB-000005
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Desarrollar la escena del Outro (outro.tscn)
+Type: AI_ASSISTED
+Commit: abb500b
