@@ -67,7 +67,7 @@ Cada ronda es un turno de trabajo. El juego tiene seis rondas.
 - **Calor:** medidor que sube con el tiempo, los golpes y las anomalías activas. Si llega al máximo, pierdes.
 - **Vida:** 3 golpes. Si llega a 0, pierdes.
 - **Movimiento:** caminar, saltar, deslizarse, subir y bajar escaleras.
-- **Herbicida:** lanzamiento ilimitado con cooldown de 5 segundos.
+- **Herbicida:** lanzamiento ilimitado con cooldown de 3 segundos.
 
 ### 5.2 Anomalías
 

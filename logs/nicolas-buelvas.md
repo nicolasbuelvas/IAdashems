@@ -547,5 +547,19 @@ Task: Corrección de invisibilidad tras captura en muerte y activación de derro
 Type: AI_ASSISTED
 Files: player/player.gd, systems/round_manager.gd, anomalies/test_arena_controller.gd
 Change: 1) Se resolvió la condición de carrera donde capturar la última anomalía durante la animación de muerte dejaba la papa invisible y penalizaba la ronda siguiente: se implementó token de generación de muerte (_death_token) en Player para invalidar corrutinas pendientes al invocar reset_to o emitirse round_won, restableciendo visibilidad del sprite inmediatamente y cancelando cualquier ciclo de penalización en RoundManager. 2) Se corrigió la expiración del reloj en test_arena_controller: se conectó la llamada directa a _on_timer_expired() cuando time_left llega a 0 en _process(), desplegando el Game Over y pausando la arena adecuadamente.
-Commit: 0e490c3
+Commit: 2231151
+Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000041
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Reducción del cooldown del herbicida del jugador a 3 segundos
+Type: AI_ASSISTED
+Files: autoload/game_config.gd, player/player.gd, docs/GDD.md
+Change: Se redujo la constante HERBICIDE_COOLDOWN de 5.0s a 3.0s en autoload/game_config.gd, su valor fallback en player/player.gd y la documentación en docs/GDD.md, aumentando la cadencia y dinamismo del lanzamiento de herbicida para contener guisantes.
+Commit: 50bf6b2
 Notes: 332 comprobaciones automatizadas pasando sin errores.
