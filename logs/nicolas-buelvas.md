@@ -102,4 +102,17 @@ Type: AI_ASSISTED
 Files: ui/pause_menu.tscn, ui/pause_menu.gd
 Change: Se creó el script pause_menu.gd con funcionalidad de pausa, y se implementó el diseño visual del menú de pausa con título y botones para Reanudar, Opciones y Salir al menú.
 Commit: PENDING
-Notes: La navegación a opciones y al menú principal se integrará cuando GameManager.goto() esté disponible.
+
+
+---
+
+## AI-IAdashems-NB-000009
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Desarrollar la escena del menú de opciones (ui/options_menu.tscn)
+Type: AI_ASSISTED
+Files: ui/options_menu.tscn, ui/options_menu.gd
+Change: Se creó el script options_menu.gd con la lógica para volumen de audio, pantalla completa y resolución. Se implementó el diseño visual del menú de opciones con sliders, checkbox y un selector de resolución.
+Commit: PENDING
+Notes: Se asume que los buses de audio 'Music' y 'SFX' existen en la configuración del proyecto de Godot.
