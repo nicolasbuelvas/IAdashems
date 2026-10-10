@@ -9,12 +9,18 @@ extends Camera3D
 @export var look_ahead_distance := 1.0
 @export var look_ahead_speed := 5.0
 @export var look_ahead_reference_speed := 11.0
+@export var heat_shake_max_offset := Vector2(0.045, 0.028)
+@export var heat_response_speed := 2.8
 
 const _REFERENCE_PITCH_DEG := -6.5
 const _REFERENCE_YAW_DEG := -3.5
 
 var _target: Node3D
 var _look_ahead_x := 0.0
+var _follow_position := Vector3.ZERO
+var _heat_intensity := 0.0
+var _heat_target_intensity := 0.0
+var _shake_time := 0.0
 
 
 func _ready() -> void:
@@ -27,6 +33,12 @@ func _ready() -> void:
 	position.z = fixed_z
 	rotation_degrees.x = pitch_deg
 	rotation_degrees.y = yaw_deg
+	_follow_position = global_position
+	var event_bus := get_node_or_null("/root/EventBus")
+	if event_bus != null and event_bus.has_signal("heat_changed"):
+		var callback := Callable(self, "_on_heat_changed")
+		if not event_bus.is_connected("heat_changed", callback):
+			event_bus.connect("heat_changed", callback)
 	current = true
 
 
@@ -46,6 +58,22 @@ func _process(delta: float) -> void:
 	# Compensa el cambio angular para que el jugador mantenga el encuadre al revelar profundidad.
 	var yaw_frame_offset := fixed_z * (tan(deg_to_rad(-yaw_deg)) - tan(deg_to_rad(-_REFERENCE_YAW_DEG)))
 	var pitch_frame_offset := fixed_z * (tan(deg_to_rad(-pitch_deg)) - tan(deg_to_rad(-_REFERENCE_PITCH_DEG)))
-	global_position.x = lerpf(global_position.x, focus_x - yaw_frame_offset, follow_weight)
-	global_position.y = lerpf(global_position.y, _target.global_position.y + y_offset + pitch_frame_offset, follow_weight)
-	global_position.z = fixed_z
+	_follow_position.x = lerpf(_follow_position.x, focus_x - yaw_frame_offset, follow_weight)
+	_follow_position.y = lerpf(_follow_position.y, _target.global_position.y + y_offset + pitch_frame_offset, follow_weight)
+	_follow_position.z = fixed_z
+	_heat_intensity = lerpf(_heat_intensity, _heat_target_intensity, 1.0 - exp(-heat_response_speed * delta))
+	_shake_time += delta
+	var shake := Vector3(
+		sin(_shake_time * 17.0) * heat_shake_max_offset.x,
+		sin(_shake_time * 23.7 + 1.4) * heat_shake_max_offset.y,
+		0.0
+	) * _heat_intensity
+	global_position = _follow_position + shake
+
+
+func _on_heat_changed(value: float, max_value: float) -> void:
+	var threshold := float(GameConfig.HEAT_HIGH_THRESHOLD)
+	if max_value <= threshold:
+		_heat_target_intensity = 0.0
+		return
+	_heat_target_intensity = smoothstep(0.0, 1.0, clampf((value - threshold) / (max_value - threshold), 0.0, 1.0))

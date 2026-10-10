@@ -10,3 +10,13 @@ fixed_z = 13.0
 y_offset = 1.2
 pitch_deg = -11.0
 yaw_deg = -12.0
+
+[node name="CameraKeyLight" type="SpotLight3D" parent="."]
+position = Vector3(0.0, 0.0, -6.0)
+light_color = Color(1.0, 0.94, 0.82, 1.0)
+light_energy = 4.0
+spot_range = 24.0
+spot_angle = 70.0
+# Desactiva esta opción para recuperar el rendimiento sin quitar la luz.
+shadow_enabled = true
+shadow_opacity = 0.72

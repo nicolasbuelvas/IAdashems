@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://game/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://level/building.tscn" id="2_building"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://player/follow_camera.tscn" id="6_camera"]
 [ext_resource type="PackedScene" uid="uid://cmf2f53o82h1y" path="res://ui/hud.tscn" id="7_hud"]
 [ext_resource type="PackedScene" uid="uid://cmf2f53o82h1z" path="res://ui/pause_menu.tscn" id="8_pause"]
+[ext_resource type="PackedScene" path="res://effects/heat_screen_effect.tscn" id="9_heat_effect"]
 
 [node name="Game" type="Node3D"]
 script = ExtResource("1_game")
@@ -34,6 +35,10 @@ target_path = NodePath("../Player")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 rotation = Vector3(-0.9, 0.4, 0)
+# Luz direccional global para que las sombras del edificio y sus objetos sean consistentes.
+shadow_enabled = true
+
+[node name="HeatScreenEffect" parent="." instance=ExtResource("9_heat_effect")]
 
 [node name="HUDLayer" type="CanvasLayer" parent="."]
 

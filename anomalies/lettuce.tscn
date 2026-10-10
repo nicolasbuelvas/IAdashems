@@ -21,6 +21,9 @@ shape = SubResource("SphereShape3D_let")
 [node name="Sprite3D" type="Sprite3D" parent="."]
 position = Vector3(0, 0.45, 0)
 scale = Vector3(0.22, 0.22, 0.22)
+cast_shadow = 1
+alpha_cut = 2
+shaded = true
 texture_filter = 1
 billboard = 1
 texture = ExtResource("2_sprite")

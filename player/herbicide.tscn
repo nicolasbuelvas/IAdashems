@@ -17,6 +17,7 @@ script = ExtResource("1_script")
 shape = SubResource("SphereShape3D_projectile")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
+cast_shadow = 0
 scale = Vector3(0.08, 0.08, 0.08)
 texture_filter = 1
 billboard = 1

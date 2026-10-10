@@ -210,3 +210,36 @@ Files: player/player.gd, player/player.tscn, player/herbicide.tscn, anomalies/le
 Change: Se añadieron idle de dos fotogramas y disparo de tres fotogramas a AnimatedSprite3D. El movimiento queda bloqueado solo durante los ~0.38 s de la animación de disparo; el cooldown conserva su duración independiente. El proyectil usa papaXLL y la lechuga usa su sprite estático.
 Limitaciones: Falta ejecutar las escenas en Godot para revisar importación, escala visual y transición de estados; el motor no está disponible en este entorno.
 Commit: PENDING
+
+## AI-IAdashems-SM-000019
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Agregar efectos visuales de temperatura alta sin modificar el HUD
+Type: AI_ASSISTED
+Files: effects/heat_screen_effect.gd, effects/heat_screen_effect.gdshader, effects/heat_screen_effect.tscn, player/follow_camera.gd, game/game.tscn, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: La escena principal escucha heat_changed y aumenta gradualmente una distorsión térmica, una viñeta roja en los bordes y vibración suave de cámara desde HEAT_HIGH_THRESHOLD. La capa de efectos se dibuja debajo del HUD; no se modificó su contenido ni el escenario.
+Commit: PENDING
+Notes: git diff --check pasó. Godot no está disponible en PATH, por lo que no se pudo validar la importación del shader ni probar visualmente los efectos en runtime; valores de distorsión y vibración quedan sujetos a ajuste visual.
+
+## AI-IAdashems-SM-000020
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Aplicar concreto PBR a la oficina y agregar sombras proyectadas reversibles
+Type: AI_ASSISTED
+Files: level/materials/office_concrete.tres, level/building.tscn, game/game.tscn, player/player.tscn, player/herbicide.tscn, anomalies/cucumber.tscn, anomalies/pea.tscn, anomalies/lettuce.tscn, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: Se creó un material propio desde los mapas color, roughness, normal GL y AO, con repetición para las superficies largas y sin displacement. Se aplicó a pisos y paredes de fondo; la luz direccional principal proyecta sombras de opacidad reducida y los sprites recortan alfa para formar siluetas. Las sombras se revierten desactivando shadow_enabled en esa luz.
+Commit: PENDING
+Notes: git diff --check y validaciones estáticas de rutas/referencias completadas. No hay ejecutable Godot disponible en PATH; faltan validación de carga de escenas, revisión visual del tiling y medición de rendimiento en la PC del equipo.
+
+## AI-IAdashems-SM-000021
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Completar textura de paredes laterales y activar iluminación frontal con sombras
+Type: DEBUGGING
+Files: level/materials/office_concrete_sidewalls.tres, level/building.tscn, player/follow_camera.tscn, game/game.tscn, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: Se asignó concreto PBR con escala UV propia a las paredes laterales. Se añadió un foco cálido hijo de la cámara, dirigido hacia el jugador y la pared de fondo, y se trasladó a ese foco la única sombra en tiempo real; la direccional queda como luz de relleno sin sombras. La casilla CameraKeyLight.shadow_enabled permite apagar las sombras sin quitar iluminación.
+Commit: PENDING
+Notes: Validaciones estáticas de rutas, materiales y configuración de luz realizadas; git diff --check pasó. Godot no está disponible en PATH, así que la apariencia y el costo real de la luz quedan pendientes de comprobar en la PC del equipo. Los .import de texturas son metadatos generados por Godot para los mapas usados.
