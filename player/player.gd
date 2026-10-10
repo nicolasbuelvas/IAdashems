@@ -11,14 +11,19 @@ const _FALLBACK_IFRAMES := 1.0
 const _FALLBACK_SLIDE_DURATION := 0.65
 const _FALLBACK_SLIDE_COOLDOWN := 0.6
 const _FALLBACK_SLIDE_SPEED := 11.0
-const _GROUND_ACCELERATION := 34.0
-const _AIR_ACCELERATION := 22.0
-const _TURNAROUND_ACCELERATION := 50.0
-const _GROUND_DECELERATION := 42.0
-const _AIR_DECELERATION := 20.0
+const _GROUND_ACCELERATION := 18.0
+const _AIR_ACCELERATION := 14.0
+const _TURNAROUND_ACCELERATION := 30.0
+const _GROUND_DECELERATION := 22.0
+const _AIR_DECELERATION := 10.0
 const _PLAYER_GRAVITY_SCALE := 2.25
 const _FALL_GRAVITY_MULTIPLIER := 1.35
-const _JUMP_RELEASE_GRAVITY_MULTIPLIER := 1.35
+const _JUMP_RELEASE_GRAVITY_MULTIPLIER := 1.6
+const _JUMP_APEX_GRAVITY_MULTIPLIER := 0.72
+const _JUMP_APEX_VELOCITY_RATIO := 0.25
+const _DASH_CARRY_DURATION := 0.55
+const _DASH_CARRY_DECELERATION := 10.0
+const _DASH_EXIT_SPEED_RATIO := 0.82
 const _FALLBACK_HERBICIDE_SPEED := 14.0
 const _FALLBACK_HERBICIDE_COOLDOWN := 5.0
 const _HERBICIDE_SCENE: PackedScene = preload("res://player/herbicide.tscn")
@@ -47,6 +52,9 @@ var _facing: float = 1.0
 var _slide_dir: float = 1.0
 var _slide_time_left: float = 0.0
 var _slide_cooldown_left: float = 0.0
+var _dash_carry_time_left: float = 0.0
+var _dash_carry_speed: float = 0.0
+var _dash_carry_direction: float = 0.0
 var _herbicide_cooldown_left: float = 0.0
 var _last_aim_direction := Vector2.RIGHT
 var _iframe_left: float = 0.0
@@ -101,6 +109,8 @@ func _physics_process(delta: float) -> void:
 			gravity_multiplier = _FALL_GRAVITY_MULTIPLIER
 		elif not Input.is_physical_key_pressed(KEY_SPACE):
 			gravity_multiplier = _JUMP_RELEASE_GRAVITY_MULTIPLIER
+		elif velocity.y < jump_velocity * _JUMP_APEX_VELOCITY_RATIO:
+			gravity_multiplier = _JUMP_APEX_GRAVITY_MULTIPLIER
 		velocity.y -= _gravity * _PLAYER_GRAVITY_SCALE * gravity_multiplier * delta
 
 	if _wants_jump() and not is_sliding() and is_on_floor():
@@ -123,8 +133,19 @@ func _physics_process(delta: float) -> void:
 	if is_sliding():
 		var slide_progress := 1.0 - _slide_time_left / slide_duration
 		var deceleration := smoothstep(0.7, 1.0, slide_progress)
-		var current_slide_speed := lerpf(slide_speed, move_speed, deceleration)
+		var dash_exit_speed := maxf(move_speed, slide_speed * _DASH_EXIT_SPEED_RATIO)
+		var current_slide_speed := lerpf(slide_speed, dash_exit_speed, deceleration)
 		velocity.x = _slide_dir * current_slide_speed
+	elif _dash_carry_time_left > 0.0:
+		var carry_ratio := _dash_carry_time_left / _DASH_CARRY_DURATION
+		if input_x == _dash_carry_direction:
+			var carry_speed := lerpf(move_speed, _dash_carry_speed, carry_ratio)
+			velocity.x = _dash_carry_direction * carry_speed
+		elif input_x == 0.0:
+			velocity.x = move_toward(velocity.x, 0.0, _DASH_CARRY_DECELERATION * delta)
+		else:
+			velocity.x = move_toward(velocity.x, input_x * move_speed, _TURNAROUND_ACCELERATION * delta)
+		_dash_carry_time_left = maxf(_dash_carry_time_left - delta, 0.0)
 	elif input_x != 0.0:
 		var acceleration := _GROUND_ACCELERATION if is_on_floor() else _AIR_ACCELERATION
 		if velocity.x * input_x < 0.0:
@@ -179,6 +200,9 @@ func reset_to(spawn: Vector3) -> void:
 	_herbicide_queued = false
 	_slide_time_left = 0.0
 	_slide_cooldown_left = 0.0
+	_dash_carry_time_left = 0.0
+	_dash_carry_speed = 0.0
+	_dash_carry_direction = 0.0
 	_herbicide_cooldown_left = 0.0
 	_iframe_left = 0.0
 	_blink_on = false
@@ -196,6 +220,9 @@ func _update_slide(delta: float) -> void:
 		if _slide_time_left <= 0.0:
 			_slide_time_left = 0.0
 			_slide_cooldown_left = slide_cooldown
+			_dash_carry_direction = signf(velocity.x)
+			_dash_carry_speed = maxf(absf(velocity.x), move_speed)
+			_dash_carry_time_left = _DASH_CARRY_DURATION
 			_emit_bus("player_slide_ended", [])
 			_apply_visual()
 	elif _slide_cooldown_left > 0.0:

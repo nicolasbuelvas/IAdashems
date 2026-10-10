@@ -111,3 +111,25 @@ Files: player/player.gd
 Change: El movimiento horizontal ahora acelera hasta la velocidad objetivo, frena al soltar y usa una respuesta diferenciada al invertir dirección y durante el aire. El sprite mantiene su orientación mientras el impulso cambia, para evitar un giro visual instantáneo.
 Limitaciones: Parámetros iniciales de control; requieren ajuste mediante playtest, especialmente la inversión de dirección en el aire.
 Commit: PENDING
+
+## AI-IAdashems-SM-000010
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Mejorar el comportamiento de seguimiento de cámara con anticipación suave
+Type: AI_ASSISTED
+Files: player/follow_camera.gd
+Change: La cámara ya existente ahora anticipa horizontalmente según la velocidad real del jugador. La anticipación y el seguimiento usan suavizado exponencial independiente para mostrar más recorrido al moverse y recentrar con suavidad al frenar o cambiar de dirección.
+Limitaciones: Distancia y velocidad de anticipación son parámetros iniciales; pendientes de ajustar en playtest con el nivel completo y sus límites.
+Commit: PENDING
+
+## AI-IAdashems-SM-000011
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Hacer más progresiva la aceleración, conservar impulso tras el dash y afinar salto/cámara
+Type: AI_ASSISTED
+Files: player/player.gd, player/follow_camera.gd
+Change: Reducida la aceleración y frenado horizontal para tardar cerca de 0.33 s en alcanzar velocidad de carrera y cerca de 0.4 s en invertirla. El dash termina conservando velocidad por 0.55 s; el salto tiene gravedad reducida de forma breve cerca del ápice y al soltar Espacio cae más rápido. La cámara sigue el impulso con anticipación suavizada.
+Limitaciones: Parámetros de balance iniciales; faltan pruebas jugables para valorar la curva de velocidad y el arrastre tras el dash en el nivel completo.
+Commit: PENDING

@@ -3,8 +3,12 @@ extends Camera3D
 @export var target_path: NodePath
 @export var follow_speed := 6.0
 @export var fixed_z := 12.0
+@export var look_ahead_distance := 1.0
+@export var look_ahead_speed := 5.0
+@export var look_ahead_reference_speed := 8.0
 
 var _target: Node3D
+var _look_ahead_x := 0.0
 
 
 func _ready() -> void:
@@ -21,7 +25,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not is_instance_valid(_target):
 		return
-	var weight := 1.0 - exp(-follow_speed * delta)
-	global_position.x = lerpf(global_position.x, _target.global_position.x, weight)
-	global_position.y = lerpf(global_position.y, _target.global_position.y, weight)
+	var target_velocity_x := 0.0
+	if _target is CharacterBody3D:
+		target_velocity_x = (_target as CharacterBody3D).velocity.x
+	var velocity_ratio := clampf(target_velocity_x / look_ahead_reference_speed, -1.0, 1.0)
+	var desired_look_ahead := velocity_ratio * look_ahead_distance
+	var look_weight := 1.0 - exp(-look_ahead_speed * delta)
+	_look_ahead_x = lerpf(_look_ahead_x, desired_look_ahead, look_weight)
+
+	var follow_weight := 1.0 - exp(-follow_speed * delta)
+	var focus_x := _target.global_position.x + _look_ahead_x
+	global_position.x = lerpf(global_position.x, focus_x, follow_weight)
+	global_position.y = lerpf(global_position.y, _target.global_position.y, follow_weight)
 	global_position.z = fixed_z
