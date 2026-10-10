@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://anomalies/test_arena_controller.gd" id="1_controller"]
 [ext_resource type="PackedScene" uid="uid://d310r1vedl67d" path="res://player/player.tscn" id="2_player"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://level/ladder.tscn" id="5_ladder"]
 [ext_resource type="Theme" path="res://ui/theme.tres" id="6_theme"]
 [ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="7_eyebrow"]
+[ext_resource type="PackedScene" uid="uid://cmf2f53o82h1y" path="res://ui/hud.tscn" id="8_hud"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_Basement"]
 albedo_color = Color(0.18, 0.16, 0.15, 1)
@@ -83,22 +84,6 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[sub_resource type="StyleBoxFlat" id="Style_HUDCard"]
-content_margin_left = 18.0
-content_margin_top = 12.0
-content_margin_right = 18.0
-content_margin_bottom = 12.0
-bg_color = Color(0.10, 0.07, 0.05, 0.88)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.96, 0.68, 0.22, 0.6)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-
 [node name="TestAllAnomalies" type="Node3D"]
 script = ExtResource("1_controller")
 
@@ -136,14 +121,14 @@ mesh = SubResource("Mesh_Container")
 shape = SubResource("Shape_Container")
 
 [node name="Ladder_Sotano_Left" parent="Architecture/Basement" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, -4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, -4, 0)
 bottom_y = -3.5
 top_y = 0.5
 bottom_exit_offset_x = -1.2
 top_exit_offset_x = 1.2
 
 [node name="Ladder_Sotano_Right" parent="Architecture/Basement" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, -4, 0)
 bottom_y = -3.5
 top_y = 0.5
 bottom_exit_offset_x = 1.2
@@ -183,14 +168,14 @@ shape = SubResource("Shape_Container")
 [node name="Ladders_F1_F2" type="Node3D" parent="Architecture"]
 
 [node name="Ladder_F1_F2_Left" parent="Architecture/Ladders_F1_F2" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0)
 bottom_y = 0.5
 top_y = 4.5
 bottom_exit_offset_x = -1.2
 top_exit_offset_x = 1.2
 
 [node name="Ladder_F1_F2_Right" parent="Architecture/Ladders_F1_F2" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
 bottom_y = 0.5
 top_y = 4.5
 bottom_exit_offset_x = 1.2
@@ -230,14 +215,14 @@ shape = SubResource("Shape_Container")
 [node name="Ladders_F2_F3" type="Node3D" parent="Architecture"]
 
 [node name="Ladder_F2_F3_Left" parent="Architecture/Ladders_F2_F3" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 4, 0)
 bottom_y = 4.5
 top_y = 8.5
 bottom_exit_offset_x = -1.2
 top_exit_offset_x = 1.2
 
 [node name="Ladder_F2_F3_Right" parent="Architecture/Ladders_F2_F3" instance=ExtResource("5_ladder")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 4, 0)
 bottom_y = 4.5
 top_y = 8.5
 bottom_exit_offset_x = 1.2
@@ -300,39 +285,21 @@ light_energy = 1.15
 
 [node name="SpawnedAnomalies" type="Node3D" parent="."]
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+layer = 5
 
-[node name="HUDCard" type="PanelContainer" parent="UI"]
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 540.0
-offset_bottom = 120.0
-theme = ExtResource("6_theme")
-theme_override_styles/panel = SubResource("Style_HUDCard")
+[node name="HUD" parent="HUDLayer" instance=ExtResource("8_hud")]
 
-[node name="Margin" type="MarginContainer" parent="UI/HUDCard"]
-layout_mode = 2
-
-[node name="VBox" type="VBoxContainer" parent="UI/HUDCard/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="Label" type="Label" parent="UI/HUDCard/Margin/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
-theme_override_font_sizes/font_size = 14
-text = "SIMULADOR EN CURSO"
-
-[node name="BtnReopenSetup" type="Button" parent="UI"]
+[node name="BtnReopenSetup" type="Button" parent="HUDLayer"]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -220.0
-offset_top = 20.0
-offset_right = -20.0
-offset_bottom = 60.0
+offset_left = -200.0
+offset_top = 80.0
+offset_right = -24.0
+offset_bottom = 118.0
 theme = ExtResource("6_theme")
-text = "CONFIGURACIÓN (F1)"
+text = "CONFIGURAR (F1)"
 
 [node name="SetupUI" type="CanvasLayer" parent="."]
 process_mode = 3
@@ -493,7 +460,7 @@ theme_override_constants/separation = 6
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.78, 0.7, 1)
 theme_override_font_sizes/font_size = 13
-text = "Pisos Habilitados (mínimo 2 escaleras por piso + sótano base):"
+text = "Pisos Habilitados (2 escaleras alternadas + sótano base):"
 horizontal_alignment = 1
 
 [node name="FloorButtons" type="HBoxContainer" parent="SetupUI/Center/Card/Rows/FloorsSection"]
@@ -533,6 +500,76 @@ custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
 text = "COMENZAR SIMULACIÓN"
+
+[node name="GameOverUI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 18
+visible = false
+
+[node name="Backdrop" type="ColorRect" parent="GameOverUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.12, 0.02, 0.02, 0.88)
+
+[node name="Center" type="CenterContainer" parent="GameOverUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Card" type="PanelContainer" parent="GameOverUI/Center"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+theme = ExtResource("6_theme")
+theme_override_styles/panel = SubResource("Style_Card")
+
+[node name="Rows" type="VBoxContainer" parent="GameOverUI/Center/Card"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Eyebrow" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+label_settings = ExtResource("7_eyebrow")
+text = "PAPA COCINADA • SIN VIDAS"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+theme_type_variation = &"TitleLg"
+theme_override_colors/font_color = Color(0.95, 0.35, 0.25, 1)
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="GameOverUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(64, 4)
+layout_mode = 2
+size_flags_horizontal = 4
+color = Color(0.95, 0.35, 0.25, 1)
+
+[node name="Sub" type="Label" parent="GameOverUI/Center/Card/Rows"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.85, 0.8, 1)
+theme_override_font_sizes/font_size = 14
+text = "Has recibido 3 impactos y caíste derrotado ante las anomalías."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Gap" type="Control" parent="GameOverUI/Center/Card/Rows"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+
+[node name="BtnRetry" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "REINTENTAR SIMULACIÓN"
+
+[node name="BtnGameOverSetup" type="Button" parent="GameOverUI/Center/Card/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "CONFIGURAR ENTIDADES (F1)"
 
 [node name="PauseLayer" type="CanvasLayer" parent="."]
 layer = 20

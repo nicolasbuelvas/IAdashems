@@ -40,10 +40,16 @@ func _physics_process(_delta: float) -> void:
 			elif is_near_top and wants_down:
 				body.call("start_climb", bottom_y, ladder_x + bottom_exit_offset_x, ladder_x)
 		
-		# Comportamiento para Pepino que huye:
+		# Comportamiento para anomalías (Pepinos y evasores):
 		elif body.is_in_group("anomaly") and body.has_method("start_climb"):
-			if is_near_bottom and not body.get("is_contained"):
+			if not body.get("is_contained"):
 				var player := get_tree().get_first_node_in_group("player") as Node3D
-				if player != null and player.global_position.y <= bottom_y + 1.5:
-					if absf(player.global_position.x - body.global_position.x) < 5.5:
-						body.call("start_climb", top_y, ladder_x + top_exit_offset_x, ladder_x)
+				var player_dist := INF
+				if player != null and is_instance_valid(player):
+					player_dist = global_position.distance_to(player.global_position)
+				
+				# Prioridad táctica: bajar las escaleras activamente para rotar de piso
+				if is_near_top:
+					body.call("start_climb", bottom_y, ladder_x + bottom_exit_offset_x, ladder_x)
+				elif is_near_bottom and player_dist < 6.5:
+					body.call("start_climb", top_y, ladder_x + top_exit_offset_x, ladder_x)

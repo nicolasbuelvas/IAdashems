@@ -2,8 +2,8 @@ class_name TestArenaController
 extends Node3D
 
 ## Controlador de la arena de pruebas y Editor Manual Pre-Partida.
-## Configura cantidad de entidades y pisos (1 a 3 + sótano base con 2 escaleras por piso).
-## Las entidades operan siempre en su máxima condición táctica (sin degradación de dificultad).
+## Incluye HUD oficial, pantalla de Game Over al recibir 3 golpes y
+## escaleras alternadas entre pisos para evitar transiciones directas.
 
 const SCENE_CUCUMBER := preload("res://anomalies/cucumber.tscn")
 const SCENE_LETTUCE := preload("res://anomalies/lettuce.tscn")
@@ -17,8 +17,8 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 @onready var player: Node3D = $Player
 @onready var anomalies_container: Node3D = $SpawnedAnomalies
 @onready var setup_canvas: CanvasLayer = $SetupUI
-@onready var hud_canvas: CanvasLayer = $UI
-@onready var hud_label: Label = $UI/HUDCard/Margin/VBox/Label
+@onready var game_over_canvas: CanvasLayer = $GameOverUI
+@onready var hud_node: Control = $HUDLayer/HUD
 
 @onready var floor_2_node: Node3D = $Architecture/Floor2
 @onready var floor_3_node: Node3D = $Architecture/Floor3
@@ -43,11 +43,15 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 @onready var btn_floor_3: Button = %BtnFloor3
 
 @onready var btn_start: Button = %BtnStart
-@onready var btn_reopen: Button = $UI/BtnReopenSetup
+
+# Game Over botones
+@onready var btn_retry: Button = %BtnRetry
+@onready var btn_game_over_setup: Button = %BtnGameOverSetup
 
 
 func _ready() -> void:
 	_init_setup_ui()
+	_connect_event_bus()
 	show_setup_editor()
 
 
@@ -55,6 +59,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_F1:
 			show_setup_editor()
+
+
+func _connect_event_bus() -> void:
+	var bus := get_node_or_null("/root/EventBus")
+	if bus and bus.has_signal("player_died"):
+		bus.connect("player_died", _on_player_died)
+	if bus and bus.has_signal("anomaly_contained"):
+		bus.connect("anomaly_contained", _on_anomaly_contained)
 
 
 func _init_setup_ui() -> void:
@@ -92,7 +104,9 @@ func _init_setup_ui() -> void:
 	btn_floor_3.pressed.connect(func(): _set_floors(3))
 	
 	btn_start.pressed.connect(_on_btn_start_pressed)
-	btn_reopen.pressed.connect(show_setup_editor)
+	
+	btn_retry.pressed.connect(_on_btn_retry_pressed)
+	btn_game_over_setup.pressed.connect(show_setup_editor)
 	
 	_update_floor_buttons()
 
@@ -123,17 +137,45 @@ func _style_toggle_button(btn: Button, is_active: bool) -> void:
 
 func show_setup_editor() -> void:
 	setup_canvas.visible = true
-	hud_canvas.visible = false
+	game_over_canvas.visible = false
 	get_tree().paused = true
 
 
 func _on_btn_start_pressed() -> void:
 	setup_canvas.visible = false
-	hud_canvas.visible = true
+	game_over_canvas.visible = false
 	get_tree().paused = false
 	
 	_apply_floor_configuration()
 	_respawn_simulation()
+
+
+func _on_btn_retry_pressed() -> void:
+	game_over_canvas.visible = false
+	get_tree().paused = false
+	_respawn_simulation()
+
+
+func _on_player_died() -> void:
+	game_over_canvas.visible = true
+	get_tree().paused = true
+	var audio := get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_music"):
+		audio.call("play_music", "res://audio/bgm_game_over.ogg")
+
+
+func _on_anomaly_contained(_anomaly: Node) -> void:
+	call_deferred("_update_remaining_anomalies")
+
+
+func _update_remaining_anomalies() -> void:
+	var remaining := 0
+	for c in anomalies_container.get_children():
+		if c is Anomaly and not c.is_contained:
+			remaining += 1
+	var bus := get_node_or_null("/root/EventBus")
+	if bus and bus.has_signal("anomalies_remaining_changed"):
+		bus.emit_signal("anomalies_remaining_changed", remaining)
 
 
 func _apply_floor_configuration() -> void:
@@ -152,11 +194,18 @@ func _respawn_simulation() -> void:
 	for child in anomalies_container.get_children():
 		child.queue_free()
 	
+	# Reposicionar jugador en el SÓTANO por default con 3 vidas
 	if player != null and player.has_method("reset_to"):
 		player.call("reset_to", Vector3(-10.0, -3.5, 0.0))
 	elif player != null:
 		player.global_position = Vector3(-10.0, -3.5, 0.0)
 		player.velocity = Vector3.ZERO
+		
+	var bus := get_node_or_null("/root/EventBus")
+	if bus and bus.has_signal("player_health_changed"):
+		bus.emit_signal("player_health_changed", 3, 3)
+	if bus and bus.has_signal("heat_changed"):
+		bus.emit_signal("heat_changed", 0.0, 100.0)
 		
 	var floor_heights: Array[float] = [0.5]
 	if active_floors >= 2:
@@ -185,28 +234,11 @@ func _respawn_simulation() -> void:
 		var pos_x: float = randf_range(-3.0, 9.0)
 		pea.global_position = Vector3(pos_x, f_y, 0.0)
 		
-	_update_hud_status()
-
-
-func _physics_process(_delta: float) -> void:
-	if not setup_canvas.visible:
-		_update_hud_status()
-
-
-func _update_hud_status() -> void:
-	var alive_cuc := 0
-	var alive_let := 0
-	var alive_pea := 0
-	for child in anomalies_container.get_children():
-		if child is CucumberAnomaly and not child.is_contained:
-			alive_cuc += 1
-		elif child is LettuceAnomaly and not child.is_contained:
-			alive_let += 1
-		elif child is PeaAnomaly and not child.is_contained:
-			alive_pea += 1
-			
-	hud_label.text = "SIMULADOR • %d Pisos (+ Sótano Base)
-Vivas -> Pepinos: %d  |  Lechugas: %d  |  Guisantes: %d
-WASD (Mover/Escalar) | Espacio (Salto) | Shift (Slide) | E (Herbicida)" % [
-		active_floors, alive_cuc, alive_let, alive_pea
-	]
+	var total_anomalies := cucumber_count + lettuce_count + pea_count
+	if bus and bus.has_signal("anomalies_remaining_changed"):
+		bus.emit_signal("anomalies_remaining_changed", total_anomalies)
+		
+	# Reanudar BGM gameplay
+	var audio := get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_music"):
+		audio.call("play_music", "res://audio/bgm_gameplay.ogg")

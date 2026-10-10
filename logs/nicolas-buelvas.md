@@ -337,5 +337,19 @@ Task: Corrección de movimiento activo en pepino, eliminación de dificultad y s
 Type: AI_ASSISTED
 Files: anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
 Change: Corrección del bug donde el pepino se congelaba en paredes o permanecía estático en pisos distintos al jugador: ahora patrulla activamente, corre en todo momento, huye dinámicamente y busca escaleras o rebota al tocar muros sin bloquearse a velocidad 0. Eliminación de la dificultad artificial en favor de que todas las entidades operen permanentemente en su condición máxima y más inteligente (pepino con escudos y evasión, lechuga con rebote 2D suelo/techo y castigo de slide, lanzaguisantes con leading shot y kiteo). Simplificación de la tarjeta modal del editor a 360px de altura, garantizando visibilidad holgada del botón de jugar.
-Commit: PENDING
+Commit: 06aa919
 Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless limpia.
+
+
+---
+
+## AI-IAdashems-NB-000026
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Pantalla de Game Over, integración de HUD oficial, dispersión de pepinos y escaleras alternadas
+Type: AI_ASSISTED
+Files: level/ladder.gd, anomalies/cucumber.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
+Change: Integración de la escena oficial res://ui/hud.tscn en la arena mostrando corazones, barra de calor, reloj y conteo de anomalías. Implementación de pantalla modal GameOverUI disparada al morir tras recibir 3 impactos (player_died), pausando la escena y reproduciendo bgm_game_over.ogg con opciones de reintento o reconfiguración. Corrección táctica de los pepinos: dispersión lateral activa para no amontonarse en manadas, búsqueda activa de descenso por escaleras para escapar hacia pisos inferiores y eliminación del bloqueo en paredes. Reubicación alternada de las escaleras entre pisos (Sótano a P1 en X=±9m, P1 a P2 en X=±3m, P2 a P3 en X=±8.5m), evitando que se suba de un nivel a otro en línea recta continua sin recorrer la plataforma.
+Commit: PENDING
+Notes: Verificado con 209/209 comprobaciones en verde y ejecución en headless.
