@@ -100,3 +100,14 @@ Files: player/player.gd
 Change: Ajustada la gravedad efectiva del jugador con aceleración al caer y al soltar Espacio, extendido el dash a 0.65 s con frenado gradual, squash/stretch visual al despegar/aterrizar y restringido el herbicida a disparos horizontales. Salto, dash y disparo se bloquean entre sí en el mismo ciclo; el dash exige estar en el suelo.
 Limitaciones: Los valores son una primera pasada de balance y requieren playtest visual para confirmar altura, duración y sensación.
 Commit: PENDING
+
+## AI-IAdashems-SM-000009
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Añadir aceleración y suavizar los cambios de dirección del jugador
+Type: AI_ASSISTED
+Files: player/player.gd
+Change: El movimiento horizontal ahora acelera hasta la velocidad objetivo, frena al soltar y usa una respuesta diferenciada al invertir dirección y durante el aire. El sprite mantiene su orientación mientras el impulso cambia, para evitar un giro visual instantáneo.
+Limitaciones: Parámetros iniciales de control; requieren ajuste mediante playtest, especialmente la inversión de dirección en el aire.
+Commit: PENDING

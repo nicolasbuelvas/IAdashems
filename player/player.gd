@@ -11,6 +11,11 @@ const _FALLBACK_IFRAMES := 1.0
 const _FALLBACK_SLIDE_DURATION := 0.65
 const _FALLBACK_SLIDE_COOLDOWN := 0.6
 const _FALLBACK_SLIDE_SPEED := 11.0
+const _GROUND_ACCELERATION := 34.0
+const _AIR_ACCELERATION := 22.0
+const _TURNAROUND_ACCELERATION := 50.0
+const _GROUND_DECELERATION := 42.0
+const _AIR_DECELERATION := 20.0
 const _PLAYER_GRAVITY_SCALE := 2.25
 const _FALL_GRAVITY_MULTIPLIER := 1.35
 const _JUMP_RELEASE_GRAVITY_MULTIPLIER := 1.35
@@ -112,7 +117,7 @@ func _physics_process(delta: float) -> void:
 		_fire_herbicide()
 
 	var input_x := _horizontal_axis()
-	if input_x != 0.0:
+	if input_x != 0.0 and (is_zero_approx(velocity.x) or signf(velocity.x) == signf(input_x)):
 		_facing = signf(input_x)
 
 	if is_sliding():
@@ -121,9 +126,13 @@ func _physics_process(delta: float) -> void:
 		var current_slide_speed := lerpf(slide_speed, move_speed, deceleration)
 		velocity.x = _slide_dir * current_slide_speed
 	elif input_x != 0.0:
-		velocity.x = input_x * move_speed
+		var acceleration := _GROUND_ACCELERATION if is_on_floor() else _AIR_ACCELERATION
+		if velocity.x * input_x < 0.0:
+			acceleration = _TURNAROUND_ACCELERATION
+		velocity.x = move_toward(velocity.x, input_x * move_speed, acceleration * delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0.0, move_speed)
+		var deceleration := _GROUND_DECELERATION if is_on_floor() else _AIR_DECELERATION
+		velocity.x = move_toward(velocity.x, 0.0, deceleration * delta)
 
 	velocity.z = 0.0
 	var was_on_floor := is_on_floor()
