@@ -2,23 +2,27 @@ class_name CucumberAnomaly
 extends Anomaly
 
 ## Anomalía Pepino (Cucumis sativus):
-## Evasiva y altamente táctica (Pac-Man AI).
-## Sabe que subir/bajar escaleras es una acción no cancelable.
-## Busca activamente escaleras para descender, usa escudos y se dispersa para no acorralarse.
-## Captura: Tocarla directamente (inofensiva).
+## Algoritmo de evasión táctica de alta supervivencia:
+## - Lectura de proximidad y pisos.
+## - Salto evasivo si la papa se desliza con Shift (Dash).
+## - Búsqueda activa de escaleras libres para descender.
+## - Dispersión espacial para evitar acorralarse juntas.
+## - Evasión anticipada de muros (X = ±11.5).
 
-var speed: float = 6.0
-var stairs_mult: float = 0.5
+var speed: float = 6.2
+var stairs_mult: float = 0.55
 
 var is_climbing: bool = false
 var climb_target_y: float = 0.0
 var climb_exit_x: float = 0.0
-var climb_speed: float = 4.0
+var climb_speed: float = 4.2
 var _climb_ladder_x: float = 0.0
 
 var _post_climb_cooldown: float = 0.0
 var _patrol_dir: float = 1.0
 var _wall_escape_timer: float = 0.0
+var _jump_cooldown: float = 0.0
+var _alive_time: float = 0.0
 
 
 func _ready() -> void:
@@ -27,7 +31,7 @@ func _ready() -> void:
 	if cfg:
 		speed = cfg.get("CUCUMBER_SPEED") if cfg.get("CUCUMBER_SPEED") != null else speed
 		stairs_mult = cfg.get("CUCUMBER_STAIRS_MULT") if cfg.get("CUCUMBER_STAIRS_MULT") != null else stairs_mult
-	speed = maxf(speed, 6.0)
+	speed = maxf(speed, 6.2)
 	_patrol_dir = 1.0 if (randf() > 0.5) else -1.0
 
 
@@ -35,7 +39,15 @@ func _physics_process(delta: float) -> void:
 	if is_contained:
 		return
 
-	# Animación y traslación vertical no cancelable
+	_alive_time += delta
+	if _jump_cooldown > 0.0:
+		_jump_cooldown -= delta
+	if _post_climb_cooldown > 0.0:
+		_post_climb_cooldown -= delta
+	if _wall_escape_timer > 0.0:
+		_wall_escape_timer -= delta
+
+	# Estado de escalada vertical (acción bloqueada y no cancelable)
 	if is_climbing:
 		global_position.x = move_toward(global_position.x, _climb_ladder_x, 10.0 * delta)
 		global_position.y = move_toward(global_position.y, climb_target_y, climb_speed * delta)
@@ -45,16 +57,11 @@ func _physics_process(delta: float) -> void:
 			is_climbing = false
 			global_position.x = climb_exit_x
 			velocity = Vector3.ZERO
-			_post_climb_cooldown = 2.0
+			_post_climb_cooldown = 2.2
 		return
 		
 	if not is_on_floor():
 		velocity.y -= _gravity * delta
-		
-	if _post_climb_cooldown > 0.0:
-		_post_climb_cooldown -= delta
-	if _wall_escape_timer > 0.0:
-		_wall_escape_timer -= delta
 
 	var player := get_player_node()
 	var move_x := 0.0
@@ -64,75 +71,58 @@ func _physics_process(delta: float) -> void:
 		var dist_h := absf(diff_x)
 		var dist_v := absf(global_position.y - player.global_position.y)
 		var player_is_climbing: bool = bool(player.get("is_climbing") == true)
+		var player_is_sliding: bool = bool(player.has_method("is_sliding") and player.call("is_sliding"))
 		
-		# SI EL JUGADOR ESTÁ EN LA ESCALERA (acción bloqueada):
-		if player_is_climbing:
-			# El jugador no se puede mover ni cancelar. Alejarse de su destino
+		# 1. EVASIÓN DE DASH/SLIDE DEL JUGADOR:
+		# Si la papa viene a toda velocidad con slide hacia el pepino, dar salto evasivo por encima
+		if player_is_sliding and dist_h < 4.5 and dist_v < 1.6 and is_on_floor() and _jump_cooldown <= 0.0:
+			velocity.y = 8.5
+			_jump_cooldown = 1.2
+			# Al saltar, cambiar el vector para cruzar al lado opuesto
+			move_x = -signf(diff_x)
+		
+		# 2. SI EL JUGADOR ESTÁ EN LA ESCALERA (acción bloqueada):
+		elif player_is_climbing:
 			var player_target_y: float = float(player.get("climb_target_y") if player.get("climb_target_y") != null else 0.0)
 			var target_is_my_floor := absf(global_position.y - player_target_y) < 1.5
 			if target_is_my_floor:
-				# La papa va a emerger en mi piso: alejarse hacia el extremo opuesto
+				# La papa saldrá en mi piso: alejarse del punto de salida
 				move_x = signf(global_position.x - player.global_position.x)
 			else:
 				move_x = _patrol_dir
-				
-		# SI EL JUGADOR ESTÁ EN EL MISMO PISO (< 2.2m vertical):
-		elif dist_v < 2.2:
-			# 1. TÁCTICA DE ESCUDO HUMANO (Buscar aliada Lechuga o Guisante):
-			var shield_found := false
-			var allies := get_allies()
-			var best_shield: Anomaly = null
-			var min_s_dist := INF
-			for ally in allies:
-				if (ally is LettuceAnomaly or ally is PeaAnomaly) and absf(ally.global_position.y - global_position.y) < 1.5:
-					var d := global_position.distance_to(ally.global_position)
-					if d < min_s_dist and d < 9.0:
-						min_s_dist = d
-						best_shield = ally
-						
-			if best_shield != null:
-				shield_found = true
-				var p_to_shield := best_shield.global_position.x - player.global_position.x
-				var target_x := best_shield.global_position.x + signf(p_to_shield) * 2.2
-				var diff_s := target_x - global_position.x
-				move_x = signf(diff_s) if absf(diff_s) > 0.3 else signf(p_to_shield)
 
-			if not shield_found:
-				# 2. PRIORIDAD TÁCTICA: Buscar activamente bajar escaleras para escapar
-				var best_ladder: Node3D = null
-				var best_ladder_dist := INF
-				var ladders := get_tree().get_nodes_in_group("ladder")
-				
-				for lad in ladders:
-					if lad is Node3D:
-						var lad_node := lad as Node3D
-						var lad_top_y: float = float(lad_node.get("top_y") if lad_node.get("top_y") != null else 0.0)
-						var lad_bot_y: float = float(lad_node.get("bottom_y") if lad_node.get("bottom_y") != null else 0.0)
-						
-						# Verificar si es una escalera que desciende desde mi piso
-						var is_descending_ladder := absf(global_position.y - lad_top_y) < 1.6
-						if is_descending_ladder:
-							var lad_x := lad_node.global_position.x
-							# Verificar que el jugador no esté entre el pepino y la escalera
-							var player_between := (player.global_position.x > minf(global_position.x, lad_x)) and (player.global_position.x < maxf(global_position.x, lad_x))
-							var d := absf(lad_x - global_position.x)
-							if not player_between and d < best_ladder_dist:
-								best_ladder_dist = d
-								best_ladder = lad_node
-				
-				if best_ladder != null and _post_climb_cooldown <= 0.0:
-					# Dirigirse con determinación a la escalera de escape
-					var d_to_lad := best_ladder.global_position.x - global_position.x
-					move_x = signf(d_to_lad)
-				else:
-					# Huida estándar alejándose del jugador
-					move_x = signf(diff_x)
-					if move_x == 0.0:
-						move_x = 1.0
-						
-		# SI EL JUGADOR ESTÁ EN OTRO PISO:
+		# 3. SI EL JUGADOR ESTÁ EN EL MISMO PISO (< 2.2m vertical):
+		elif dist_v < 2.2:
+			# Prioridad: Buscar escalera de descenso segura para cambiar de nivel
+			var best_ladder: Node3D = null
+			var best_ladder_dist := INF
+			var ladders := get_tree().get_nodes_in_group("ladder")
+			
+			for lad in ladders:
+				if lad is Node3D:
+					var lad_node := lad as Node3D
+					var lad_top_y: float = float(lad_node.get("top_y") if lad_node.get("top_y") != null else 0.0)
+					var is_descending := absf(global_position.y - lad_top_y) < 1.6
+					if is_descending:
+						var lad_x := lad_node.global_position.x
+						# Comprobar que el jugador no bloquee el paso a esta escalera
+						var player_between := (player.global_position.x > minf(global_position.x, lad_x)) and (player.global_position.x < maxf(global_position.x, lad_x))
+						var d := absf(lad_x - global_position.x)
+						if not player_between and d < best_ladder_dist:
+							best_ladder_dist = d
+							best_ladder = lad_node
+			
+			if best_ladder != null and _post_climb_cooldown <= 0.0:
+				move_x = signf(best_ladder.global_position.x - global_position.x)
+			else:
+				# Huida horizontal normal
+				move_x = signf(diff_x)
+				if move_x == 0.0:
+					move_x = 1.0
+
+		# 4. SI EL JUGADOR ESTÁ EN OTRO PISO:
 		else:
-			# Patrullar y buscar escaleras para descender si está en piso alto
+			# Si está en piso alto, buscar escaleras para descender
 			if global_position.y > 0.0 and _post_climb_cooldown <= 0.0:
 				var ladders := get_tree().get_nodes_in_group("ladder")
 				for lad in ladders:
@@ -148,7 +138,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		move_x = _patrol_dir
 
-	# 3. DISPERSIÓN ENTRE PEPINOS (No agruparse en manadas):
+	# 5. DISPERSIÓN ENTRE PEPINOS (No apelotonarse en el mismo rincón):
 	for ally in get_allies():
 		if ally is CucumberAnomaly:
 			var d_ally := absf(global_position.x - ally.global_position.x)
@@ -158,37 +148,36 @@ func _physics_process(delta: float) -> void:
 				if repel != 0.0:
 					move_x = repel
 
-	# 4. EVITAR ACORRALARSE EN PAREDES DEL MAPA (X = ±13):
-	var near_right_wall := global_position.x > 11.5
-	var near_left_wall := global_position.x < -11.5
-	
-	if (near_right_wall and move_x > 0.0) or (near_left_wall and move_x < 0.0):
-		# En vez de seguir empujando contra la pared, dar media vuelta inmediata
-		move_x = -move_x
-		_patrol_dir = move_x
-		_wall_escape_timer = 1.2
+	# 6. ANTICIPACIÓN DE MUROS (No esperar a chocar con X = ±13):
+	if global_position.x > 11.0 and move_x > 0.0:
+		move_x = -1.0
+		_patrol_dir = -1.0
+		_wall_escape_timer = 1.4
+	elif global_position.x < -11.0 and move_x < 0.0:
+		move_x = 1.0
+		_patrol_dir = 1.0
+		_wall_escape_timer = 1.4
 	elif is_on_wall():
 		var wall_norm := get_wall_normal()
 		if wall_norm.x != 0.0:
 			move_x = signf(wall_norm.x)
 			_patrol_dir = move_x
-			_wall_escape_timer = 1.0
+			_wall_escape_timer = 1.2
 
 	var current_speed := speed * (stairs_mult if in_stairs else 1.0)
-	
 	if move_x != 0.0:
-		velocity.x = move_toward(velocity.x, move_x * current_speed, 28.0 * delta)
+		velocity.x = move_toward(velocity.x, move_x * current_speed, 30.0 * delta)
 	else:
-		velocity.x = move_toward(velocity.x, _patrol_dir * current_speed, 18.0 * delta)
+		velocity.x = move_toward(velocity.x, _patrol_dir * current_speed, 20.0 * delta)
 		
 	velocity.z = 0.0
 	move_and_slide()
 	global_position.z = 0.0
 
 
-## Contrato de contacto con el jugador:
 func on_player_contact(_player: Node) -> void:
 	if not is_contained:
+		print("[Cucumber] Capturado tras sobrevivir %.2f segundos" % _alive_time)
 		contain()
 
 

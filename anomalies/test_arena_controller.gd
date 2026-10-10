@@ -1,24 +1,24 @@
 class_name TestArenaController
 extends Node3D
 
-## Controlador de la arena de pruebas y Editor Manual Pre-Partida.
-## Incluye HUD oficial, pantalla de Game Over al recibir 3 golpes y
-## escaleras alternadas entre pisos para evitar transiciones directas.
+## Controlador de la arena de pruebas y Entrenamiento de Corredores.
+## 3 Pepinos por default en 3 pisos para sesión de entrenamiento y evasión.
 
 const SCENE_CUCUMBER := preload("res://anomalies/cucumber.tscn")
 const SCENE_LETTUCE := preload("res://anomalies/lettuce.tscn")
 const SCENE_PEA := preload("res://anomalies/pea.tscn")
 
-@export var cucumber_count: int = 1
-@export var lettuce_count: int = 1
-@export var pea_count: int = 1
-@export_range(1, 3) var active_floors: int = 2
+@export var cucumber_count: int = 3
+@export var lettuce_count: int = 0
+@export var pea_count: int = 0
+@export_range(1, 3) var active_floors: int = 3
 
 @onready var player: Node3D = $Player
 @onready var anomalies_container: Node3D = $SpawnedAnomalies
 @onready var setup_canvas: CanvasLayer = $SetupUI
 @onready var game_over_canvas: CanvasLayer = $GameOverUI
 @onready var hud_node: Control = $HUDLayer/HUD
+@onready var session_timer_label: Label = $HUDLayer/SessionCard/Label
 
 @onready var floor_2_node: Node3D = $Architecture/Floor2
 @onready var floor_3_node: Node3D = $Architecture/Floor3
@@ -48,11 +48,15 @@ const SCENE_PEA := preload("res://anomalies/pea.tscn")
 @onready var btn_retry: Button = %BtnRetry
 @onready var btn_game_over_setup: Button = %BtnGameOverSetup
 
+var _session_time: float = 0.0
+var _session_active: bool = false
+
 
 func _ready() -> void:
 	_init_setup_ui()
 	_connect_event_bus()
-	show_setup_editor()
+	# Iniciar sesión directamente con 3 corredores
+	_on_btn_start_pressed()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -104,7 +108,6 @@ func _init_setup_ui() -> void:
 	btn_floor_3.pressed.connect(func(): _set_floors(3))
 	
 	btn_start.pressed.connect(_on_btn_start_pressed)
-	
 	btn_retry.pressed.connect(_on_btn_retry_pressed)
 	btn_game_over_setup.pressed.connect(show_setup_editor)
 	
@@ -138,6 +141,7 @@ func _style_toggle_button(btn: Button, is_active: bool) -> void:
 func show_setup_editor() -> void:
 	setup_canvas.visible = true
 	game_over_canvas.visible = false
+	_session_active = false
 	get_tree().paused = true
 
 
@@ -145,6 +149,8 @@ func _on_btn_start_pressed() -> void:
 	setup_canvas.visible = false
 	game_over_canvas.visible = false
 	get_tree().paused = false
+	_session_time = 0.0
+	_session_active = true
 	
 	_apply_floor_configuration()
 	_respawn_simulation()
@@ -153,10 +159,13 @@ func _on_btn_start_pressed() -> void:
 func _on_btn_retry_pressed() -> void:
 	game_over_canvas.visible = false
 	get_tree().paused = false
+	_session_time = 0.0
+	_session_active = true
 	_respawn_simulation()
 
 
 func _on_player_died() -> void:
+	_session_active = false
 	game_over_canvas.visible = true
 	get_tree().paused = true
 	var audio := get_node_or_null("/root/AudioManager")
@@ -176,6 +185,12 @@ func _update_remaining_anomalies() -> void:
 	var bus := get_node_or_null("/root/EventBus")
 	if bus and bus.has_signal("anomalies_remaining_changed"):
 		bus.emit_signal("anomalies_remaining_changed", remaining)
+	if remaining == 0 and _session_active:
+		_session_active = false
+		print("==================================================")
+		print("¡SESIÓN DE ENTRENAMIENTO FINALIZADA!")
+		print("TIEMPO TOTAL DE SUPERVIVENCIA DE CORREDORES: %.2f s" % _session_time)
+		print("==================================================")
 
 
 func _apply_floor_configuration() -> void:
@@ -194,7 +209,6 @@ func _respawn_simulation() -> void:
 	for child in anomalies_container.get_children():
 		child.queue_free()
 	
-	# Reposicionar jugador en el SÓTANO por default con 3 vidas
 	if player != null and player.has_method("reset_to"):
 		player.call("reset_to", Vector3(-10.0, -3.5, 0.0))
 	elif player != null:
@@ -213,11 +227,12 @@ func _respawn_simulation() -> void:
 	if active_floors >= 3:
 		floor_heights.append(8.5)
 		
+	# Instanciar corredores distribuidos en los pisos superiores
 	for i in range(cucumber_count):
 		var cuc := SCENE_CUCUMBER.instantiate() as Anomaly
 		anomalies_container.add_child(cuc)
 		var f_y: float = floor_heights[i % floor_heights.size()]
-		var pos_x: float = randf_range(-4.0, 8.0)
+		var pos_x: float = -4.0 + float(i) * 5.0
 		cuc.global_position = Vector3(pos_x, f_y, 0.0)
 		
 	for i in range(lettuce_count):
@@ -238,7 +253,18 @@ func _respawn_simulation() -> void:
 	if bus and bus.has_signal("anomalies_remaining_changed"):
 		bus.emit_signal("anomalies_remaining_changed", total_anomalies)
 		
-	# Reanudar BGM gameplay
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_music"):
 		audio.call("play_music", "res://audio/bgm_gameplay.ogg")
+
+
+func _process(delta: float) -> void:
+	if _session_active:
+		_session_time += delta
+		var remaining := 0
+		for c in anomalies_container.get_children():
+			if c is Anomaly and not c.is_contained:
+				remaining += 1
+		session_timer_label.text = "ENTRENAMIENTO • SUPERVIVENCIA: %.1f s • CORREDORES VIVOS: %d / %d" % [
+			_session_time, remaining, cucumber_count
+		]
