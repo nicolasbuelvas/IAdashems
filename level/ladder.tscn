@@ -15,7 +15,7 @@ material = SubResource("Mat_Wood")
 size = Vector3(0.7, 0.06, 0.06)
 
 [sub_resource type="BoxShape3D" id="Shape_LadderArea"]
-size = Vector3(1.2, 4.2, 1.2)
+size = Vector3(2.0, 5.4, 2.0)
 
 [node name="VerticalLadder" type="Node3D" groups=["ladder", "stairs"]]
 script = ExtResource("1_script")
@@ -61,7 +61,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.9, 0)
 mesh = SubResource("Mesh_Rung")
 
 [node name="Area3D" type="Area3D" parent="." groups=["ladder", "stairs"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 collision_layer = 2
 collision_mask = 6
 

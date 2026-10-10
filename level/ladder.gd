@@ -25,10 +25,13 @@ func _physics_process(_delta: float) -> void:
 			continue
 		if body.get("is_climbing") == true:
 			continue
+		if body.get("_post_climb_cooldown") != null and body.get("_post_climb_cooldown") > 0.0:
+			continue
 			
 		var ladder_x := global_position.x
-		var is_near_bottom := body.global_position.y <= bottom_y + 1.2
-		var is_near_top := body.global_position.y >= top_y - 1.2
+		var mid_y := (bottom_y + top_y) * 0.5
+		var is_near_bottom := body.global_position.y < mid_y
+		var is_near_top := body.global_position.y >= mid_y
 		
 		# Control de escalada para el jugador:
 		if body.is_in_group("player"):
@@ -40,16 +43,25 @@ func _physics_process(_delta: float) -> void:
 			elif is_near_top and wants_down:
 				body.call("start_climb", bottom_y, ladder_x + bottom_exit_offset_x, ladder_x)
 		
-		# Comportamiento para anomalías (Pepinos y evasores):
+		# Comportamiento táctico para anomalías (Pepinos):
 		elif body.is_in_group("anomaly") and body.has_method("start_climb"):
 			if not body.get("is_contained"):
 				var player := get_tree().get_first_node_in_group("player") as Node3D
-				var player_dist := INF
-				if player != null and is_instance_valid(player):
-					player_dist = global_position.distance_to(player.global_position)
-				
-				# Prioridad táctica: bajar las escaleras activamente para rotar de piso
 				if is_near_top:
-					body.call("start_climb", bottom_y, ladder_x + bottom_exit_offset_x, ladder_x)
-				elif is_near_bottom and player_dist < 6.5:
-					body.call("start_climb", top_y, ladder_x + top_exit_offset_x, ladder_x)
+					# Bajar escaleras activamente para escapar
+					var safe_to_descend := true
+					if player != null and is_instance_valid(player):
+						var player_at_bottom := absf(player.global_position.y - bottom_y) < 1.5
+						var player_at_ladder_x := absf(player.global_position.x - (ladder_x + bottom_exit_offset_x)) < 2.0
+						if player_at_bottom and player_at_ladder_x:
+							safe_to_descend = false
+					
+					if safe_to_descend:
+						body.call("start_climb", bottom_y, ladder_x + bottom_exit_offset_x, ladder_x)
+				elif is_near_bottom:
+					# Subir si el jugador se acerca agresivamente por abajo
+					if player != null and is_instance_valid(player):
+						var player_on_floor := absf(player.global_position.y - bottom_y) < 1.5
+						var player_dist := absf(player.global_position.x - body.global_position.x)
+						if player_on_floor and player_dist < 6.0:
+							body.call("start_climb", top_y, ladder_x + top_exit_offset_x, ladder_x)

@@ -351,5 +351,19 @@ Task: Pantalla de Game Over, integración de HUD oficial, dispersión de pepinos
 Type: AI_ASSISTED
 Files: level/ladder.gd, anomalies/cucumber.gd, anomalies/test_arena_controller.gd, anomalies/test_all_anomalies.tscn
 Change: Integración de la escena oficial res://ui/hud.tscn en la arena mostrando corazones, barra de calor, reloj y conteo de anomalías. Implementación de pantalla modal GameOverUI disparada al morir tras recibir 3 impactos (player_died), pausando la escena y reproduciendo bgm_game_over.ogg con opciones de reintento o reconfiguración. Corrección táctica de los pepinos: dispersión lateral activa para no amontonarse en manadas, búsqueda activa de descenso por escaleras para escapar hacia pisos inferiores y eliminación del bloqueo en paredes. Reubicación alternada de las escaleras entre pisos (Sótano a P1 en X=±9m, P1 a P2 en X=±3m, P2 a P3 en X=±8.5m), evitando que se suba de un nivel a otro en línea recta continua sin recorrer la plataforma.
-Commit: PENDING
+Commit: fd0e4b0
 Notes: Verificado con 209/209 comprobaciones en verde y ejecución en headless.
+
+
+---
+
+## AI-IAdashems-NB-000027
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: IA evasiva con conciencia de escaleras no cancelables y corrección de volumen de trigger
+Type: AI_ASSISTED
+Files: level/ladder.tscn, level/ladder.gd, anomalies/cucumber.gd
+Change: Corrección del volumen de colisión de la escalera (Shape_LadderArea ampliado de 4.2m a 5.4m de altura) para detectar confiablemente entidades en la plataforma superior. Ajuste en ladder.gd para evaluar mitad de altura y permitir descensos seguros verificando que el jugador no esté acampando abajo. En cucumber.gd: detección táctica de que el movimiento en escalera es una acción bloqueada y no cancelable (si el jugador escala, queda vulnerable y el pepino aprovecha para reubicarse; el pepino busca escaleras de descenso libres de jugador y escapa a pisos inferiores con cooldown de salida para evitar oscilaciones de reentrada).
+Commit: PENDING
+Notes: Verificado con 209/209 comprobaciones en verde (ui_check, heat_system_test, round_manager_test) y ejecución headless.
