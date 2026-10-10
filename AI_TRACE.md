@@ -24,3 +24,14 @@ sube sus entradas sin pisar las de los demás y sin generar conflictos de fusió
 
 > `logs/INDICE_LOGS.md` es un archivo **generado**: no lo edites a mano.
 > Si Git reporta un conflicto ahí, resuelve re-ejecutando el script sobre la versión fusionada.
+
+## AI-IAdashems-SM-000001
+
+Timestamp: 2026-10-09T22:03:57-05:00
+Participant: SM (Sebastian Marquez)
+Task: Crear escena y script base del jugador (movimiento X, gravedad, salto, rampas, grupo player, lock Z)
+Type: AI_GENERATED
+Files: player/player.tscn, player/player.gd, player/player.gd.uid
+Change: CharacterBody3D 2.5D con A/D, salto Espacio, gravedad, floor_constant_speed para rampas, capa 2 / máscara 1. Constantes desde GameConfig si existe, si no 6.0 / 9.0. Placeholder cápsula. Sin escena de prueba ni suelo (fuera de player/).
+Limitaciones: No se pudo jugar el criterio de rampa/suelo en runtime porque no hay nivel; se validó carga headless de la escena. Input por teclas físicas (InputMap aún no definido).
+Commit: PENDING

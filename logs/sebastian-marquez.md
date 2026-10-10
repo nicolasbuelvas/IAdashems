@@ -7,3 +7,14 @@
 ---
 
 <!-- Nuevas entradas debajo de esta línea -->
+
+## AI-IAdashems-SM-000001
+
+Timestamp: 2026-10-09T22:03:57-05:00
+Participant: SM (Sebastian Marquez)
+Task: Crear escena y script base del jugador (movimiento X, gravedad, salto, rampas, grupo player, lock Z)
+Type: AI_GENERATED
+Files: player/player.tscn, player/player.gd, player/player.gd.uid
+Change: CharacterBody3D 2.5D con A/D, salto Espacio, gravedad, floor_constant_speed para rampas, capa 2 / máscara 1. Constantes desde GameConfig si existe, si no 6.0 / 9.0. Placeholder cápsula. Sin escena de prueba ni suelo (fuera de player/).
+Commit: PENDING
+Notes: Trazabilidad duplicada en AI_TRACE.md por protocolo del evento. Validación: Godot 4.7.1 --import OK; carga headless de player.tscn OK. Pendiente probar sobre suelo/rampa cuando C entregue el nivel.
