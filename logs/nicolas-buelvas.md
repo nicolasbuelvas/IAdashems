@@ -479,3 +479,17 @@ Files: player/player.gd, anomalies/test_arena_controller.gd, game/game.gd, ui/au
 Change: Se conectó directamente el evento EventBus.heat_maxed en Player para ejecutar el método letal kill(), garantizando que la papa muera y explote en papitas francesas sin ser bloqueada por iframes o deslizamientos. Se enriqueció la explosión con nubes ascendentes de vapor/humo blanco translúcido en 3D. Se garantizó que _on_player_died espere 1.5s antes de desplegar el Game Over tanto en la arena como en la campaña principal, protegiendo contra llamadas reentrantes. Se ajustó el volumen del reproductor de vapor de calor en AudioManager a -22.0 dB para mantenerlo como sonido ambiente sutil de fondo, y se aseguró su detención inmediata al morir el jugador.
 Commit: c5c4489
 Notes: 209/209 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000036
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Anticipación al rojo vivo de la papa antes de estallar y caída balística de papitas fritas al vacío
+Type: AI_ASSISTED
+Files: player/player.gd, player/french_fries_explosion.gd
+Change: Se implementó fase de anticipación dramática al morir la papa (_die_and_explode): se tiñe de rojo incandescente (Color(2.0, 0.15, 0.15)), se infla un 30% y tiembla rápidamente durante 0.4s antes de estallar. Se creó la clase FrenchFriesExplosion (french_fries_explosion.gd) que simula gravedad dinámica (26.0 m/s²) y velocidades angulares 3D continuas sobre cada una de las 24 papitas fritas, logrando que salgan despedidas en abanico y se precipiten acelerando hacia el vacío en lugar de quedar suspendidas en el aire.
+Commit: 53f7931
+Notes: 209/209 comprobaciones automatizadas pasando sin errores.

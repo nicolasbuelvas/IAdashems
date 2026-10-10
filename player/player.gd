@@ -253,9 +253,7 @@ func take_damage(amount: int) -> void:
 	_blink_on = true
 	_apply_visual()
 	if _hp <= 0:
-		_dead = true
-		_explode_into_fries()
-		_emit_bus("player_died", [])
+		_die_and_explode()
 
 
 func is_sliding() -> bool:
@@ -269,11 +267,29 @@ func is_invulnerable() -> bool:
 func kill() -> void:
 	if _dead:
 		return
-	_hp = 0
+	_die_and_explode()
+
+
+func _die_and_explode() -> void:
+	if _dead:
+		return
 	_dead = true
+	_hp = 0
 	_iframe_left = 0.0
 	_blink_on = false
+	velocity = Vector3.ZERO
 	_emit_bus("player_health_changed", [0, max_hp])
+
+	# Anticipación al rojo vivo: la papa se tiñe de rojo intenso, se infla y tiembla antes de estallar
+	if _visual != null:
+		_visual.modulate = Color(2.0, 0.15, 0.15, 1.0)
+		var ant_tween := create_tween()
+		ant_tween.tween_property(_visual, "scale", _visual_base_scale * 1.3, 0.38).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		for k in 6:
+			ant_tween.tween_property(_visual, "position:x", randf_range(-0.14, 0.14), 0.05)
+		ant_tween.tween_property(_visual, "position:x", 0.0, 0.05)
+		await ant_tween.finished
+
 	_explode_into_fries()
 	_emit_bus("player_died", [])
 
@@ -319,10 +335,18 @@ func reset_to(spawn: Vector3) -> void:
 	var spr := get_node_or_null("AnimatedSprite3D") as Node3D
 	if spr:
 		spr.visible = true
+	if _visual != null:
+		_visual.visible = true
+		_visual.scale = _visual_base_scale
+		_visual.position.x = 0.0
+		if _animated_sprite != null:
+			_visual.position.y = _sprite_base_y
+		_visual.modulate = Color.WHITE
 	var parent_node := get_parent()
 	if parent_node:
 		var old_fries := parent_node.get_node_or_null("FrenchFriesExplosion")
 		if old_fries:
+			old_fries.name = "FrenchFriesExplosion_Old"
 			old_fries.queue_free()
 	_apply_visual()
 	_emit_bus("player_health_changed", [_hp, max_hp])
@@ -332,6 +356,8 @@ func _explode_into_fries() -> void:
 	var spr := get_node_or_null("AnimatedSprite3D") as Node3D
 	if spr:
 		spr.visible = false
+	if _visual != null:
+		_visual.visible = false
 		
 	var audio := get_node_or_null("/root/AudioManager")
 	if audio and audio.has_method("play_sfx"):
@@ -346,7 +372,7 @@ func _explode_into_fries() -> void:
 		old_fries.name = "FrenchFriesExplosion_Old"
 		old_fries.queue_free()
 		
-	var fries_container := Node3D.new()
+	var fries_container := FrenchFriesExplosion.new()
 	fries_container.name = "FrenchFriesExplosion"
 	parent_node.add_child(fries_container)
 	fries_container.global_position = global_position + Vector3(0.0, 0.75, 0.0)
@@ -367,21 +393,16 @@ func _explode_into_fries() -> void:
 		fry.rotation = Vector3(randf_range(0.0, TAU), randf_range(0.0, TAU), randf_range(0.0, TAU))
 		
 		var vel := Vector3(
-			randf_range(-7.0, 7.0),
-			randf_range(5.0, 10.5),
-			randf_range(-1.5, 1.5)
+			randf_range(-8.5, 8.5),
+			randf_range(7.0, 13.5),
+			randf_range(-2.0, 2.0)
 		)
 		var rot_vel := Vector3(
-			randf_range(-9.0, 9.0),
-			randf_range(-9.0, 9.0),
-			randf_range(-14.0, 14.0)
+			randf_range(-10.0, 10.0),
+			randf_range(-10.0, 10.0),
+			randf_range(-15.0, 15.0)
 		)
-		
-		var tween := fry.create_tween()
-		tween.set_parallel(true)
-		var target_pos := fry.position + vel * 0.7 + Vector3(0.0, -2.8, 0.0)
-		tween.tween_property(fry, "position", target_pos, 1.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		tween.tween_property(fry, "rotation", fry.rotation + rot_vel * 1.1, 1.1)
+		fries_container.add_fry(fry, vel, rot_vel)
 
 	var steam_mesh := SphereMesh.new()
 	steam_mesh.radius = 0.35
