@@ -50,6 +50,10 @@ const SCENE_LADDER := preload("res://level/ladder.tscn")
 @onready var btn_game_over_setup: Button = %BtnGameOverSetup
 
 
+var time_left: float = 90.0
+var timer_expired: bool = false
+
+
 func _ready() -> void:
 	_init_setup_ui()
 	_connect_event_bus()
@@ -62,12 +66,35 @@ func _unhandled_input(event: InputEvent) -> void:
 			show_setup_editor()
 
 
+func _process(delta: float) -> void:
+	if get_tree().paused:
+		return
+	if time_left > 0.0:
+		time_left = maxf(time_left - delta, 0.0)
+		var bus := get_node_or_null("/root/EventBus")
+		if bus and bus.has_signal("round_timer_changed"):
+			bus.emit_signal("round_timer_changed", time_left)
+		if time_left <= 0.0 and not timer_expired:
+			timer_expired = true
+			if bus and bus.has_signal("round_timer_expired"):
+				bus.emit_signal("round_timer_expired")
+
+
 func _connect_event_bus() -> void:
 	var bus := get_node_or_null("/root/EventBus")
 	if bus and bus.has_signal("player_died"):
 		bus.connect("player_died", _on_player_died)
+	if bus and bus.has_signal("heat_maxed"):
+		bus.connect("heat_maxed", _on_heat_maxed)
 	if bus and bus.has_signal("anomaly_contained"):
 		bus.connect("anomaly_contained", _on_anomaly_contained)
+
+
+func _on_heat_maxed() -> void:
+	if player != null and player.has_method("take_damage"):
+		player.call("take_damage", 3)
+	else:
+		_on_player_died()
 
 
 func _init_setup_ui() -> void:
@@ -276,6 +303,13 @@ func _respawn_simulation() -> void:
 		pea.global_position = Vector3(pos_x, f_y, 0.0)
 		
 	var total_anomalies := cucumber_count + lettuce_count + pea_count
+	time_left = 90.0 + float(total_anomalies) * 15.0
+	timer_expired = false
+	
+	if bus and bus.has_signal("round_started"):
+		bus.emit_signal("round_started", 1, total_anomalies)
+	if bus and bus.has_signal("round_timer_changed"):
+		bus.emit_signal("round_timer_changed", time_left)
 	if bus and bus.has_signal("anomalies_remaining_changed"):
 		bus.emit_signal("anomalies_remaining_changed", total_anomalies)
 		

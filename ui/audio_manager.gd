@@ -23,6 +23,13 @@ const PATH_SFX_PLAYER_DAMAGE := "res://audio/sfx_player_damage.ogg"
 const PATH_SFX_ANOMALY_CONTAINED := "res://audio/sfx_anomaly_contained.ogg"
 const PATH_SFX_HEAT_STEAM := "res://audio/sfx_heat_steam.ogg"
 
+const PATH_SFX_PEA_SHOOT := "res://audio/sfx_pea_shoot.wav"
+const PATH_SFX_PEA_IMPACT := "res://audio/sfx_pea_impact.wav"
+const PATH_SFX_LETTUCE_BOUNCE := "res://audio/sfx_lettuce_bounce.wav"
+const PATH_SFX_ANOMALY_BITE := "res://audio/sfx_anomaly_bite.wav"
+const PATH_SFX_CUCUMBER_SCURRY := "res://audio/sfx_cucumber_scurry.wav"
+const PATH_SFX_POTATO_EXPLODE := "res://audio/sfx_potato_explode.wav"
+
 var _cache: Dictionary = {}
 
 var _bgm_player: AudioStreamPlayer
@@ -167,7 +174,10 @@ func _connect_event_bus() -> void:
 	if bus.has_signal("player_damaged"):
 		bus.connect("player_damaged", func(_amount): play_sfx(PATH_SFX_PLAYER_DAMAGE))
 	if bus.has_signal("player_died"):
-		bus.connect("player_died", func(): play_bgm(PATH_BGM_GAME_OVER, true))
+		bus.connect("player_died", func():
+			play_sfx(PATH_SFX_POTATO_EXPLODE, 2.0)
+			play_bgm(PATH_BGM_GAME_OVER, true)
+		)
 	if bus.has_signal("herbicide_fired"):
 		bus.connect("herbicide_fired", func(): play_sfx(PATH_SFX_PLAYER_HERBICIDE))
 	if bus.has_signal("herbicide_ready"):

@@ -8,6 +8,7 @@
 [ext_resource type="Theme" path="res://ui/theme.tres" id="6_theme"]
 [ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="7_eyebrow"]
 [ext_resource type="PackedScene" uid="uid://cmf2f53o82h1y" path="res://ui/hud.tscn" id="8_hud"]
+[ext_resource type="Script" path="res://systems/heat_system.gd" id="9_heat"]
 
 [sub_resource type="StandardMaterial3D" id="Mat_Basement"]
 albedo_color = Color(0.18, 0.16, 0.15, 1)
@@ -86,6 +87,9 @@ corner_radius_bottom_left = 6
 
 [node name="TestAllAnomalies" type="Node3D"]
 script = ExtResource("1_controller")
+
+[node name="HeatSystem" type="Node" parent="."]
+script = ExtResource("9_heat")
 
 [node name="Architecture" type="Node3D" parent="."]
 

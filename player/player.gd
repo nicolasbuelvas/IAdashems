@@ -224,6 +224,7 @@ func take_damage(amount: int) -> void:
 	_apply_visual()
 	if _hp <= 0:
 		_dead = true
+		_explode_into_fries()
 		_emit_bus("player_died", [])
 
 
@@ -273,8 +274,71 @@ func reset_to(spawn: Vector3) -> void:
 	_iframe_left = 0.0
 	_blink_on = false
 	_blink_accum = 0.0
+	var spr := get_node_or_null("AnimatedSprite3D") as Node3D
+	if spr:
+		spr.visible = true
+	var parent_node := get_parent()
+	if parent_node:
+		var old_fries := parent_node.get_node_or_null("FrenchFriesExplosion")
+		if old_fries:
+			old_fries.queue_free()
 	_apply_visual()
 	_emit_bus("player_health_changed", [_hp, max_hp])
+
+
+func _explode_into_fries() -> void:
+	var spr := get_node_or_null("AnimatedSprite3D") as Node3D
+	if spr:
+		spr.visible = false
+		
+	var audio := get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_sfx"):
+		audio.call("play_sfx", "res://audio/sfx_potato_explode.wav", 3.0)
+		
+	var parent_node := get_parent()
+	if parent_node == null:
+		parent_node = self
+		
+	var old_fries := parent_node.get_node_or_null("FrenchFriesExplosion")
+	if old_fries:
+		old_fries.queue_free()
+		
+	var fries_container := Node3D.new()
+	fries_container.name = "FrenchFriesExplosion"
+	parent_node.add_child(fries_container)
+	fries_container.global_position = global_position + Vector3(0.0, 0.75, 0.0)
+	
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.98, 0.78, 0.20, 1.0)
+	mat.roughness = 0.35
+	
+	var fry_mesh := BoxMesh.new()
+	fry_mesh.size = Vector3(0.09, 0.48, 0.09)
+	fry_mesh.material = mat
+	
+	for i in 24:
+		var fry := MeshInstance3D.new()
+		fry.mesh = fry_mesh
+		fries_container.add_child(fry)
+		fry.position = Vector3(randf_range(-0.25, 0.25), randf_range(-0.25, 0.25), randf_range(-0.1, 0.1))
+		fry.rotation = Vector3(randf_range(0.0, TAU), randf_range(0.0, TAU), randf_range(0.0, TAU))
+		
+		var vel := Vector3(
+			randf_range(-7.0, 7.0),
+			randf_range(5.0, 10.5),
+			randf_range(-1.5, 1.5)
+		)
+		var rot_vel := Vector3(
+			randf_range(-9.0, 9.0),
+			randf_range(-9.0, 9.0),
+			randf_range(-14.0, 14.0)
+		)
+		
+		var tween := fry.create_tween()
+		tween.set_parallel(true)
+		var target_pos := fry.position + vel * 0.7 + Vector3(0.0, -2.8, 0.0)
+		tween.tween_property(fry, "position", target_pos, 1.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tween.tween_property(fry, "rotation", fry.rotation + rot_vel * 1.1, 1.1)
 
 
 func _update_slide(delta: float) -> void:

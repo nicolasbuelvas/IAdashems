@@ -45,18 +45,25 @@ func _handle_hit(target: Node) -> void:
 		var invulnerable := false
 		if player.has_method("is_invulnerable"):
 			invulnerable = player.call("is_invulnerable")
+		_play_impact_sfx()
 		if not invulnerable and player.has_method("take_damage"):
 			player.call("take_damage", 1)
 			_spent = true
 			queue_free()
 			return
 		elif invulnerable:
-			# Si es invulnerable (ej. se está deslizando), el proyectil se desintegra sin dañar
 			_spent = true
 			queue_free()
 			return
 
 	# Si choca contra el escenario (StaticBody, paredes, suelo)
 	if target is StaticBody3D or target is GridMap:
+		_play_impact_sfx()
 		_spent = true
 		queue_free()
+
+
+func _play_impact_sfx() -> void:
+	var audio := get_node_or_null("/root/AudioManager")
+	if audio and audio.has_method("play_sfx"):
+		audio.call("play_sfx", "res://audio/sfx_pea_impact.wav", -2.0)

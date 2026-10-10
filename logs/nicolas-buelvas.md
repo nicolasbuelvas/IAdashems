@@ -435,5 +435,19 @@ Task: Corrección de hitbox sobredimensionada en el guisante e implementación d
 Type: AI_ASSISTED
 Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/lettuce.gd, anomalies/pea.gd, anomalies/pea.tscn, anomalies/pea_projectile.tscn
 Change: Corrección del tamaño de hitbox en el lanzaguisantes (SphereShape3D_hit reducido de 0.55 a 0.40 para quedar estrictamente contenido dentro del cuerpo esférico de radio 0.48, eliminando daños fantasma; proyectil ajustado de radio 0.22 a 0.18). Implementación de soporte universal de escalada vertical y navegación entre pisos en la clase base Anomaly (start_climb, process_climbing, helpers de niveles y escaleras) para que todas las entidades puedan subir y bajar escaleras. En pea.gd: búsqueda de escaleras hacia el nivel del jugador si este está en otro piso y kiteo vertical para escapar si el jugador se aproxima en cuerpo a cuerpo. En lettuce.gd: integración de tránsito vertical en escaleras para perseguir verticalmente al jugador o rotar de piso.
-Commit: cd8fb01
+Commit: 61eccb1
 Notes: Verificado con 209/209 comprobaciones automatizadas en verde y ejecuciones headless limpias de test_pea.tscn, test_lettuce.tscn, test_cucumber.tscn y test_all_anomalies.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000033
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: HUD profesional renovado sin AI slop, temporizador y calor activos, botón de pausa, explosión de papitas fritas y SFX para entidades
+Type: AI_ASSISTED
+Files: ui/hud.tscn, ui/hud.gd, ui/theme.tres, ui/audio_manager.gd, player/player.gd, anomalies/test_all_anomalies.tscn, anomalies/test_arena_controller.gd, anomalies/pea.gd, anomalies/pea_projectile.gd, anomalies/lettuce.gd, anomalies/cucumber.gd, audio/sfx_pea_shoot.wav, audio/sfx_pea_impact.wav, audio/sfx_lettuce_bounce.wav, audio/sfx_anomaly_bite.wav, audio/sfx_cucumber_scurry.wav, audio/sfx_potato_explode.wav
+Change: Rediseño completo del HUD eliminando textos innecesarios y adoptando iconografía técnica (♨ para temperatura con porcentaje, ◷ para reloj, ◎ para anomalías, ♥ para vidas y [E] para herbicida). Integración de botón de pausa ⏸ en pantalla superior derecha. Activación de lógica y visualización de temporizador de ronda con alerta en <15s, e integración del nodo HeatSystem para simulación real de temperatura vinculada a anomalías, daño y expiración de reloj con sobrecalentamiento crítico. Implementación de muerte de la papa con explosión cómica y fragmentación en 24 papitas fritas francesas doradas con física balística 3D. Creación y enlace de efectos de audio procedurales a 44.1kHz (disparo de guisante, impacto de proyectil, rebote elástico de lechuga, mordisco cuerpo a cuerpo, correteo de pepino y estallido crujiente de papitas).
+Commit: 4012def
+Notes: Verificado con 209/209 comprobaciones en verde y renderizado visual directo.
