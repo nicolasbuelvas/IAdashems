@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cmf2f53o82h1z"]
+[gd_scene load_steps=5 format=3 uid="uid://cmf2f53o82h1z"]
 
 [ext_resource type="Script" path="res://ui/pause_menu.gd" id="1_pqrst"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="2_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="3_eyebrow"]
 
 [node name="PauseMenu" type="Control"]
 process_mode = 3
@@ -9,6 +11,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 visible = false
+theme = ExtResource("2_theme")
 script = ExtResource("1_pqrst")
 
 [node name="Dim" type="ColorRect" parent="."]
@@ -16,7 +19,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0, 0, 0, 0.6)
+color = Color(0, 0, 0, 0.74)
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -24,30 +27,61 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Rows" type="VBoxContainer" parent="Center"]
+[node name="Card" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(430, 0)
+layout_mode = 2
+
+[node name="Content" type="VBoxContainer" parent="Center/Card"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="Center/Rows"]
+[node name="Eyebrow" type="Label" parent="Center/Card/Content"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+mouse_filter = 2
+label_settings = ExtResource("3_eyebrow")
+text = "JUEGO EN PAUSA"
+
+[node name="Title" type="Label" parent="Center/Card/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "TitleLg"
 text = "PAUSA"
 horizontal_alignment = 1
 
-[node name="ResumeButton" type="Button" parent="Center/Rows"]
-custom_minimum_size = Vector2(280, 0)
+[node name="Rule" type="ColorRect" parent="Center/Card/Content"]
+custom_minimum_size = Vector2(72, 4)
 layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+color = Color(0.909804, 0.639216, 0.239216, 1)
+
+[node name="Gap" type="Control" parent="Center/Card/Content"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ResumeButton" type="Button" parent="Center/Card/Content"]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+theme_type_variation = "PrimaryButton"
 text = "Reanudar"
 
-[node name="OptionsButton" type="Button" parent="Center/Rows"]
-custom_minimum_size = Vector2(280, 0)
+[node name="OptionsButton" type="Button" parent="Center/Card/Content"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Opciones"
 
-[node name="QuitButton" type="Button" parent="Center/Rows"]
-custom_minimum_size = Vector2(280, 0)
+[node name="QuitButton" type="Button" parent="Center/Card/Content"]
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 text = "Salir al menú"
-[connection signal="pressed" from="Center/Rows/ResumeButton" to="." method="_on_ResumeButton_pressed"]
-[connection signal="pressed" from="Center/Rows/OptionsButton" to="." method="_on_OptionsButton_pressed"]
-[connection signal="pressed" from="Center/Rows/QuitButton" to="." method="_on_QuitButton_pressed"]
+
+[node name="Hint" type="Label" parent="Center/Card/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Muted"
+text = "ESC para reanudar"
+horizontal_alignment = 1
+[connection signal="pressed" from="Center/Card/Content/ResumeButton" to="." method="_on_ResumeButton_pressed"]
+[connection signal="pressed" from="Center/Card/Content/OptionsButton" to="." method="_on_OptionsButton_pressed"]
+[connection signal="pressed" from="Center/Card/Content/QuitButton" to="." method="_on_QuitButton_pressed"]

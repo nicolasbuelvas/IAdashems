@@ -10,15 +10,15 @@ extends Control
 ## todavía no existe, se duplica aquí a propósito para no depender de él).
 const HEAT_HIGH_THRESHOLD := 70.0
 
-@onready var heat_bar = $"TopBar/HeatBar"
-@onready var clock_label = $"TopBar/ClockLabel"
+@onready var heat_bar = $"TopBar/HeatPanel/HeatRow/HeatBar"
+@onready var clock_label = $"TopBar/ClockPanel/ClockLabel"
 @onready var life_icons = [
-	$"BottomBar/HealthIcons/Life1",
-	$"BottomBar/HealthIcons/Life2",
-	$"BottomBar/HealthIcons/Life3",
+	$"BottomBar/LivesPanel/LivesRow/Slot1/Life1",
+	$"BottomBar/LivesPanel/LivesRow/Slot2/Life2",
+	$"BottomBar/LivesPanel/LivesRow/Slot3/Life3",
 ]
-@onready var anomalies_label = $"BottomBar/AnomaliesLabel"
-@onready var herbicide_icon = $"BottomBar/HerbicideSlot/HerbicideIcon"
+@onready var anomalies_count = $"TopBar/AnomaliesPanel/AnomaliesRow/AnomaliesCount"
+@onready var herbicide_icon = $"BottomBar/HerbicideSlot/HerbicideRow/IconSlot/HerbicideIcon"
 
 var _shake_tween: Tween
 
@@ -67,7 +67,7 @@ func _on_round_timer_changed(seconds_left: float) -> void:
 
 
 func _on_anomalies_remaining_changed(remaining: int) -> void:
-	anomalies_label.text = "Anomalías: %d" % remaining
+	anomalies_count.text = str(remaining)
 
 
 func _on_herbicide_cooldown_changed(progress: float) -> void:

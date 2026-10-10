@@ -199,3 +199,17 @@ Files: scenes/credits.gd
 Change: set_input_as_handled() solo es válido dentro de _input/_unhandled_input; se llamaba desde la señal pressed de un botón. Se dejó el comentario de que esa navegación depende de GameManager.goto() de C.
 Commit: 91168e7
 Notes: Igual en ui/pause_menu.gd y ui/options_menu.gd (mismo cambio, commits 4f09a97 y 6c93a05).
+
+
+---
+
+## AI-IAdashems-NB-000016
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Rediseño visual completo de las pantallas de D (versión sin "bodrio")
+Type: AI_ASSISTED
+Files: ui/theme.tres, ui/backdrop.tscn, ui/style_eyebrow.tres, ui/hud.tscn, ui/hud.gd, ui/pause_menu.tscn, ui/options_menu.tscn, ui/options_menu.gd, ui/round_card.tscn, ui/round_card.gd, scenes/main_menu.tscn, scenes/intro.tscn, scenes/intro.gd, scenes/outro.tscn, scenes/outro.gd, scenes/credits.tscn, tools/ui_check.gd, art/d-ui/PAPA_0000.png, art/d-ui/PAPA_0003.png, art/d-ui/PAPA_DASH_0002.png, art/d-ui/fonts/fredoka.ttf, art/d-ui/fonts/nunito.ttf
+Change: Sistema visual compartido: ui/theme.tres (paleta ámbar/crema sobre espresso, botones primario/secundario, píldoras, barras y sliders) y ui/backdrop.tscn (degradado + grano + viñeta) reutilizado por las 8 pantallas. Tipografía Fredoka (títulos) y Nunito (texto), licencia OFL de Google Fonts, en art/d-ui/fonts/; los títulos usan outline del mismo color como faux bold porque Godot 4.7 no aplica el eje wght de la fuente variable. Rediseño de las 8 pantallas: menú (marca, mascota con sprites PAPA del equipo, tarjeta con botón primario), HUD (módulos de calor/reloj/anomalías, ranuras de vida, slot de herbicida), pausa, opciones, tarjeta de ronda, intro (pista parpadeante), outro (conserva WhiteFlash para la explosión) y créditos.
+Commit: PENDING
+Notes: La navegación entre escenas queda vacía porque depende de GameManager (C). Verificación: godot --path . -s tools/ui_check.gd → 41/41 PASS en Godot 4.7.2. El kenney_retro-urban-kit es un kit 3D (FBX), no sirve para UI. Rutas de nodos de hud.gd cambiaron; el contrato de señales con EventBus no cambió.
