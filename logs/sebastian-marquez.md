@@ -89,3 +89,14 @@ Files: player/player.gd, player/player.tscn
 Change: Idle usa el frame con menor espacio transparente bajo los pies; se ajustó el offset vertical de sprite y dash. Se mantiene la separación de collider sólido y ContactArea sensor.
 Commit: PENDING
 Notes: Godot 4.7.1 headless validó carga sin errores; ventana abierta para confirmación visual del apoyo.
+
+## AI-IAdashems-SM-000008
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Mejorar el peso del salto y la sensación del dash; restringir disparo y acciones simultáneas
+Type: AI_ASSISTED
+Files: player/player.gd
+Change: Ajustada la gravedad efectiva del jugador con aceleración al caer y al soltar Espacio, extendido el dash a 0.65 s con frenado gradual, squash/stretch visual al despegar/aterrizar y restringido el herbicida a disparos horizontales. Salto, dash y disparo se bloquean entre sí en el mismo ciclo; el dash exige estar en el suelo.
+Limitaciones: Los valores son una primera pasada de balance y requieren playtest visual para confirmar altura, duración y sensación.
+Commit: PENDING
