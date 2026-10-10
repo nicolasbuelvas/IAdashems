@@ -8,6 +8,8 @@ extends Anomaly
 ## Captura: 1 impacto de herbicida (E).
 
 const PROJECTILE_SCENE := preload("res://anomalies/pea_projectile.tscn")
+## Cuadros de preparación de la animación "shoot" antes del fogonazo (cuadros 0 y 1).
+const SHOOT_WINDUP_FRAMES := 2
 
 var speed: float = 3.2
 var fire_interval: float = 1.6
@@ -15,6 +17,8 @@ var projectile_speed: float = 8.0
 
 var _fire_timer: float = 1.0
 var _facing: float = 1.0
+var _animated_sprite: AnimatedSprite3D
+var _windup_time: float = 0.25
 
 
 func _ready() -> void:
@@ -27,6 +31,14 @@ func _ready() -> void:
 	speed = maxf(speed, 3.0)
 	fire_interval = minf(fire_interval, 1.8)
 	climb_speed = 4.8
+
+	_animated_sprite = get_node_or_null("AnimatedSprite3D") as AnimatedSprite3D
+	if _animated_sprite != null:
+		_animated_sprite.play("idle")
+		_animated_sprite.animation_finished.connect(_on_animation_finished)
+		# El fogonazo (cuadro 2) debe coincidir con la salida del proyectil.
+		var fps := _animated_sprite.sprite_frames.get_animation_speed("shoot")
+		_windup_time = minf(SHOOT_WINDUP_FRAMES / maxf(fps, 1.0), fire_interval * 0.5)
 
 
 func _physics_process(delta: float) -> void:
@@ -124,9 +136,31 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, 10.0 * delta)
 		
+	_update_sprite()
 	velocity.z = 0.0
 	move_and_slide()
 	global_position.z = 0.0
+
+
+func _start_shoot_animation() -> void:
+	if _animated_sprite != null and _animated_sprite.animation != &"shoot":
+		_animated_sprite.play("shoot")
+
+
+func _on_animation_finished() -> void:
+	if _animated_sprite != null and _animated_sprite.animation == &"shoot":
+		_animated_sprite.play("idle")
+
+
+## El sprite original mira a la derecha: se voltea según la dirección de movimiento
+## (o de disparo mientras dispara). Sin disparar usa el cuadro 0 ("idle").
+func _update_sprite() -> void:
+	if _animated_sprite == null:
+		return
+	if _animated_sprite.animation == &"shoot":
+		_animated_sprite.flip_h = _facing < 0.0
+	elif absf(velocity.x) > 0.05:
+		_animated_sprite.flip_h = velocity.x < 0.0
 
 
 func _shoot_projectile(target_player: Node3D = null) -> void:
@@ -147,6 +181,12 @@ func _shoot_projectile(target_player: Node3D = null) -> void:
 			shoot_dir.x = signf(predicted_diff)
 			_facing = shoot_dir.x
 
+	# Garantiza que el fogonazo se vea aunque la preparación no haya arrancado.
+	if _animated_sprite != null and _animated_sprite.animation != &"shoot":
+		_animated_sprite.play("shoot")
+		_animated_sprite.frame = SHOOT_WINDUP_FRAMES
+	_animated_sprite.flip_h = _facing < 0.0 if _animated_sprite != null else false
+
 	proj.direction = shoot_dir
 	proj.speed = projectile_speed
 	
@@ -154,7 +194,7 @@ func _shoot_projectile(target_player: Node3D = null) -> void:
 	if scene_root == null:
 		scene_root = get_parent()
 	scene_root.add_child(proj)
-	proj.global_position = global_position + Vector3(_facing * 0.65, 0.4, 0.0)
+	proj.global_position = global_position + Vector3(_facing * 1, 1.1, 0.0)
 
 
 ## Contrato de impacto de herbicida:

@@ -1,24 +1,41 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://anomalies/pea.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bbl22hy20dom1" path="res://Sprites/GUISANTE_TATATATAA/verde_0000.png" id="2_f0"]
+[ext_resource type="Texture2D" uid="uid://c56jqkby38o7l" path="res://Sprites/GUISANTE_TATATATAA/verde_0001.png" id="3_f1"]
+[ext_resource type="Texture2D" uid="uid://c4xqc3lcxqvdj" path="res://Sprites/GUISANTE_TATATATAA/verde_0002.png" id="4_f2"]
+[ext_resource type="Texture2D" uid="uid://dperru0pp4uw1" path="res://Sprites/GUISANTE_TATATATAA/verde_0003.png" id="5_f3"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_pea"]
 radius = 0.44
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pea"]
-albedo_color = Color(0.20, 0.58, 0.26, 1)
-roughness = 0.5
-
-[sub_resource type="SphereMesh" id="SphereMesh_pea"]
-material = SubResource("StandardMaterial3D_pea")
-radius = 0.48
-height = 0.96
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_nozzle"]
-material = SubResource("StandardMaterial3D_pea")
-top_radius = 0.16
-bottom_radius = 0.2
-height = 0.4
+[sub_resource type="SpriteFrames" id="SpriteFrames_pea"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_f0")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_f0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_f1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_f2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_f3")
+}],
+"loop": false,
+"name": &"shoot",
+"speed": 8.0
+}]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_hit"]
 radius = 0.40
@@ -32,13 +49,11 @@ script = ExtResource("1_script")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
 shape = SubResource("SphereShape3D_pea")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)
-mesh = SubResource("SphereMesh_pea")
-
-[node name="NozzleMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0.42, 0.48, 0)
-mesh = SubResource("CylinderMesh_nozzle")
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
+transform = Transform3D(0.96, 0, 0, 0, 0.96, 0, 0, 0, 1, 0, 0.8, 0)
+billboard = 1
+sprite_frames = SubResource("SpriteFrames_pea")
+animation = &"idle"
 
 [node name="ContactArea" type="Area3D" parent="." groups=["anomaly"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0)

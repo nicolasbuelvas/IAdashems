@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://cwjwtqhfd11u5"]
 
-[ext_resource type="Script" path="res://anomalies/pea_projectile.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dcah64rudmkih" path="res://anomalies/pea_projectile.gd" id="1_script"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_proj"]
 radius = 0.18
@@ -16,13 +16,13 @@ material = SubResource("StandardMaterial3D_pea")
 radius = 0.18
 height = 0.36
 
-[node name="PeaProjectile" type="Area3D"]
+[node name="PeaProjectile" type="Area3D" unique_id=898215857]
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_script")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1299747338]
 shape = SubResource("SphereShape3D_proj")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1621647055]
 mesh = SubResource("SphereMesh_proj")
