@@ -1,0 +1,70 @@
+[gd_scene format=3]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="HeatLabel" type="Label" parent="TopBar"]
+layout_mode = 2
+text = "Calor"
+
+[node name="HeatBar" type="ProgressBar" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 0.0
+show_percentage = false
+
+[node name="ClockLabel" type="Label" parent="TopBar"]
+layout_mode = 2
+text = "01:30"
+
+[node name="BottomBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -64.0
+offset_bottom = -16.0
+mouse_filter = 2
+
+[node name="HealthIcons" type="HBoxContainer" parent="BottomBar"]
+layout_mode = 2
+
+[node name="Life1" type="TextureRect" parent="BottomBar/HealthIcons"]
+layout_mode = 2
+texture = null
+
+[node name="Life2" type="TextureRect" parent="BottomBar/HealthIcons"]
+layout_mode = 2
+texture = null
+
+[node name="Life3" type="TextureRect" parent="BottomBar/HealthIcons"]
+layout_mode = 2
+texture = null
+
+[node name="Spacer" type="Control" parent="BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AnomaliesLabel" type="Label" parent="BottomBar"]
+layout_mode = 2
+text = "Anomalías: 1"
+
+[node name="HerbicideIcon" type="TextureRect" parent="BottomBar"]
+layout_mode = 2
+texture = null
