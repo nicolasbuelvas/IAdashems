@@ -1,20 +1,19 @@
-[gd_scene format=3 uid="uid://cmf2f53o82h1x"]
+[gd_scene load_steps=5 format=3 uid="uid://cmf2f53o82h1x"]
 
-[ext_resource type="Script" path="res://scenes/credits.gd" id="1_klmno"]
+[ext_resource type="PackedScene" path="res://ui/backdrop.tscn" id="1_bg"]
+[ext_resource type="Script" path="res://scenes/credits.gd" id="2_script"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="3_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="4_eyebrow"]
 
 [node name="Credits" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource("1_klmno")
+theme = ExtResource("3_theme")
+script = ExtResource("2_script")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color(0, 0, 0, 1)
+[node name="Backdrop" parent="." instance=ExtResource("1_bg")]
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -23,21 +22,87 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Rows" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(560, 0)
 layout_mode = 2
-theme_override_constants/separation = 8
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Eyebrow" type="Label" parent="Center/Rows"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = ExtResource("4_eyebrow")
+text = "EQUIPO IADASHEMS"
+horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="Center/Rows"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 40
+mouse_filter = 2
+theme_type_variation = "TitleLg"
 text = "CRÉDITOS"
 horizontal_alignment = 1
 
-[node name="Names" type="Label" parent="Center/Rows"]
+[node name="Rule" type="ColorRect" parent="Center/Rows"]
+custom_minimum_size = Vector2(72, 4)
 layout_mode = 2
-text = "[equipo: A, B, C, D]"
+size_flags_horizontal = 4
+mouse_filter = 2
+color = Color(0.909804, 0.639216, 0.239216, 1)
+
+[node name="Gap" type="Control" parent="Center/Rows"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Names" type="VBoxContainer" parent="Center/Rows"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Name1" type="Label" parent="Center/Rows/Names"]
+layout_mode = 2
+mouse_filter = 2
+text = "Nicolas Buelvas"
 horizontal_alignment = 1
 
+[node name="Name2" type="Label" parent="Center/Rows/Names"]
+layout_mode = 2
+mouse_filter = 2
+text = "Stiven Valencia"
+horizontal_alignment = 1
+
+[node name="Name3" type="Label" parent="Center/Rows/Names"]
+layout_mode = 2
+mouse_filter = 2
+text = "Sebastian Marquez"
+horizontal_alignment = 1
+
+[node name="Name4" type="Label" parent="Center/Rows/Names"]
+layout_mode = 2
+mouse_filter = 2
+text = "Carol Mosquera"
+horizontal_alignment = 1
+
+[node name="Gap2" type="Control" parent="Center/Rows"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Trace" type="Label" parent="Center/Rows"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Muted"
+text = "Trabajo con asistencia de IA declarado en logs/ (bitácora por tarea)."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Gap3" type="Control" parent="Center/Rows"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+mouse_filter = 2
+
 [node name="BackButton" type="Button" parent="Center/Rows"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "Volver al menú"
 [connection signal="pressed" from="Center/Rows/BackButton" to="." method="_on_BackButton_pressed"]

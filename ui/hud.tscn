@@ -1,7 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://cmf2f53o82h1y"]
+[gd_scene load_steps=7 format=3 uid="uid://cmf2f53o82h1y"]
 
 [ext_resource type="Script" path="res://ui/hud.gd" id="1_gjw4h"]
 [ext_resource type="PackedScene" path="res://ui/round_card.tscn" id="3_card"]
+[ext_resource type="Theme" path="res://ui/theme.tres" id="4_theme"]
+[ext_resource type="LabelSettings" path="res://ui/style_eyebrow.tres" id="5_eyebrow"]
+
+[sub_resource type="StyleBoxFlat" id="sb_life"]
+bg_color = Color(0.909804, 0.639216, 0.239216, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+
+[sub_resource type="StyleBoxFlat" id="sb_herb"]
+bg_color = Color(0.498039, 0.690196, 0.411765, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.368627, 0.529412, 0.301961, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -9,34 +30,83 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+theme = ExtResource("4_theme")
 script = ExtResource("1_gjw4h")
 
 [node name="TopBar" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 64.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = 76.0
 mouse_filter = 2
+theme_override_constants/separation = 12
 
-[node name="HeatLabel" type="Label" parent="TopBar"]
+[node name="HeatPanel" type="PanelContainer" parent="TopBar"]
 layout_mode = 2
 mouse_filter = 2
-text = "Calor"
+theme_type_variation = "Pill"
 
-[node name="HeatBar" type="ProgressBar" parent="TopBar"]
+[node name="HeatRow" type="HBoxContainer" parent="TopBar/HeatPanel"]
 layout_mode = 2
 mouse_filter = 2
-size_flags_horizontal = 3
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="HeatLabel" type="Label" parent="TopBar/HeatPanel/HeatRow"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = ExtResource("5_eyebrow")
+text = "CALOR"
+
+[node name="HeatBar" type="ProgressBar" parent="TopBar/HeatPanel/HeatRow"]
+custom_minimum_size = Vector2(280, 20)
+layout_mode = 2
+mouse_filter = 2
 max_value = 100.0
 value = 0.0
 show_percentage = false
 
-[node name="ClockLabel" type="Label" parent="TopBar"]
+[node name="TopSpacer" type="Control" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="AnomaliesPanel" type="PanelContainer" parent="TopBar"]
 layout_mode = 2
 mouse_filter = 2
+theme_type_variation = "Pill"
+
+[node name="AnomaliesRow" type="HBoxContainer" parent="TopBar/AnomaliesPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="AnomaliesLabel" type="Label" parent="TopBar/AnomaliesPanel/AnomaliesRow"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = ExtResource("5_eyebrow")
+text = "ANOMALÍAS"
+
+[node name="AnomaliesCount" type="Label" parent="TopBar/AnomaliesPanel/AnomaliesRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "TitleMd"
+theme_override_colors/font_color = Color(0.909804, 0.639216, 0.239216, 1)
+text = "5"
+
+[node name="ClockPanel" type="PanelContainer" parent="TopBar"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Pill"
+
+[node name="ClockLabel" type="Label" parent="TopBar/ClockPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "TitleMd"
 text = "01:30"
 
 [node name="BottomBar" type="HBoxContainer" parent="."]
@@ -45,48 +115,30 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -64.0
-offset_bottom = -16.0
+offset_left = 24.0
+offset_top = -76.0
+offset_right = -24.0
+offset_bottom = -20.0
 mouse_filter = 2
+theme_override_constants/separation = 12
 
-[node name="HealthIcons" type="HBoxContainer" parent="BottomBar"]
+[node name="LivesPanel" type="PanelContainer" parent="BottomBar"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Pill"
+
+[node name="LivesRow" type="HBoxContainer" parent="BottomBar/LivesPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="Slot1" type="Panel" parent="BottomBar/LivesPanel/LivesRow"]
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Life1" type="ColorRect" parent="BottomBar/HealthIcons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-mouse_filter = 2
-color = Color(0.86, 0.25, 0.22, 1)
-
-[node name="Life2" type="ColorRect" parent="BottomBar/HealthIcons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-mouse_filter = 2
-color = Color(0.86, 0.25, 0.22, 1)
-
-[node name="Life3" type="ColorRect" parent="BottomBar/HealthIcons"]
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-mouse_filter = 2
-color = Color(0.86, 0.25, 0.22, 1)
-
-[node name="Spacer" type="Control" parent="BottomBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-
-[node name="AnomaliesLabel" type="Label" parent="BottomBar"]
-layout_mode = 2
-mouse_filter = 2
-text = "Anomalías: 0"
-
-[node name="HerbicideSlot" type="Control" parent="BottomBar"]
-custom_minimum_size = Vector2(48, 48)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="HerbicideIcon" type="ColorRect" parent="BottomBar/HerbicideSlot"]
+[node name="Life1" type="Panel" parent="BottomBar/LivesPanel/LivesRow/Slot1"]
+theme_override_styles/panel = SubResource("sb_life")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,7 +146,73 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.3, 0.75, 0.35, 1)
+
+[node name="Slot2" type="Panel" parent="BottomBar/LivesPanel/LivesRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Life2" type="Panel" parent="BottomBar/LivesPanel/LivesRow/Slot2"]
+theme_override_styles/panel = SubResource("sb_life")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Slot3" type="Panel" parent="BottomBar/LivesPanel/LivesRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Life3" type="Panel" parent="BottomBar/LivesPanel/LivesRow/Slot3"]
+theme_override_styles/panel = SubResource("sb_life")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BottomSpacer" type="Control" parent="BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="HerbicideSlot" type="PanelContainer" parent="BottomBar"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = "Pill"
+
+[node name="HerbicideRow" type="HBoxContainer" parent="BottomBar/HerbicideSlot"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="IconSlot" type="Control" parent="BottomBar/HerbicideSlot/HerbicideRow"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HerbicideIcon" type="Panel" parent="BottomBar/HerbicideSlot/HerbicideRow/IconSlot"]
+theme_override_styles/panel = SubResource("sb_herb")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HerbicideLabel" type="Label" parent="BottomBar/HerbicideSlot/HerbicideRow"]
+layout_mode = 2
+mouse_filter = 2
+label_settings = ExtResource("5_eyebrow")
+text = "HERBICIDA"
 
 [node name="RoundCard" parent="." instance=ExtResource("3_card")]
 layout_mode = 1
