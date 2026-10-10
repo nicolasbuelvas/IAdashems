@@ -561,5 +561,19 @@ Task: Reducción del cooldown del herbicida del jugador a 3 segundos
 Type: AI_ASSISTED
 Files: autoload/game_config.gd, player/player.gd, docs/GDD.md
 Change: Se redujo la constante HERBICIDE_COOLDOWN de 5.0s a 3.0s en autoload/game_config.gd, su valor fallback en player/player.gd y la documentación en docs/GDD.md, aumentando la cadencia y dinamismo del lanzamiento de herbicida para contener guisantes.
-Commit: 50bf6b2
+Commit: e76f5ca
+Notes: 332 comprobaciones automatizadas pasando sin errores.
+
+
+---
+
+## AI-IAdashems-NB-000042
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Apertura visual y escotilla en el techo/piso superior de las escaleras
+Type: AI_ASSISTED
+Files: level/ladder.tscn
+Change: Se integró una abertura visual estructurada (CeilingOpeningHatch) en la parte superior de cada escalera (y = 4.0m) para evitar que las entidades y el jugador atraviesen el forjado como un sólido continuo: incluye una cavidad oscura de profundidad (HatchCavity), marco perimetral de madera (RimFront, RimBack, RimLeft, RimRight), escotilla abierta inclinada (OpenTrapdoor) y asas de seguridad metálicas (HandleLeft, HandleRight) que sobresalen hacia el piso superior. El marco visual no añade colisión obstructiva ni interfiere con la superficie de apoyo, asegurando que pararse allí no produzca caídas accidentales.
+Commit: f2c4552
 Notes: 332 comprobaciones automatizadas pasando sin errores.
