@@ -255,3 +255,17 @@ Files: art/d-ui/menu_background.png, art/d-ui/options_background.png, art/d-ui/c
 Change: Eliminación de las tarjetas y textos estáticos antiguos horneados en las imágenes de fondo mediante difuminado y composición limpia, dejando únicamente la UI interactiva de Godot. Actualización del menú de opciones con señal back_requested para integrarse como submenú tanto en el menú principal como en el menú de pausa durante el juego: al abrir opciones desde la pausa, el botón Volver regresa a la pausa sin reiniciar ni destruir la partida.
 Commit: PENDING
 Notes: Verificado con tools/ui_check.gd (41/41 PASS) y systems/tests/heat_system_test.gd (32/32 PASS).
+
+
+---
+
+## AI-IAdashems-NB-000020
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Implementación completa de las 3 anomalías (Pepino, Lechuga, Guisante) y mapas de prueba
+Type: AI_ASSISTED
+Files: anomalies/anomaly.gd, anomalies/cucumber.gd, anomalies/cucumber.tscn, anomalies/lettuce.gd, anomalies/lettuce.tscn, anomalies/pea.gd, anomalies/pea.tscn, anomalies/pea_projectile.gd, anomalies/pea_projectile.tscn, anomalies/test_cucumber.tscn, anomalies/test_lettuce.tscn, anomalies/test_pea.tscn, anomalies/test_all_anomalies.tscn
+Change: Creación de la clase base Anomaly cumpliendo el contrato de RoundManager y EventBus (spawn_id, anomaly_spawned, tween hacia contenedor más cercano con anomaly_contained). Pepino (Cápsula esmeralda) huye en X, se ralentiza en escaleras y se acorrala contra paredes; captura por contacto directo. Lechuga (Esfera lima) rebota por suelos y paredes, hiere al contacto y se captura deslizándose con Shift. Lanzaguisantes (Esfera verde oscura) avanza lento, dispara proyectiles de guisante cada 2.5s e hiere al contacto; se captura con impacto de herbicida (E). Creación de 4 mapas de prueba 3D de 2 pisos con rampa/escalera funcional (StairsArea en grupo stairs), contenedores y cámara.
+Commit: PENDING
+Notes: Verificado con tools/ui_check.gd (41/41 PASS), systems/tests/heat_system_test.gd (32/32 PASS) y systems/tests/round_manager_test.gd (136/136 PASS). Total: 209 comprobaciones automatizadas en verde.
