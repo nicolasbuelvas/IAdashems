@@ -407,5 +407,19 @@ Task: Perspectiva 3D con relieve visible en cámara de seguimiento
 Type: AI_ASSISTED
 Files: player/follow_camera.gd, player/follow_camera.tscn
 Change: Transición de proyección ortogonal plana a proyección en perspectiva 3D (FOV 48.0, distancia fixed_z = 13.0m). Inclinación leve de cámara (pitch de -6.5° y yaw sutil de -3.5° con elevación y_offset = 1.2m) permitiendo apreciar el relieve tridimensional, caras superiores y profundidad de plataformas, techos, peldaños de escaleras y personajes en 2.5D.
-Commit: fbc6508
+Commit: dc3dbdf
 Notes: Verificado con 209/209 comprobaciones automatizadas en verde y captura visual directa en D3D12.
+
+
+---
+
+## AI-IAdashems-NB-000031
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Física balística realista y cálculo cinemático de rebote para la lechuga
+Type: AI_ASSISTED
+Files: anomalies/lettuce.gd
+Change: Eliminación de la sobreescritura continua de velocidad vertical que provocaba que la lechuga se quedara pegada/flotando en el techo durante el slide del jugador. Implementación de física parabólica pura en caída libre con restitución en techo (e=0.8, rebote hacia abajo inmediato) y paredes (e=0.85). Cálculo cinemático de impulso exclusivamente al tocar el suelo con relación inversa entre altura y distancia: 1) Salto alto vertical (vy=8.6, vx=3.0) para sortear por arriba si el jugador se desliza a corta distancia (<3.8m); 2) Salto largo rasante (vy=4.6, vx=9.8) para escapar velozmente si el slide ocurre a distancia media; 3) Embestida rasante en picada (vy=4.2, vx=8.8) para castigar al jugador al finalizar su slide.
+Commit: 7b22496
+Notes: Verificado con 209/209 comprobaciones en verde (ui_check 41/41, heat_system_test 32/32, round_manager_test 136/136) y ejecución headless limpia de test_lettuce.tscn y test_all_anomalies.tscn.
