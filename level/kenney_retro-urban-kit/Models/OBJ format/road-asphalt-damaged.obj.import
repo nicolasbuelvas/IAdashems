@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bj53w7mto5lf8"
+path="res://.godot/imported/road-asphalt-damaged.obj-38e3f7a725fc4505a7a26e0be8b14942.mesh"
+
+[deps]
+
+files=["res://.godot/imported/road-asphalt-damaged.obj-38e3f7a725fc4505a7a26e0be8b14942.mesh"]
+
+source_file="res://level/kenney_retro-urban-kit/Models/OBJ format/road-asphalt-damaged.obj"
+dest_files=["res://.godot/imported/road-asphalt-damaged.obj-38e3f7a725fc4505a7a26e0be8b14942.mesh", "res://.godot/imported/road-asphalt-damaged.obj-38e3f7a725fc4505a7a26e0be8b14942.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

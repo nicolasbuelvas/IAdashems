@@ -1,0 +1,500 @@
+[gd_scene format=3 uid="uid://b4502o2x8yggc"]
+
+[ext_resource type="PackedScene" uid="uid://mkcboqgpyr2k" path="res://level/kenney_retro-urban-kit/Models/FBX format/balcony-ladder-bottom.fbx" id="1_563ib"]
+[ext_resource type="PackedScene" uid="uid://c3ql3ytt6mb1m" path="res://level/kenney_retro-urban-kit/Models/FBX format/balcony-ladder-top.fbx" id="2_wd75x"]
+[ext_resource type="PackedScene" uid="uid://b07nok21kc5li" path="res://level/kenney_retro-urban-kit/Models/FBX format/balcony-type-a.fbx" id="3_aqlr7"]
+[ext_resource type="PackedScene" uid="uid://di88x05us5m84" path="res://level/kenney_retro-urban-kit/Models/FBX format/cliff-corner.fbx" id="4_o5i3k"]
+[ext_resource type="PackedScene" uid="uid://cxdb77o45rhu" path="res://level/kenney_retro-urban-kit/Models/FBX format/cliff-side.fbx" id="5_6c6n7"]
+[ext_resource type="PackedScene" uid="uid://cjm0aeby8p1bn" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-awning-small.fbx" id="6_h7oh2"]
+[ext_resource type="PackedScene" uid="uid://cftst2di88pub" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-awning-wide.fbx" id="7_wcwpb"]
+[ext_resource type="PackedScene" uid="uid://bxpbly8yfvoxl" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-barrier-strong-damaged.fbx" id="8_dhcxx"]
+[ext_resource type="PackedScene" uid="uid://efmcrbqw7d18" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-barrier-strong-type-a.fbx" id="9_qx0ja"]
+[ext_resource type="PackedScene" uid="uid://cpuihds5rsgct" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-barrier-strong-type-b.fbx" id="10_ymn1v"]
+[ext_resource type="PackedScene" uid="uid://melw2xqqdleh" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-barrier-type-a.fbx" id="11_4rgeo"]
+[ext_resource type="PackedScene" uid="uid://bjk56pubohhuk" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-barrier-type-b.fbx" id="12_7dt46"]
+[ext_resource type="PackedScene" uid="uid://dmyy6sxgfyp71" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-beam.fbx" id="13_7sqdc"]
+[ext_resource type="PackedScene" uid="uid://dlsasysnkq53a" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-bench.fbx" id="14_a7vka"]
+[ext_resource type="PackedScene" uid="uid://maxe76ne7jew" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-block.fbx" id="15_y6rw3"]
+[ext_resource type="PackedScene" uid="uid://dj7jxehp64unk" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-bricks-type-a.fbx" id="16_wai4p"]
+[ext_resource type="PackedScene" uid="uid://bwbmfl664vt2c" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-bricks-type-b.fbx" id="17_4inpl"]
+[ext_resource type="PackedScene" uid="uid://cucsgd0uqid6q" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-cables-type-a.fbx" id="18_gis2x"]
+[ext_resource type="PackedScene" uid="uid://d07812byy5pa3" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-cables-type-b.fbx" id="19_s6g2n"]
+[ext_resource type="PackedScene" uid="uid://dtf6y54rvc88e" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-dumpster-closed.fbx" id="20_snfns"]
+[ext_resource type="PackedScene" uid="uid://1ciu2cvskgp6" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-dumpster-open.fbx" id="21_on5u8"]
+[ext_resource type="PackedScene" uid="uid://cv3rxisc7ysu" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-light-double.fbx" id="22_kk3di"]
+[ext_resource type="PackedScene" uid="uid://dkqik5obo3081" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-light-single.fbx" id="23_wrxgk"]
+[ext_resource type="PackedScene" uid="uid://b2ww2i1iiwyit" path="res://level/kenney_retro-urban-kit/Models/FBX format/detail-light-traffic.fbx" id="24_odh2a"]
+[ext_resource type="PackedScene" uid="uid://bqyitvvii56b6" path="res://level/kenney_retro-urban-kit/Models/FBX format/door-type-a.fbx" id="25_fol4h"]
+[ext_resource type="PackedScene" uid="uid://bjo5vaubytv3x" path="res://level/kenney_retro-urban-kit/Models/FBX format/door-type-b.fbx" id="26_lpr8i"]
+[ext_resource type="PackedScene" uid="uid://dufrqd2q68ho4" path="res://level/kenney_retro-urban-kit/Models/FBX format/grass-corner-inner.fbx" id="27_e6o5e"]
+[ext_resource type="PackedScene" uid="uid://c617whm8mtdk6" path="res://level/kenney_retro-urban-kit/Models/FBX format/grass-corner.fbx" id="28_c4447"]
+[ext_resource type="PackedScene" uid="uid://bql6tqat6mgb" path="res://level/kenney_retro-urban-kit/Models/FBX format/grass-hill.fbx" id="29_afmq0"]
+[ext_resource type="PackedScene" uid="uid://cv0esddhia6by" path="res://level/kenney_retro-urban-kit/Models/FBX format/grass.fbx" id="30_n4khn"]
+[ext_resource type="PackedScene" uid="uid://14nfo0x4kkwv" path="res://level/kenney_retro-urban-kit/Models/FBX format/pallet-small.fbx" id="31_bncat"]
+[ext_resource type="PackedScene" uid="uid://6717cqou2nu3" path="res://level/kenney_retro-urban-kit/Models/FBX format/pallet.fbx" id="32_86nof"]
+[ext_resource type="PackedScene" uid="uid://l5xpnrxynjd6" path="res://level/kenney_retro-urban-kit/Models/FBX format/planks.fbx" id="33_ensbv"]
+[ext_resource type="PackedScene" uid="uid://bjrj2ckytaipt" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-asphalt-center.fbx" id="34_45rnl"]
+[ext_resource type="PackedScene" uid="uid://2qa1bvhj168i" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-asphalt-corner-inner.fbx" id="35_jgbks"]
+[ext_resource type="PackedScene" uid="uid://gedeu3pgr865" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-asphalt-corner-outer.fbx" id="36_i8pgu"]
+[ext_resource type="PackedScene" uid="uid://crvygh0xwqr8d" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-asphalt-corner.fbx" id="37_u63rh"]
+[ext_resource type="PackedScene" uid="uid://b68u77d5sx4f2" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-asphalt-damaged.fbx" id="38_bp7xm"]
+[ext_resource type="PackedScene" uid="uid://ycvf55rc7qqy" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-asphalt-pavement.fbx" id="39_47okv"]
+[ext_resource type="PackedScene" uid="uid://dmqo3wyyy5psl" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-asphalt-side.fbx" id="40_20u4w"]
+[ext_resource type="PackedScene" uid="uid://qehi6u5jrpt5" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-asphalt-straight.fbx" id="41_bst08"]
+[ext_resource type="PackedScene" uid="uid://c40p5a60v4row" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-center.fbx" id="42_8moqw"]
+[ext_resource type="PackedScene" uid="uid://oh0wxtx6lr4c" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-corner-inner.fbx" id="43_cen10"]
+[ext_resource type="PackedScene" uid="uid://dve2ardvdqitx" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-corner-outer.fbx" id="44_mw26m"]
+[ext_resource type="PackedScene" uid="uid://cqmjde15sy454" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-corner.fbx" id="45_dxe2f"]
+[ext_resource type="PackedScene" uid="uid://dylhepoqegepw" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-damaged.fbx" id="46_gmqbu"]
+[ext_resource type="PackedScene" uid="uid://c6eaofhf4luf6" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-pavement.fbx" id="47_k4tut"]
+[ext_resource type="PackedScene" uid="uid://7rnyrv6l7bxs" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-side.fbx" id="48_6na2o"]
+[ext_resource type="PackedScene" uid="uid://0p34iimy4jlu" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-straight.fbx" id="49_l1rtq"]
+[ext_resource type="PackedScene" uid="uid://dmpvrkffilqk4" path="res://level/kenney_retro-urban-kit/Models/FBX format/road-dirt-tile.fbx" id="50_pafpr"]
+[ext_resource type="PackedScene" uid="uid://bvyq73ek306xx" path="res://level/kenney_retro-urban-kit/Models/FBX format/roof-metal-poles.fbx" id="51_o770o"]
+[ext_resource type="PackedScene" uid="uid://bqoq0wvfxjsu2" path="res://level/kenney_retro-urban-kit/Models/FBX format/roof-metal-type-a.fbx" id="52_35cyu"]
+[ext_resource type="PackedScene" uid="uid://dn0takvqtc56d" path="res://level/kenney_retro-urban-kit/Models/FBX format/roof-metal-type-b.fbx" id="53_c32f5"]
+[ext_resource type="PackedScene" uid="uid://c2hw4v1ka0kmp" path="res://level/kenney_retro-urban-kit/Models/FBX format/scaffolding-floor.fbx" id="54_3m64r"]
+[ext_resource type="PackedScene" uid="uid://sqmu5soq3w4q" path="res://level/kenney_retro-urban-kit/Models/FBX format/scaffolding-poles.fbx" id="55_3ni2k"]
+[ext_resource type="PackedScene" uid="uid://m8cpbhdlf1kb" path="res://level/kenney_retro-urban-kit/Models/FBX format/scaffolding-structure.fbx" id="56_j44pc"]
+[ext_resource type="PackedScene" uid="uid://c3qsrb08w6voe" path="res://level/kenney_retro-urban-kit/Models/FBX format/tree-large.fbx" id="57_oac4x"]
+[ext_resource type="PackedScene" uid="uid://clxcefmn7upr1" path="res://level/kenney_retro-urban-kit/Models/FBX format/tree-park-large.fbx" id="58_g2yol"]
+[ext_resource type="PackedScene" uid="uid://busfv00qb3ohm" path="res://level/kenney_retro-urban-kit/Models/FBX format/tree-park-pine-large.fbx" id="59_m3d6i"]
+[ext_resource type="PackedScene" uid="uid://c5hwnboef3apx" path="res://level/kenney_retro-urban-kit/Models/FBX format/tree-pine-large.fbx" id="60_rryqm"]
+[ext_resource type="PackedScene" uid="uid://b8ofj184j4h2a" path="res://level/kenney_retro-urban-kit/Models/FBX format/tree-pine-small.fbx" id="61_4q1gf"]
+[ext_resource type="PackedScene" uid="uid://btp0v0psdi4vc" path="res://level/kenney_retro-urban-kit/Models/FBX format/tree-shrub.fbx" id="62_r08gp"]
+[ext_resource type="PackedScene" uid="uid://b61auxxmfudvu" path="res://level/kenney_retro-urban-kit/Models/FBX format/tree-small.fbx" id="63_hqctg"]
+[ext_resource type="PackedScene" uid="uid://sgdi7xqx8ro0" path="res://level/kenney_retro-urban-kit/Models/FBX format/truck-flat.fbx" id="64_8vh8w"]
+[ext_resource type="PackedScene" uid="uid://d0ydw2f0oy46p" path="res://level/kenney_retro-urban-kit/Models/FBX format/truck-green-cargo.fbx" id="65_ugfkb"]
+[ext_resource type="PackedScene" uid="uid://cwhtbjtpy0u1y" path="res://level/kenney_retro-urban-kit/Models/FBX format/truck-green.fbx" id="66_43uyk"]
+[ext_resource type="PackedScene" uid="uid://mv5j3va722fe" path="res://level/kenney_retro-urban-kit/Models/FBX format/truck-grey-cargo.fbx" id="67_dhfy2"]
+[ext_resource type="PackedScene" uid="uid://c58aq8d06n260" path="res://level/kenney_retro-urban-kit/Models/FBX format/truck-grey.fbx" id="68_m22fd"]
+[ext_resource type="PackedScene" uid="uid://cpqxgkiu4hcn1" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-column-painted.fbx" id="69_3wc1k"]
+[ext_resource type="PackedScene" uid="uid://dv5hlql66d8ic" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-column.fbx" id="70_v3uqa"]
+[ext_resource type="PackedScene" uid="uid://c2mgelngfhho3" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-corner-painted.fbx" id="71_bkxpn"]
+[ext_resource type="PackedScene" uid="uid://s6w6dunsklff" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-corner.fbx" id="72_nuuoj"]
+[ext_resource type="PackedScene" uid="uid://cw264w6a26sk3" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-detail-painted.fbx" id="73_f3sl2"]
+[ext_resource type="PackedScene" uid="uid://b8coawb8r73gr" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-detail.fbx" id="74_on5lg"]
+[ext_resource type="PackedScene" uid="uid://qjnpwhed732a" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-diagonal.fbx" id="75_s43rf"]
+[ext_resource type="PackedScene" uid="uid://cuf6fp4aip7f2" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-door.fbx" id="76_iki5w"]
+[ext_resource type="PackedScene" uid="uid://bswaf644ufm0t" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-flat-garage.fbx" id="77_2jj81"]
+[ext_resource type="PackedScene" uid="uid://ban702fhfng7v" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-flat-painted.fbx" id="78_prui6"]
+[ext_resource type="PackedScene" uid="uid://byvkno0k0dr4d" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-flat-window.fbx" id="79_hinq0"]
+[ext_resource type="PackedScene" uid="uid://cw0t2vpec5e4w" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-flat.fbx" id="80_hhjel"]
+[ext_resource type="PackedScene" uid="uid://cy8vbelb7t384" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-garage.fbx" id="81_2w6ic"]
+[ext_resource type="PackedScene" uid="uid://cfxvh8themog2" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-low-painted.fbx" id="82_61ows"]
+[ext_resource type="PackedScene" uid="uid://vb2xlsb4cgyy" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-low.fbx" id="83_fl0l1"]
+[ext_resource type="PackedScene" uid="uid://dv7e6is1ijxi1" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-open.fbx" id="84_ytoro"]
+[ext_resource type="PackedScene" uid="uid://b6wip0oueev62" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-painted-diagonal.fbx" id="85_8o8q2"]
+[ext_resource type="PackedScene" uid="uid://cntwo222fuun2" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-painted.fbx" id="86_1qlcw"]
+[ext_resource type="PackedScene" uid="uid://cihaykf003sj7" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-roof-detailed.fbx" id="87_ftvbj"]
+[ext_resource type="PackedScene" uid="uid://co68d2jy46yfc" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-roof-slant-detailed.fbx" id="88_51qli"]
+[ext_resource type="PackedScene" uid="uid://be8jsvjtuibl2" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-roof-slant.fbx" id="89_l02nf"]
+[ext_resource type="PackedScene" uid="uid://bb8fo7f2n1q1j" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-roof.fbx" id="90_55o1g"]
+[ext_resource type="PackedScene" uid="uid://fqhb7wi3sb5g" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a-window.fbx" id="91_wdw7e"]
+[ext_resource type="PackedScene" uid="uid://bh706k54ijdx7" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-a.fbx" id="92_j2xhy"]
+[ext_resource type="PackedScene" uid="uid://culi3fujoefv" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-column.fbx" id="93_wss60"]
+[ext_resource type="PackedScene" uid="uid://dlcv5o64ctaj3" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-corner.fbx" id="94_rxvj1"]
+[ext_resource type="PackedScene" uid="uid://jvgrr6grdwhv" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-detail-painted.fbx" id="95_clyt2"]
+[ext_resource type="PackedScene" uid="uid://dtee2q601c5ep" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-diagonal.fbx" id="96_iv88q"]
+[ext_resource type="PackedScene" uid="uid://cbssi7prpw8pi" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-door.fbx" id="97_j46w0"]
+[ext_resource type="PackedScene" uid="uid://cmhrl71vg437x" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-flat-garage.fbx" id="98_mh4c8"]
+[ext_resource type="PackedScene" uid="uid://ciiy7ft73froa" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-flat-window.fbx" id="99_nktds"]
+[ext_resource type="PackedScene" uid="uid://c47vwx5i5r7j4" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-flat.fbx" id="100_gyl34"]
+[ext_resource type="PackedScene" uid="uid://cg3s15ahecjgb" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-garage.fbx" id="101_17oxy"]
+[ext_resource type="PackedScene" uid="uid://dx2q2a42bmtlq" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-low.fbx" id="102_le3nx"]
+[ext_resource type="PackedScene" uid="uid://nqy11fa3ul5n" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-open.fbx" id="103_oscm5"]
+[ext_resource type="PackedScene" uid="uid://dvfwescs61bjk" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-roof-detailed.fbx" id="104_8b4g5"]
+[ext_resource type="PackedScene" uid="uid://2vrrmtk0vtw7" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-roof-slant-detailed.fbx" id="105_n4dsh"]
+[ext_resource type="PackedScene" uid="uid://d0xox1kexxabw" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-roof-slant.fbx" id="106_8jaua"]
+[ext_resource type="PackedScene" uid="uid://w4g2k5xsvk0d" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-roof.fbx" id="107_2cqx2"]
+[ext_resource type="PackedScene" uid="uid://dfganp8ianbqj" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b-window.fbx" id="108_1o3cx"]
+[ext_resource type="PackedScene" uid="uid://cjlnfoftix7cs" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-b.fbx" id="109_kismm"]
+[ext_resource type="PackedScene" uid="uid://5kkvlvwe712s" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-broken-type-a.fbx" id="110_ld7ul"]
+[ext_resource type="PackedScene" uid="uid://dtmmc1polfkf2" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-broken-type-b.fbx" id="111_mxw13"]
+[ext_resource type="PackedScene" uid="uid://dbumxlggtw7d2" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-c-flat-low.fbx" id="112_3lixy"]
+[ext_resource type="PackedScene" uid="uid://4dyqkpxgl3av" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-c-flat.fbx" id="113_y2tft"]
+[ext_resource type="PackedScene" uid="uid://bve6gfgigbfwd" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-fence.fbx" id="114_ptffw"]
+[ext_resource type="PackedScene" uid="uid://b2ii02k3w4egp" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-steps-type-a.fbx" id="115_x4jkv"]
+[ext_resource type="PackedScene" uid="uid://b761278f6ut0o" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-steps-type-b.fbx" id="116_yqbx2"]
+[ext_resource type="PackedScene" uid="uid://dlk86sj755h24" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-type-a.fbx" id="117_qvmsu"]
+[ext_resource type="PackedScene" uid="uid://2x61xb6tq6y5" path="res://level/kenney_retro-urban-kit/Models/FBX format/wall-type-b.fbx" id="118_xskjn"]
+[ext_resource type="PackedScene" uid="uid://cwimvu82v4tvq" path="res://level/kenney_retro-urban-kit/Models/FBX format/window-small-type-a.fbx" id="119_hjc7v"]
+[ext_resource type="PackedScene" uid="uid://cmkuhys5goisq" path="res://level/kenney_retro-urban-kit/Models/FBX format/window-small-type-b.fbx" id="120_ls4yc"]
+[ext_resource type="PackedScene" uid="uid://b8cvq6j7wno41" path="res://level/kenney_retro-urban-kit/Models/FBX format/window-wide-type-a.fbx" id="121_7gyt2"]
+[ext_resource type="PackedScene" uid="uid://b331m8ktohs3e" path="res://level/kenney_retro-urban-kit/Models/FBX format/window-wide-type-b.fbx" id="122_tcn7u"]
+[ext_resource type="PackedScene" uid="uid://delnaoun8aepe" path="res://level/kenney_retro-urban-kit/Models/FBX format/window-wide-type-c.fbx" id="123_ofyo4"]
+[ext_resource type="PackedScene" uid="uid://ba8wjf3ta6uqt" path="res://level/kenney_retro-urban-kit/Models/FBX format/window-wide-type-d.fbx" id="124_0ufev"]
+
+[node name="Edificio" type="Node3D" unique_id=2074577542]
+
+[node name="balcony-ladder-bottom" parent="." unique_id=803120186 instance=ExtResource("1_563ib")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="balcony-ladder-top" parent="." unique_id=1545437191 instance=ExtResource("2_wd75x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="balcony-type-a" parent="." unique_id=1005612204 instance=ExtResource("3_aqlr7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="cliff-corner" parent="." unique_id=1442284358 instance=ExtResource("4_o5i3k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="cliff-side" parent="." unique_id=92938497 instance=ExtResource("5_6c6n7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-awning-small" parent="." unique_id=550747031 instance=ExtResource("6_h7oh2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-awning-wide" parent="." unique_id=1642030308 instance=ExtResource("7_wcwpb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-barrier-strong-damaged" parent="." unique_id=40861621 instance=ExtResource("8_dhcxx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-barrier-strong-type-a" parent="." unique_id=1301441143 instance=ExtResource("9_qx0ja")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-barrier-strong-type-b" parent="." unique_id=862456224 instance=ExtResource("10_ymn1v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-barrier-type-a" parent="." unique_id=1336647369 instance=ExtResource("11_4rgeo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-barrier-type-b" parent="." unique_id=1605124648 instance=ExtResource("12_7dt46")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-beam" parent="." unique_id=2077647528 instance=ExtResource("13_7sqdc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-bench" parent="." unique_id=1176354144 instance=ExtResource("14_a7vka")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-block" parent="." unique_id=1290903851 instance=ExtResource("15_y6rw3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-bricks-type-a" parent="." unique_id=791615217 instance=ExtResource("16_wai4p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-bricks-type-b" parent="." unique_id=405199468 instance=ExtResource("17_4inpl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-cables-type-a" parent="." unique_id=730015853 instance=ExtResource("18_gis2x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-cables-type-b" parent="." unique_id=1376570754 instance=ExtResource("19_s6g2n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-dumpster-closed" parent="." unique_id=300197050 instance=ExtResource("20_snfns")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-dumpster-open" parent="." unique_id=545422820 instance=ExtResource("21_on5u8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-light-double" parent="." unique_id=1503099520 instance=ExtResource("22_kk3di")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-light-single" parent="." unique_id=256235632 instance=ExtResource("23_wrxgk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="detail-light-traffic" parent="." unique_id=1003023156 instance=ExtResource("24_odh2a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="door-type-a" parent="." unique_id=928384553 instance=ExtResource("25_fol4h")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="door-type-b" parent="." unique_id=756660302 instance=ExtResource("26_lpr8i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="grass-corner-inner" parent="." unique_id=1100991574 instance=ExtResource("27_e6o5e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="grass-corner" parent="." unique_id=392572791 instance=ExtResource("28_c4447")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="grass-hill" parent="." unique_id=1866947778 instance=ExtResource("29_afmq0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="grass" parent="." unique_id=782805884 instance=ExtResource("30_n4khn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="pallet-small" parent="." unique_id=1606857370 instance=ExtResource("31_bncat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="pallet" parent="." unique_id=177737481 instance=ExtResource("32_86nof")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="planks" parent="." unique_id=1877797382 instance=ExtResource("33_ensbv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-asphalt-center" parent="." unique_id=1187561667 instance=ExtResource("34_45rnl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-asphalt-corner-inner" parent="." unique_id=1622184522 instance=ExtResource("35_jgbks")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-asphalt-corner-outer" parent="." unique_id=357762267 instance=ExtResource("36_i8pgu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-asphalt-corner" parent="." unique_id=987634478 instance=ExtResource("37_u63rh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-asphalt-damaged" parent="." unique_id=318337295 instance=ExtResource("38_bp7xm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-asphalt-pavement" parent="." unique_id=1368736560 instance=ExtResource("39_47okv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-asphalt-side" parent="." unique_id=337801629 instance=ExtResource("40_20u4w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-asphalt-straight" parent="." unique_id=1453157909 instance=ExtResource("41_bst08")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-center" parent="." unique_id=1294069540 instance=ExtResource("42_8moqw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-corner-inner" parent="." unique_id=2131790587 instance=ExtResource("43_cen10")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-corner-outer" parent="." unique_id=949764595 instance=ExtResource("44_mw26m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-corner" parent="." unique_id=156929176 instance=ExtResource("45_dxe2f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-damaged" parent="." unique_id=478542290 instance=ExtResource("46_gmqbu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-pavement" parent="." unique_id=400548730 instance=ExtResource("47_k4tut")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-side" parent="." unique_id=1975225405 instance=ExtResource("48_6na2o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-straight" parent="." unique_id=1557194571 instance=ExtResource("49_l1rtq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="road-dirt-tile" parent="." unique_id=1391799941 instance=ExtResource("50_pafpr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="roof-metal-poles" parent="." unique_id=1592547917 instance=ExtResource("51_o770o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="roof-metal-type-a" parent="." unique_id=755680001 instance=ExtResource("52_35cyu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="roof-metal-type-b" parent="." unique_id=1855986154 instance=ExtResource("53_c32f5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="scaffolding-floor" parent="." unique_id=557391455 instance=ExtResource("54_3m64r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="scaffolding-poles" parent="." unique_id=1081917386 instance=ExtResource("55_3ni2k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="scaffolding-structure" parent="." unique_id=781404112 instance=ExtResource("56_j44pc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="tree-large" parent="." unique_id=2046307334 instance=ExtResource("57_oac4x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="tree-park-large" parent="." unique_id=261040429 instance=ExtResource("58_g2yol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="tree-park-pine-large" parent="." unique_id=1830015580 instance=ExtResource("59_m3d6i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="tree-pine-large" parent="." unique_id=666168569 instance=ExtResource("60_rryqm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="tree-pine-small" parent="." unique_id=2122211447 instance=ExtResource("61_4q1gf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="tree-shrub" parent="." unique_id=173179966 instance=ExtResource("62_r08gp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="tree-small" parent="." unique_id=1611658705 instance=ExtResource("63_hqctg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="truck-flat" parent="." unique_id=145734932 instance=ExtResource("64_8vh8w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="truck-green-cargo" parent="." unique_id=1344605779 instance=ExtResource("65_ugfkb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="truck-green" parent="." unique_id=2111214390 instance=ExtResource("66_43uyk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="truck-grey-cargo" parent="." unique_id=1155725436 instance=ExtResource("67_dhfy2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="truck-grey" parent="." unique_id=771510681 instance=ExtResource("68_m22fd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-column-painted" parent="." unique_id=1146341457 instance=ExtResource("69_3wc1k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-column" parent="." unique_id=1421497995 instance=ExtResource("70_v3uqa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-corner-painted" parent="." unique_id=1233917494 instance=ExtResource("71_bkxpn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-corner" parent="." unique_id=970746431 instance=ExtResource("72_nuuoj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-detail-painted" parent="." unique_id=1220618837 instance=ExtResource("73_f3sl2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-detail" parent="." unique_id=844577838 instance=ExtResource("74_on5lg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-diagonal" parent="." unique_id=362598217 instance=ExtResource("75_s43rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-door" parent="." unique_id=154731942 instance=ExtResource("76_iki5w")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-flat-garage" parent="." unique_id=2122347315 instance=ExtResource("77_2jj81")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-flat-painted" parent="." unique_id=1801057130 instance=ExtResource("78_prui6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-flat-window" parent="." unique_id=1546880069 instance=ExtResource("79_hinq0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-flat" parent="." unique_id=1207641097 instance=ExtResource("80_hhjel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-garage" parent="." unique_id=828981214 instance=ExtResource("81_2w6ic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-low-painted" parent="." unique_id=974589662 instance=ExtResource("82_61ows")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-low" parent="." unique_id=83786424 instance=ExtResource("83_fl0l1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-open" parent="." unique_id=1532151872 instance=ExtResource("84_ytoro")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-painted-diagonal" parent="." unique_id=1499403666 instance=ExtResource("85_8o8q2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-painted" parent="." unique_id=1713475342 instance=ExtResource("86_1qlcw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-roof-detailed" parent="." unique_id=1128267964 instance=ExtResource("87_ftvbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-roof-slant-detailed" parent="." unique_id=1451754872 instance=ExtResource("88_51qli")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-roof-slant" parent="." unique_id=1769404436 instance=ExtResource("89_l02nf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-roof" parent="." unique_id=2113882415 instance=ExtResource("90_55o1g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a-window" parent="." unique_id=1580138558 instance=ExtResource("91_wdw7e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-a" parent="." unique_id=814973201 instance=ExtResource("92_j2xhy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-column" parent="." unique_id=88340921 instance=ExtResource("93_wss60")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-corner" parent="." unique_id=1475305395 instance=ExtResource("94_rxvj1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-detail-painted" parent="." unique_id=179906269 instance=ExtResource("95_clyt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-diagonal" parent="." unique_id=1211530142 instance=ExtResource("96_iv88q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-door" parent="." unique_id=732413125 instance=ExtResource("97_j46w0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-flat-garage" parent="." unique_id=215407024 instance=ExtResource("98_mh4c8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-flat-window" parent="." unique_id=653250656 instance=ExtResource("99_nktds")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-flat" parent="." unique_id=1003694929 instance=ExtResource("100_gyl34")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-garage" parent="." unique_id=987637043 instance=ExtResource("101_17oxy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-low" parent="." unique_id=729254482 instance=ExtResource("102_le3nx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-open" parent="." unique_id=350897347 instance=ExtResource("103_oscm5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-roof-detailed" parent="." unique_id=1517451873 instance=ExtResource("104_8b4g5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-roof-slant-detailed" parent="." unique_id=1236422094 instance=ExtResource("105_n4dsh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-roof-slant" parent="." unique_id=720299631 instance=ExtResource("106_8jaua")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-roof" parent="." unique_id=614125479 instance=ExtResource("107_2cqx2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b-window" parent="." unique_id=241427711 instance=ExtResource("108_1o3cx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-b" parent="." unique_id=1294198506 instance=ExtResource("109_kismm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-broken-type-a" parent="." unique_id=2083782089 instance=ExtResource("110_ld7ul")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-broken-type-b" parent="." unique_id=1918807425 instance=ExtResource("111_mxw13")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-c-flat-low" parent="." unique_id=269544484 instance=ExtResource("112_3lixy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-c-flat" parent="." unique_id=858807916 instance=ExtResource("113_y2tft")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-fence" parent="." unique_id=1159828326 instance=ExtResource("114_ptffw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-steps-type-a" parent="." unique_id=465365689 instance=ExtResource("115_x4jkv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-steps-type-b" parent="." unique_id=579917637 instance=ExtResource("116_yqbx2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-type-a" parent="." unique_id=1331456133 instance=ExtResource("117_qvmsu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="wall-type-b" parent="." unique_id=801994953 instance=ExtResource("118_xskjn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="window-small-type-a" parent="." unique_id=1865416804 instance=ExtResource("119_hjc7v")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="window-small-type-b" parent="." unique_id=933371198 instance=ExtResource("120_ls4yc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="window-wide-type-a" parent="." unique_id=131313217 instance=ExtResource("121_7gyt2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="window-wide-type-b" parent="." unique_id=22884326 instance=ExtResource("122_tcn7u")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="window-wide-type-c" parent="." unique_id=1507020536 instance=ExtResource("123_ofyo4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
+
+[node name="window-wide-type-d" parent="." unique_id=2101656333 instance=ExtResource("124_0ufev")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.27198052, 0, -0.4060955)
