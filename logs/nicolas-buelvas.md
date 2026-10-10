@@ -116,3 +116,86 @@ Files: ui/options_menu.tscn, ui/options_menu.gd
 Change: Se creó el script options_menu.gd con la lógica para volumen de audio, pantalla completa y resolución. Se implementó el diseño visual del menú de opciones con sliders, checkbox y un selector de resolución.
 Commit: PENDING
 Notes: Se asume que los buses de audio 'Music' y 'SFX' existen en la configuración del proyecto de Godot.
+
+---
+
+## AI-IAdashems-NB-000010
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Corregir el alcance del PR #3 (retocar solo archivos de D)
+Type: AI_ASSISTED
+Files: .github/workflows/commit-lint.yml, .github/workflows/indice-logs.yml, .github/workflows/trazabilidad.yml
+Change: Se retiraron del PR los tres workflows de GitHub Actions: la CI del equipo no es alcance de D y además llamaban a .github/scripts/*.sh que no existe en ninguna rama, así que los jobs fallaban. El CI del repo debe entrar en un PR propio (dueño C).
+Commit: 966b687
+Notes: logs/ y scenes/ de NB se conservan en el PR. El índice de logs se regenera con tools/indice_logs.py.
+
+
+---
+
+## AI-IAdashems-NB-000011
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Dejar el HUD solo con señales y fuera de la escena de producción el emisor de pruebas
+Type: AI_ASSISTED
+Files: ui/hud.gd, ui/hud.tscn, ui/test_signal_emitter.gd, ui/hud_test.gd, ui/hud_test.tscn
+Change: Se quitó el TestSignalEmitter de hud.tscn (llevaba un add_child(self) inválido que rompía en runtime) y se movió a la escena de prueba hud_test.tscn. El HUD se engancha a /root/EventBus si tiene las señales del contrato y si no queda mudo; attach_source() permite probarlo sin EventBus. Se implementaron el color de la barra de calor al pasar 70 y el temblor del icono del herbicida, y los iconos de vida/herbicida pasaron a placeholders con color visibles.
+Commit: 3cf02e7
+Notes: Verificado con 27 comprobaciones en Godot 4.7 headless (HUD, tarjeta, pausa, opciones y carga de las 6 escenas). Ver criterio "el HUD reacciona a todas las señales".
+
+
+---
+
+## AI-IAdashems-NB-000012
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Que la pausa funcione con el árbol congelado sin depender de GameManager
+Type: AI_ASSISTED
+Files: ui/pause_menu.gd, ui/pause_menu.tscn
+Change: Se puso process_mode = 3 (ALWAYS) en la raíz, porque con el árbol pausado el menú no recibía input ni se veía. toggle_pause() conmuta el árbol él mismo mientras no exista EventBus; si EventBus tiene pause_toggled, Esc queda en manos de GameManager (C) y el menú solo emite/escucha la señal para no duplicar el toggle.
+Commit: 4f09a97
+Notes: Opciones y Salir al menú siguen imprimiendo en consola: dependen de GameManager.goto() de C.
+
+
+---
+
+## AI-IAdashems-NB-000013
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Que las opciones cambien volumen y pantalla sin depender de C
+Type: AI_ASSISTED
+Files: ui/options_menu.gd
+Change: El menú crea los buses Music y SFX en tiempo de ejecución si faltan (el layout de audio vive en project.godot, que solo lo edita C), corrige el mapeo slider<->dB (100 = 0 dB, 0 = silencio) y arregla la ruta del selector de resolución, que apuntaba a un nodo inexistente y hacía fallar _ready.
+Commit: 6c93a05
+Notes: Si C define después default_bus_layout con Music/SFX, _ensure_bus no hace nada y no hay conflicto.
+
+
+---
+
+## AI-IAdashems-NB-000014
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Implementar la tarjeta de ronda (ui/round_card.tscn)
+Type: AI_ASSISTED
+Files: ui/round_card.gd, ui/round_card.tscn, ui/hud.tscn
+Change: La tarjeta pasó de esqueleto a funcionar: muestra "Turno N" 2 segundos y el aviso "¡Nuevo piso habilitado!", con temporizador que sigue corriendo con el juego pausado. Escucha round_started y floor_unlocked si EventBus existe y si no se llama con show_turn()/show_floor_unlocked(). Se instancia dentro de hud.tscn para que C solo tenga que instanciar el HUD.
+Commit: 7164be1
+Notes: Aviso para C: no instanciar round_card en game.tscn, ya viene dentro de hud.tscn.
+
+
+---
+
+## AI-IAdashems-NB-000015
+
+Timestamp: N/A
+Participant: NB (Nicolas Buelvas)
+Task: Quitar set_input_as_handled() inválido en botones
+Type: AI_ASSISTED
+Files: scenes/credits.gd
+Change: set_input_as_handled() solo es válido dentro de _input/_unhandled_input; se llamaba desde la señal pressed de un botón. Se dejó el comentario de que esa navegación depende de GameManager.goto() de C.
+Commit: 91168e7
+Notes: Igual en ui/pause_menu.gd y ui/options_menu.gd (mismo cambio, commits 4f09a97 y 6c93a05).
