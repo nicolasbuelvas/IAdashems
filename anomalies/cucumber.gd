@@ -13,10 +13,14 @@ var stairs_mult: float = 0.75
 
 var _patrol_dir: float = 1.0
 var _dodge_jump_cooldown: float = 0.0
+var _animated_sprite: AnimatedSprite3D
 
 
 func _ready() -> void:
 	super._ready()
+	_animated_sprite = get_node_or_null("AnimatedSprite3D") as AnimatedSprite3D
+	if _animated_sprite != null and _animated_sprite.sprite_frames.has_animation(&"run"):
+		_animated_sprite.play(&"run")
 	var cfg = get_node_or_null("/root/GameConfig")
 	if cfg:
 		speed = cfg.get("CUCUMBER_SPEED") if cfg.get("CUCUMBER_SPEED") != null else speed

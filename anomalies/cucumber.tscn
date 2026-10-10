@@ -60,10 +60,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 shape = SubResource("CapsuleShape3D_cuc")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=659288894]
-transform = Transform3D(0.48082587, 0, 0, 0, 0.48082587, 0, 0, 0, 4.469083, 0, 1.0391917, 0)
+position = Vector3(0, 0.72, 0)
+scale = Vector3(0.32, 0.32, 1)
+billboard = 1
 sprite_frames = SubResource("SpriteFrames_dmuor")
 animation = &"run"
-frame_progress = 0.3348255
 speed_scale = 2.0
 
 [node name="StairsDetector" type="Area3D" parent="." unique_id=1183397434]

@@ -8,4 +8,5 @@ fov = 48.0
 script = ExtResource("1_camera")
 fixed_z = 13.0
 y_offset = 1.2
-pitch_deg = -6.5
+pitch_deg = -11.0
+yaw_deg = -12.0
