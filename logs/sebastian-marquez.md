@@ -199,3 +199,14 @@ Files: anomalies/cucumber.gd, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
 Change: El AnimatedSprite3D invierte horizontalmente la textura cuando la velocidad X del hongo es negativa y conserva la orientación cuando se detiene.
 Limitaciones: No se pudo validar visualmente en ejecución porque Godot no está disponible en este entorno.
 Commit: PENDING
+
+## AI-IAdashems-SM-000018
+
+Timestamp: N/A
+Participant: SM (Sebastian Marquez)
+Task: Integrar sprites de idle/disparo, proyectil de papa y enemigo lechuga
+Type: AI_ASSISTED
+Files: player/player.gd, player/player.tscn, player/herbicide.tscn, anomalies/lettuce.tscn, logs/sebastian-marquez.md, logs/INDICE_LOGS.md
+Change: Se añadieron idle de dos fotogramas y disparo de tres fotogramas a AnimatedSprite3D. El movimiento queda bloqueado solo durante los ~0.38 s de la animación de disparo; el cooldown conserva su duración independiente. El proyectil usa papaXLL y la lechuga usa su sprite estático.
+Limitaciones: Falta ejecutar las escenas en Godot para revisar importación, escala visual y transición de estados; el motor no está disponible en este entorno.
+Commit: PENDING
